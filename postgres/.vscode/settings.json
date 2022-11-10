@@ -52,6 +52,16 @@
         "cfenv": "cpp",
         "cinttypes": "cpp",
         "typeinfo": "cpp",
-        "pqxx": "cpp"
-    }
+        "pqxx": "cpp",
+        "list": "cpp",
+        "bitset": "cpp",
+        "variant": "cpp",
+        "cursor": "cpp",
+        "connection": "cpp",
+        "typeindex": "cpp",
+        "charconv": "cpp"
+    },
+    "cSpell.words": [
+        "pqxx"
+    ]
 }

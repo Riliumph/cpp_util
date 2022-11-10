@@ -4,10 +4,10 @@ CXXFLAGS = -g -MMD -Wall -Wextra -Winit-self -std=c++17
 
 # library setting
 LDFLAGS = -L/usr/local/lib
-LIBS    = -lstdc++ -pthread
+LIBS    = -lstdc++ -pthread -lpqxx
 
 # include setting
-INCLUDE = -I./
+INCLUDE = -I/usr/local/include/ -I./
 EXCLUDE = .git%
 
 # binary setting
@@ -35,7 +35,7 @@ all: $(OBJS) $(TARGET)
 
 $(TARGET): $(OBJS)
 	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
-	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(LIBS) $(INCLUDE)
+	$(COMPILER) $(CXXFLAGS) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(LIBS) $(INCLUDE)
 
 $(OBJROOT)/%.o: %.cpp
 	@echo %.cpp

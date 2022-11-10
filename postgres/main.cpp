@@ -1,5 +1,6 @@
 // STL
 #include <iostream>
+#include <memory>
 // 3rd
 #include <pqxx/pqxx>
 // original
@@ -8,20 +9,22 @@
 int
 main()
 {
-  std::map<std::string, std::string> data1;
-  data1["KEY1"] = "hoge";
-  data1["KEY2"] = "fuga";
-  std::map<std::string, std::string> data2;
-  data2["KEY1"] = "foo";
-  data2["KEY2"] = "bar";
-
-  std::vector<ResultSet::Record> records;
-  records.emplace_back(data1);
-  records.emplace_back(data2);
-
-  ResultSet result_set;
-  result_set.Data(records);
-
-  std::cout << result_set << std::endl;
+  try {
+    auto db_conn = std::make_unique<pqxx::connection>("host=0.0.0.0 "
+                                                      "port=5432 "
+                                                      "dbname=sample_db "
+                                                      "user=postgres "
+                                                      "password=postgres ");
+    pqxx::work transactor(*db_conn);
+    auto query = "select * from sample_table";
+    pqxx::result res(transactor.exec(query));
+    transactor.commit();
+    postgres::ResultSet res_set(res);
+    std::cout << res_set << std::endl;
+  } catch (const pqxx::sql_error& e) {
+    std::cerr << e.what() << " : SQL->" << e.query() << std::endl;
+  } catch (const pqxx::usage_error& e) {
+    std::cerr << e.what() << std::endl;
+  }
   return 0;
 }
