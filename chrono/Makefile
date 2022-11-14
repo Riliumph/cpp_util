@@ -16,20 +16,19 @@ BINROOT = bin
 BIN     = $(BINDIR)/$(TARGET)
 
 # source setting
-SRCROOT = .
-SRCS    = $(filter-out $(EXCLUDE), $(shell find ./ -name "*.cpp"))
+SRCROOT = src
+SRCS    = $(filter-out $(EXCLUDE), $(shell find $(SRCROOT) -name *.cpp))
 SRCDIRS = $(dir $(SRCS))
 
 # object setting
 OBJROOT = obj
-OBJDIRS = $(addprefix $(OBJROOT)/, $(SRCDIRS))
-OBJS    = $(addprefix $(OBJROOT)/, $(patsubst %.cpp, %.o, $(SRCS)))
+OBJDIRS = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%, %, $(SRCDIRS)))
+OBJS    = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%.cpp, %.o, $(SRCS)))
 
 # dependency setting
 DEPS = $(OBJS:.o=.d)
 
-default:
-	@make all
+.PHONY: clean all
 
 all: $(OBJS) $(TARGET)
 
@@ -37,7 +36,7 @@ $(TARGET): $(OBJS)
 	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
 	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(LIBS) $(INCLUDE)
 
-$(OBJROOT)/%.o: %.cpp
+$(OBJROOT)/%.o: $(SRCROOT)/%.cpp
 	@echo %.cpp
 	@[ -d $@ ] || mkdir -p $(dir $@)
 	$(COMPILER) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<

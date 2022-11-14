@@ -13,11 +13,10 @@ EXCLUDE = .git%
 # binary setting
 TARGET  = $(shell basename $$(pwd))
 BINROOT = bin
-BIN     = $(BINDIR)/$(TARGET)
 
 # source setting
 SRCROOT = src
-SRCS    = $(filter-out $(EXCLUDE), $(shell find $(SRCROOT) -name *.cpp))
+SRCS    = $(filter-out $(EXCLUDE), $(shell find $(SRCROOT) -name "*.cpp"))
 SRCDIRS = $(dir $(SRCS))
 
 # object setting

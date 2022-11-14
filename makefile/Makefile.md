@@ -70,6 +70,9 @@ C++言語のフラグは`CXXFLAGS`
 記述されたライブラリが更新された場合、makeコマンドは再コンパイルが必要だと認識する。  
 パスが通っていない場合は、「xx.so」のように書けば使用できる。  
 
+> [pthread](https://kaworu.jpn.org/c/pthread)  
+> `-pthread`と`-lpthread`の違いは特にない模様。
+
 ## 検索パス管理変数
 
 ### INCLUDE - インクルードパス -

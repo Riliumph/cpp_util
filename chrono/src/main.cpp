@@ -57,7 +57,7 @@ scheduled_task(double n)
   auto diff = static_cast<int>(next - local->tm_sec);
   std::printf("quot: %f(=%d/%f)\n", quotient, local->tm_sec, n);
   std::printf("now : %d sec\n", local->tm_sec);
-  std::printf("next: %f sec(=%f*%d)\n", next, n, quotient);
+  std::printf("next: %f sec(=%f*%f)\n", next, n, quotient);
   std::printf("diff: %d sec(=%f-%d)\n", diff, next, local->tm_sec);
   std::this_thread::sleep_for(std::chrono::seconds(diff));
   std::cout << std::chrono::system_clock::now();

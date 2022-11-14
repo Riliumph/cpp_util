@@ -1,49 +1,48 @@
 # compiler setting
-COMPILER  = g++ -v
-CXXFLAGS  = -g -MMD -Wall -Wextra -Winit-self -std=c++17
+COMPILER = g++ -v
+CXXFLAGS = -g -MMD -Wall -Wextra -Winit-self -std=c++17
 
 # library setting
-ifeq "$(shell getconf LONG_BIT)" "64"
-  LDFLAGS = -L/usr/local/lib -L/usr/lib/x86_64-linux-gnu
-else
-  LDFLAGS = -L/usr/local/lib -L/usr/lib/x86_64-linux-gnu
-endif
-LIBS      = -lstdc++ -lboost_log -lpthread
+LDFLAGS = -L/usr/local/lib -L/usr/lib/x86_64-linux-gnu
+LIBS    = -lstdc++ -lboost_log -lpthread
 
 # include setting
-INCLUDE   = -I/usr/include -I./ 
-EXCLUDE   = .git%
+INCLUDE = -I$(SRCROOT)/
+EXCLUDE = .git%
 
 # binary setting
-TARGET  = $(shell basename $$(readlink -f .))
+TARGET  = $(shell basename $$(pwd))
 BINROOT = bin
-BIN     = $(BINDIR)/$(TARGET)
 
 # source setting
-SRCROOT   = .
-SRCS      = $(filter-out $(NOMAKEDIR), $(shell find ./ -name "*.cpp"))
-SRCDIRS   = $(dir $(SRCS))
+SRCROOT = src
+SRCS    = $(filter-out $(EXCLUDE), $(shell find $(SRCROOT) -name "*.cpp"))
+SRCDIRS = $(dir $(SRCS))
 
 # object setting
-OBJROOT   = obj
-OBJDIRS   = $(addprefix $(OBJROOT)/, $(SRCDIRS))
-OBJS      = $(addprefix $(OBJROOT)/, $(patsubst %.cpp, %.o, $(SRCS)))
+OBJROOT = obj
+OBJDIRS = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%, %, $(SRCDIRS)))
+OBJS    = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%.cpp, %.o, $(SRCS)))
 
 # dependency setting
-DEPS      = $(OBJS:.o=.d)
+DEPS = $(OBJS:.o=.d)
 
-default:
-	@make all
+.PHONY: clean all
+
+echo:
+	@echo $(SRCS)
+	@echo $(OBJDORS)
 
 all: $(OBJS) $(TARGET)
+	@echo "make all"
 
 $(TARGET): $(OBJS)
+	@echo "build exe $@"
 	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
 	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(LIBS)
 
-$(OBJROOT)/%.o: %.cpp
-	@echo $@
-	@echo $^
+$(OBJROOT)/%.o: $(SRCROOT)/%.cpp
+	@echo "build $@ from $<"
 	@[ -d $@ ] || mkdir -p $(dir $@)
 	$(COMPILER) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
 
