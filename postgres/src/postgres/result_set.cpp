@@ -67,6 +67,7 @@ ResultSet::MakeMap()
     for (const auto& col : row) {
       // DBに名前重複は無いためチェック不要
       record[col.name()] = col.c_str();
+      std::cout << col << std::endl;
     }
     result_map.emplace_back(record);
   }

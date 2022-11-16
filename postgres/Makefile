@@ -4,41 +4,45 @@ CXXFLAGS = -g -MMD -Wall -Wextra -Winit-self -std=c++17
 
 # library setting
 LDFLAGS = -L/usr/local/lib
-LIBS    = -lstdc++ -pthread -lpqxx
+LIBS    = -lstdc++ -lpthread -lpqxx
 
 # include setting
-INCLUDE = -I/usr/local/include/ -I./
+INCLUDE = -I$(SRCROOT)/
 EXCLUDE = .git%
 
 # binary setting
 TARGET  = $(shell basename $$(pwd))
 BINROOT = bin
-BIN     = $(BINDIR)/$(TARGET)
 
 # source setting
-SRCROOT = .
-SRCS    = $(filter-out $(EXCLUDE), $(shell find ./ -name "*.cpp"))
+SRCROOT = src
+SRCS    = $(filter-out $(EXCLUDE), $(shell find $(SRCROOT) -name "*.cpp"))
 SRCDIRS = $(dir $(SRCS))
 
 # object setting
 OBJROOT = obj
-OBJDIRS = $(addprefix $(OBJROOT)/, $(SRCDIRS))
-OBJS    = $(addprefix $(OBJROOT)/, $(patsubst %.cpp, %.o, $(SRCS)))
+OBJDIRS = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%, %, $(SRCDIRS)))
+OBJS    = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%.cpp, %.o, $(SRCS)))
 
 # dependency setting
 DEPS = $(OBJS:.o=.d)
 
-default:
-	@make all
+.PHONY: clean all
+
+echo:
+	@echo $(SRCS)
+	@echo $(OBJDORS)
 
 all: $(OBJS) $(TARGET)
+	@echo "make all"
 
 $(TARGET): $(OBJS)
+	@echo "build exe $@"
 	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
-	$(COMPILER) $(CXXFLAGS) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(LIBS) $(INCLUDE)
+	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(LIBS)
 
-$(OBJROOT)/%.o: %.cpp
-	@echo %.cpp
+$(OBJROOT)/%.o: $(SRCROOT)/%.cpp
+	@echo "build $@ from $<"
 	@[ -d $@ ] || mkdir -p $(dir $@)
 	$(COMPILER) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
 

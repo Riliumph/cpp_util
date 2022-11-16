@@ -1,67 +1,39 @@
 {
-    "files.associations": {
-        "iostream": "cpp",
-        "ostream": "cpp",
-        "cctype": "cpp",
-        "clocale": "cpp",
-        "cmath": "cpp",
-        "cstdarg": "cpp",
-        "cstddef": "cpp",
-        "cstdio": "cpp",
-        "cstdlib": "cpp",
-        "cstring": "cpp",
-        "ctime": "cpp",
-        "cwchar": "cpp",
-        "cwctype": "cpp",
-        "array": "cpp",
-        "atomic": "cpp",
-        "bit": "cpp",
-        "*.tcc": "cpp",
-        "chrono": "cpp",
-        "complex": "cpp",
-        "cstdint": "cpp",
-        "deque": "cpp",
-        "unordered_map": "cpp",
-        "vector": "cpp",
-        "exception": "cpp",
-        "algorithm": "cpp",
-        "functional": "cpp",
-        "iterator": "cpp",
-        "memory": "cpp",
-        "memory_resource": "cpp",
-        "numeric": "cpp",
-        "optional": "cpp",
-        "random": "cpp",
-        "ratio": "cpp",
-        "string": "cpp",
-        "string_view": "cpp",
-        "system_error": "cpp",
-        "tuple": "cpp",
-        "type_traits": "cpp",
-        "utility": "cpp",
-        "fstream": "cpp",
-        "initializer_list": "cpp",
-        "iosfwd": "cpp",
-        "istream": "cpp",
-        "limits": "cpp",
-        "new": "cpp",
-        "sstream": "cpp",
-        "stdexcept": "cpp",
-        "streambuf": "cpp",
-        "thread": "cpp",
-        "cfenv": "cpp",
-        "cinttypes": "cpp",
-        "typeinfo": "cpp",
-        "pqxx": "cpp",
-        "list": "cpp",
-        "bitset": "cpp",
-        "variant": "cpp",
-        "cursor": "cpp",
-        "connection": "cpp",
-        "typeindex": "cpp",
-        "charconv": "cpp"
+    "[c++]": {
+        "editor.formatOnSave": true,
+        "editor.tabSize": 2
     },
-    "cSpell.words": [
-        "pqxx"
-    ]
+    "C_Cpp.clang_format_fallbackStyle": "Mozilla",
+    "C_Cpp.clang_format_style": "Mozilla",
+    "files.exclude": {
+        // * Don't show on a side panel
+        "**/.cache": true,
+        "**/.DS_Store": true,
+        // Default Setting
+        "**/.git": true,
+        "**/.hg": true,
+        "**/.svn": true,
+        "**/build": true,
+        "**/CVS": true,
+        "**/dist": true,
+        // Custom Setting
+        "**/node_modules": true
+    },
+    "files.insertFinalNewline": true,
+    "files.watcherExclude": {
+        // * Don't observe this list
+        // * Disalbe: autoSave, formatOnSave
+        // Default Settings
+        "**/.git/**objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/build": true,
+        "**/dist": true,
+        "**/images": true,
+        "**/movies": true,
+        "**/node_modules/**": true,
+        // Custom Setting
+        "**/.cache": true,
+    },
+    "git.autofetch": true,
+    "git.confirmSync": false
 }
