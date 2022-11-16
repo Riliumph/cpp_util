@@ -1,0 +1,20 @@
+version: '3.1'
+
+services:
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # image: postgres:latest Dockerfileに移行
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust # パスワード入力を無効化
+    volumes:
+      - type: bind
+        source: ./share
+        target: /var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    tty: true
