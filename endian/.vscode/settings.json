@@ -1,6 +1,39 @@
 {
-    "files.associations": {
-        "iostream": "cpp",
-        "ostream": "cpp"
-    }
+    "[c++]": {
+        "editor.formatOnSave": true,
+        "editor.tabSize": 2
+    },
+    "C_Cpp.clang_format_fallbackStyle": "Mozilla",
+    "C_Cpp.clang_format_style": "Mozilla",
+    "files.exclude": {
+        // * Don't show on a side panel
+        "**/.cache": true,
+        "**/.DS_Store": true,
+        // Default Setting
+        "**/.git": true,
+        "**/.hg": true,
+        "**/.svn": true,
+        "**/build": true,
+        "**/CVS": true,
+        "**/dist": true,
+        // Custom Setting
+        "**/node_modules": true
+    },
+    "files.insertFinalNewline": true,
+    "files.watcherExclude": {
+        // * Don't observe this list
+        // * Disalbe: autoSave, formatOnSave
+        // Default Settings
+        "**/.git/**objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/build": true,
+        "**/dist": true,
+        "**/images": true,
+        "**/movies": true,
+        "**/node_modules/**": true,
+        // Custom Setting
+        "**/.cache": true,
+    },
+    "git.autofetch": true,
+    "git.confirmSync": false
 }
