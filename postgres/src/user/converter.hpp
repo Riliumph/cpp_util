@@ -3,9 +3,9 @@
 // 3rd
 #include <pqxx/pqxx>
 // original
-#include "user/user_map.hpp"
+#include "py/map.hpp"
 namespace converter {
-entity::UserMaps
-Covert2UserMap(pqxx::result&);
+py::map
+Convert2User(pqxx::result&);
 }
 #endif // USER_CONVERTER_HPP

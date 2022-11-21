@@ -3,7 +3,7 @@ COMPILER = g++ -v
 CXXFLAGS = -g -MMD -Wall -Wextra -Winit-self -std=c++17
 
 # library setting
-LDFLAGS = -L/usr/local/lib
+LDFLAGS = -L/usr/local/lib -L/usr/lib/x86_64-linux-gnu/cmake/
 LIBS    = -lstdc++ -lpthread -lpqxx
 
 # include setting

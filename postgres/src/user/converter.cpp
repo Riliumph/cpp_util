@@ -1,33 +1,36 @@
-//system
+// STL
+#include <iostream>
+// system
 #include <sys/time.h>
-//original
+// original
 #include "user/converter.hpp"
 namespace converter {
-entity::UserMaps
-Convert2UserMaps(pqxx::result& result)
+/// @brief Userテーブルを表現するマップを構築する。
+/// Userテーブルとjoinした場合、表現できない
+/// @param result Userテーブルのpwqxx
+/// @return python形式でUserテーブルを表現したmap
+py::map
+Convert2User(pqxx::result& result)
 {
-  entity::UserMaps user_maps;
+  py::map users;
   for (const auto& row : result) {
-    entity::UserMap user_map;
+    py::record record;
     for (const auto& col : row) {
-      if (col.name() == "id") {
-        user_map[col.name()] = std::stoi(col.c_str());
-      } else if (col.name() == "nam") {
-        user_map[col.name()] = col.c_str();
-      } else if (col.name() == "age") {
-        user_map[col.name()] = std::stoi(col.c_str());
-      }else if(col.name() == "created_at"){
-        std::string time_str = col.c_str();
-        struct tm t;
-        // year
-        auto year = std::string(time_str.begin(), time_str.begin() + 4);
-        t.tm_year = std::stoi(year);
-        // month
-        auto month = std::string(time_str.begin()+5, time_str.begin() + 7);
-        t.tm_mon = std::stoi(month);
-        user_map[col.name()];
+      auto name = std::string(col.name());
+      if (name == "id") {
+        record[name] = std::stoi(col.c_str());
+      } else if (name == "name") {
+        record[name] = col.c_str();
+      } else if (name == "age") {
+        record[name] = std::stoi(col.c_str());
+      } else if (name == "modify_at") {
+        record[name] = col.c_str();
+      } else if (name == "created_at") {
+        record[name] = col.c_str();
       }
     }
+    users.emplace_back(record);
   }
+  return users;
 }
 } // converter

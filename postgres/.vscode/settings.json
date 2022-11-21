@@ -4,6 +4,11 @@
         "editor.tabSize": 2,
         "files.insertFinalNewline": true
     },
+    "[sql]": {
+        "editor.formatOnSave": false,
+        "editor.tabSize": 2,
+        "files.insertFinalNewline": true
+    },
     "C_Cpp.clang_format_fallbackStyle": "Mozilla",
     "C_Cpp.clang_format_style": "Mozilla"
 }
