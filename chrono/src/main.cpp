@@ -1,23 +1,17 @@
 #include <chrono>
 #include <cmath>
+#include <ctime>
 #include <iostream>
 #include <ostream>
 #include <thread>
-#include <time.h>
+
+#include "util/chrono.hpp"
 
 using namespace std::literals::chrono_literals;
 using namespace std::chrono;
 
 void
 scheduled_task(double);
-
-std::ostream&
-operator<<(std::ostream& os, std::chrono::system_clock::time_point tp)
-{
-  auto t = std::chrono::system_clock::to_time_t(tp);
-  os << ctime(&t);
-  return os;
-}
 
 int
 main()
