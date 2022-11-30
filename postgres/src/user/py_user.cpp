@@ -1,13 +1,15 @@
 // STL
-#include <iostream>
+#include <string>
 // system
 #include <sys/time.h>
 // original
-#include "user/converter.hpp"
-namespace converter {
+#include "user/py_user.hpp"
+
+namespace py {
 /// @brief Userテーブルを表現するマップを構築する。
-/// Userテーブルとjoinした場合、表現できない
-/// @param result Userテーブルのpwqxx
+/// Userテーブル定義外のカラムはスキップされる。
+/// そのため、別のテーブルとjoinするなどした場合は表現できない
+/// @param result Userテーブルのpqxx::result
 /// @return python形式でUserテーブルを表現したmap
 py::map
 Convert2User(pqxx::result& result)
@@ -28,9 +30,11 @@ Convert2User(pqxx::result& result)
       } else if (name == "created_at") {
         record[name] = col.c_str();
       }
+      // 対象外カラムはスキップ
+      continue;
     }
     users.emplace_back(record);
   }
   return users;
 }
-} // converter
+} // py
