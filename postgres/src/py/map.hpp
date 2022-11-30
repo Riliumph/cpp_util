@@ -16,13 +16,25 @@
 namespace py {
 #if 0
 // 2022/11/1 boost::serializationはstd::variantをエンコードできない。
-using value_t = std::variant<int, std::string>;
+using value_t = std::variant<int, double, std::string>;
 #else
 // boost::serializationはboost::variantをエンコードできる。
-using value_t = boost::variant<int, std::string>;
+using value_t = boost::variant<int, double, std::string>;
 #endif
+/// DBのレコードを表現する型。
+/// 文字列でキー情報を持ち、バリュー情報はあらゆる型で格納することができる。
 using record = std::unordered_map<std::string, value_t>;
+/// DBのレコードを複数格納できる型。
+/// 各行でカラム名を管理している。
+/// そのため非推奨ではあるが、各行で別の列名を持つレコードを登録することができる。
+/// 自由なキー名をいれられることから、table joinされても対応できる。
+/// このメリットは固定クラスへ変換する実装に比べて実装変更が発生しないため利便性に勝る。
+/// オブジェクト指向とは仕様確定後には強烈な利点があるが、joinなど自由な処理をする場合には
+/// 自由分の定義が必要になってしまう点がデメリット。
 using map = std::vector<record>;
+
+py::map
+Convert2PyMap(pqxx::result&);
 } // namespace py
 
 std::ostream&
