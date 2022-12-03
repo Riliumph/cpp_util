@@ -10,11 +10,9 @@
 using namespace std::literals::chrono_literals;
 using namespace std::chrono;
 
-void
-scheduled_task(double);
+void scheduled_task(double);
 
-int
-main()
+int main()
 {
   std::cout << "current time" << std::endl;
   auto now = std::chrono::system_clock::now();
@@ -39,10 +37,12 @@ main()
   return 0;
 }
 
-/// @brief n秒の度に動く
+/// @brief hh:mm:nのタイミングでスリープを解除する関数
+/// こんな無駄なスリープ機能意味あるのか？
+/// 端的に言って、Linuxのcronを使え。
+/// そっちの方が長年の安全性があり、
 /// @param n 時計の時刻の秒数
-void
-scheduled_task(double n)
+void scheduled_task(double n)
 {
   auto now = time(NULL);                        // 現在時刻を取得
   auto local = localtime(&now);                 // 地方時に変換
