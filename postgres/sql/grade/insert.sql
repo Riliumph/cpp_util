@@ -1,0 +1,9 @@
+insert into grade values (1, 1, 'mid term', 'physics', 50, current_timestamp, current_timestamp);
+insert into grade values (2, 1, 'mid term', 'english', 90, current_timestamp, current_timestamp);
+insert into grade values (3, 1, 'mid term', 'science', 80, current_timestamp, current_timestamp);
+insert into grade values (4, 2, 'mid term', 'physics', 80, current_timestamp, current_timestamp);
+insert into grade values (5, 2, 'mid term', 'english', 80, current_timestamp, current_timestamp);
+insert into grade values (6, 2, 'mid term', 'science', 80, current_timestamp, current_timestamp);
+insert into grade values (7, 3, 'mid term', 'physics', 80, current_timestamp, current_timestamp);
+insert into grade values (8, 3, 'mid term', 'english', 20, current_timestamp, current_timestamp);
+insert into grade values (9, 3, 'mid term', 'science', 40, current_timestamp, current_timestamp);
