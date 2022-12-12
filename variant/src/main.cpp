@@ -1,7 +1,10 @@
 // STL
 #include <iostream>
+#include <string>
 // original
 #include "variant.hpp"
+
+using namespace std::literals::string_literals;
 
 int
 main(void)
@@ -20,9 +23,13 @@ main(void)
   std::cout << a << std::endl;
 
   std::cout << "test operator== " << std::endl;
-  //  if (std::get<int>(a[0]["id"]) == 1) これが↓で書けるように
-  if (a[0]["id"] == 1) {
+  //  if (std::get<std::string>(a[0]["name"]) == "foo") これが↓で書けるように
+  if (a[0]["name"] == "foo"s) {
     std::cout << "True: " << a[0] << std::endl;
   }
+
+  a[0]["id"] = a[0]["id"] * 2;
+  std::cout << a[0]["id"] << std::endl;
+
   return 0;
 }
