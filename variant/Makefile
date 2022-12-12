@@ -9,6 +9,7 @@ LIBS    = -lstdc++
 # include setting
 INCLUDE = -I$(SRCROOT)/
 EXCLUDE = .git%
+TEST_EXT= %_test.cpp
 
 # binary setting
 TARGET  = $(shell basename $$(pwd))
@@ -16,13 +17,19 @@ BINROOT = bin
 
 # source setting
 SRCROOT = src
-SRCS    = $(filter-out $(EXCLUDE), $(shell find $(SRCROOT) -name "*.cpp"))
+SRCS    = $(filter-out $(EXCLUDE) $(TEST_EXT), $(shell find $(SRCROOT) -name "*.cpp"))
 SRCDIRS = $(dir $(SRCS))
 
 # object setting
 OBJROOT = obj
 OBJDIRS = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%, %, $(SRCDIRS)))
 OBJS    = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%.cpp, %.o, $(SRCS)))
+
+# test setting
+TESTROOT = src
+TESTS    = $(filter-out $(EXCLUDE), $(shell find $(SRCROOT) -name "*_test.cpp"))
+TESTDIRS = $(dir $(SRCS))
+TESTLIBS = $(LIBS) -lpthread -lgtest -lgtest_main
 
 # dependency setting
 DEPS = $(OBJS:.o=.d)
@@ -32,6 +39,11 @@ DEPS = $(OBJS:.o=.d)
 echo:
 	@echo $(SRCS)
 	@echo $(OBJS)
+
+test:
+	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
+	$(COMPILER) $(TESTS) $(CXXFLAGS) $(LDFLAGS) $(TESTLIBS) $(INCLUDE) -o $(BINROOT)/test
+	$(BINROOT)/test
 
 all: $(OBJS) $(TARGET)
 	@echo "make all"
