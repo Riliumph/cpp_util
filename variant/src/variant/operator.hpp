@@ -9,9 +9,9 @@
 /// @return 比較結果
 template<typename T, class... Ts>
 inline bool
-operator==(T t, std::variant<Ts...> v)
+operator==(T t, std::variant<Ts...>& v)
 {
-  const T* p = std::get_if<T>(&v);
+  T* p = std::get_if<T>(&v);
   if (p == nullptr) {
     return false;
   }
@@ -26,7 +26,7 @@ operator==(T t, std::variant<Ts...> v)
 /// @return 比較結果
 template<typename T, class... Ts>
 inline bool
-operator==(std::variant<Ts...> v, T t)
+operator==(std::variant<Ts...>& v, T t)
 {
   return t == v;
 }
@@ -39,7 +39,7 @@ operator==(std::variant<Ts...> v, T t)
 /// @return std::variantの変数
 template<typename T, class... Ts>
 inline std::variant<Ts...>
-operator+(std::variant<Ts...>& v, T&& t)
+operator+(std::variant<Ts...>& v, T t)
 {
   T* p = std::get_if<T>(&v);
   if (p == nullptr) {
@@ -58,9 +58,15 @@ operator+(std::variant<Ts...>& v, T&& t)
 /// @return std::variantの変数
 template<typename T, class... Ts>
 inline std::variant<Ts...>
-operator+(T&& t, std::variant<Ts...>& v)
+operator+(T t, std::variant<Ts...>& v)
 {
-  return v + t;
+  T* p = std::get_if<T>(&v);
+  if (p == nullptr) {
+    static_assert(std::__detail::__variant::__exactly_once<T, Ts...>,
+                  "T should occur for exactly once in alternatives");
+    return v;
+  }
+  return t + *p;
 }
 
 /// @brief std::variant型と型Tの減算演算子
@@ -71,7 +77,7 @@ operator+(T&& t, std::variant<Ts...>& v)
 /// @return std::variantの変数
 template<typename T, class... Ts>
 inline std::variant<Ts...>
-operator-(std::variant<Ts...>& v, T&& t)
+operator-(std::variant<Ts...>& v, T t)
 {
   T* p = std::get_if<T>(&v);
   if (p == nullptr) {
@@ -88,9 +94,13 @@ operator-(std::variant<Ts...>& v, T&& t)
 /// @return std::variantの変数
 template<typename T, class... Ts>
 inline std::variant<Ts...>
-operator-(T&& t, std::variant<Ts...>& v)
+operator-(T t, std::variant<Ts...>& v)
 {
-  return v - t;
+  T* p = std::get_if<T>(&v);
+  if (p == nullptr) {
+    return v;
+  }
+  return t - *p;
 }
 
 /// @brief std::variant型と型Tの乗算演算子
@@ -101,7 +111,7 @@ operator-(T&& t, std::variant<Ts...>& v)
 /// @return std::variantの変数
 template<typename T, class... Ts>
 inline std::variant<Ts...>
-operator*(std::variant<Ts...>& v, T&& t)
+operator*(std::variant<Ts...>& v, T t)
 {
   T* p = std::get_if<T>(&v);
   if (p == nullptr) {
@@ -118,9 +128,13 @@ operator*(std::variant<Ts...>& v, T&& t)
 /// @return std::variantの変数
 template<typename T, class... Ts>
 inline std::variant<Ts...>
-operator*(T&& t, std::variant<Ts...>& v)
+operator*(T t, std::variant<Ts...>& v)
 {
-  return v - t;
+  T* p = std::get_if<T>(&v);
+  if (p == nullptr) {
+    return v;
+  }
+  return t * *p;
 }
 
 /// @brief std::variant型と型Tの乗算演算子
@@ -131,7 +145,7 @@ operator*(T&& t, std::variant<Ts...>& v)
 /// @return std::variantの変数
 template<typename T, class... Ts>
 inline std::variant<Ts...>
-operator/(std::variant<Ts...>& v, T&& t)
+operator/(std::variant<Ts...>& v, T t)
 {
   T* p = std::get_if<T>(&v);
   if (p == nullptr) {
@@ -149,7 +163,7 @@ operator/(std::variant<Ts...>& v, T&& t)
 /// @return std::variantの変数
 template<typename T, class... Ts>
 inline std::variant<Ts...>
-operator/(T&& t, std::variant<Ts...>& v)
+operator/(T t, std::variant<Ts...>& v)
 {
   T* p = std::get_if<T>(&v);
   if (p == nullptr) {
