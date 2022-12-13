@@ -1,3 +1,5 @@
+#ifndef INCLUDE_ENDIAN_HPP
+#define INCLUDE_ENDIAN_HPP
 #include <algorithm>
 #include <type_traits>
 extern void* enabler;
@@ -46,3 +48,4 @@ IsLittleEndian()
   return *reinterpret_cast<char*>(&t) == 1;
 #endif
 }
+#endif // INCLUDE_ENDIAN_HPP

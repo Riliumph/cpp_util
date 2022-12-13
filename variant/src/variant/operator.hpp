@@ -1,5 +1,5 @@
-#ifndef UTIL_VALIANT_OPERATOR_HPP
-#define UTIL_VALIANT_OPERATOR_HPP
+#ifndef INCLUDE_VALIANT_OPERATOR_HPP
+#define INCLUDE_VALIANT_OPERATOR_HPP
 #include <variant>
 /// @brief 型Tとstd::variant型の比較演算子
 /// @tparam T std::variantの型判定用の型情報
@@ -171,4 +171,4 @@ operator/(T t, std::variant<Ts...>& v)
   }
   return t / *p;
 }
-#endif // UTIL_VALIANT_OPERATOR_HPP
+#endif // INCLUDE_VALIANT_OPERATOR_HPP

@@ -1,6 +1,6 @@
-#ifndef CHRONO_HPP
-#define CHRONO_HPP
+#ifndef INCLUDE_CHRONO_HPP
+#define INCLUDE_CHRONO_HPP
 
 #include "chrono/operator.hpp"
 
-#endif // CHRONO_HPP
+#endif // INCLUDE_CHRONO_HPP
