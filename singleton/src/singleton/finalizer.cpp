@@ -1,27 +1,28 @@
 // STL
+#include <mutex>
 #include <vector>
 // original
-#include "singleton/singleton.hpp"
+#include "finalizer.hpp"
 
 namespace {
-
 std::mutex g_mutex;
-std::vector<SingletonFinalizer::FinalizerFunc> g_finalizers;
-
+std::vector<singleton::Finalizer::Func> g_finalizers;
 }
 
+namespace singleton {
 void
-SingletonFinalizer::AddFinalizer(FinalizerFunc func)
+Finalizer::Add(Finalizer::Func func)
 {
   std::lock_guard<std::mutex> lock(g_mutex);
   g_finalizers.emplace_back(func);
 }
 
 void
-SingletonFinalizer::Finalize()
+Finalizer::Finalize()
 {
   std::lock_guard<std::mutex> lock(g_mutex);
   for (const auto& it : g_finalizers) {
     (*it)();
   }
 }
+} // namespace singleton

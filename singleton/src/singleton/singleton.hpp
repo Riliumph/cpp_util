@@ -1,22 +1,16 @@
-#ifndef INCLUDE_SINGLETON_HPP
-#define INCLUDE_SINGLETON_HPP
+#ifndef INCLUDE_SINGLETON_SINGLETON_HPP
+#define INCLUDE_SINGLETON_SINGLETON_HPP
 // STL
 #include <cassert>
 #include <mutex>
-
-class SingletonFinalizer
-{
-public:
-  using FinalizerFunc = void (*)();
-  static void AddFinalizer(FinalizerFunc func);
-  static void Finalize();
-};
+// original
+#include "finalizer.hpp"
 
 template<typename T>
 class Singleton final
 {
 public:
-  static T& GetInstance()
+  static T& Get()
   {
     std::call_once(is_initialized, create);
     assert(instance);
@@ -27,7 +21,7 @@ private:
   static void create()
   {
     instance = new T;
-    SingletonFinalizer::AddFinalizer(&Singleton<T>::destroy);
+    singleton::Finalizer::Add(&Singleton<T>::destroy);
   }
 
   static void destroy()
@@ -44,4 +38,4 @@ template<typename T>
 std::once_flag Singleton<T>::is_initialized;
 template<typename T>
 T* Singleton<T>::instance = nullptr;
-#endif // INCLUDE_SINGLETON_HPP
+#endif // INCLUDE_SINGLETON_SINGLETON_HPP
