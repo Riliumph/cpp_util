@@ -12,7 +12,7 @@
             "args": [],
             "stopAtEntry": false,
             "MIMode": "gdb",
-            "cwd": "${fileDirname}",
+            "cwd": "${workspaceRoot}/bin/",
             "environment": [],
             "externalConsole": false,
             "preLaunchTask": "make",

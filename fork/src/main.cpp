@@ -1,4 +1,7 @@
+#include <cerrno>
 #include <cstdio>
+#include <cstring>
+#include <string>
 // system
 #include <fcntl.h>
 #include <pthread.h>
@@ -22,22 +25,24 @@ main()
     perror("fork");
     return -1;
   } else if (pid == 0) {
-    sleep(10); // Attach用の時間
     // 子プロセス
     // 子プロセスはfdの状態も引き継いでしまう。
     // 子プロセス側の処理でfdをすべて閉じる
-    // static const int start_fd = 3;
-    // for (auto i = start_fd; i < FD_SETSIZE; ++i) {
-    //   close(i);
-    // }
+    static const int start_fd = 3;
+    for (auto i = start_fd; i < FD_SETSIZE; ++i) {
+      close(i);
+    }
+    sleep(10); // Attach用の時間
     auto argc = 0;
     char* argv[1024];
     argv[argc++] = "fork_sub";
     argv[argc++] = "foo";
-    argv[argc++] = "bar";
-    argv[argc++] = NULL;
+    auto int_data = std::to_string(1024);
+    argv[argc++] = int_data.data();
+    argv[argc++] = NULL; // NULL終端
     execve(argv[0], argv, NULL);
     // 以降、到達の場合はエラー
+    printf("error: %s", strerror(errno));
     _exit(-1);
   }
   // 親プロセス
