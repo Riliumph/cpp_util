@@ -14,7 +14,7 @@ namespace ipv4 {
 class Server
 {
 public: // constructor
-  Server(const struct addrinfo);
+  Server();
   ~Server();
 
 public: // accessor
@@ -26,7 +26,7 @@ public: // accessor
   struct timeval Timeout() const;
 
 public:
-  int Identify();
+  int Identify(struct addrinfo, u_short);
   bool Establish();
   bool ReuseAddress();
   bool Listen();
@@ -39,7 +39,7 @@ public:
 
 private: // File Descriptor
   fd_set fds;
-  int accepting_fd; // サーバー接続を待ち受けているソケットFD
+  int fd; // サーバー接続を待ち受けているソケットFD
 
 protected: // IP config
   std::shared_ptr<struct addrinfo> inet0;
@@ -47,6 +47,8 @@ protected: // IP config
   u_short port_no;
 
 protected: // Server Config
+  char host_name[NI_MAXHOST];
+  char serv_name[NI_MAXSERV];
   struct timeval timeout;
 };
 } // namespace ipv4

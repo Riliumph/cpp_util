@@ -1,6 +1,7 @@
 #include "ipv4.hpp"
 // STL
 #include <iostream>
+#include <stdlib.h>
 // system
 #include <sys/epoll.h>
 #include <sys/socket.h>
@@ -10,34 +11,99 @@
 namespace tcp {
 namespace ipv4 {
 Server::Server()
-  : accepting_fd{ 0 }
+  : fd{ 0 }
+  , ip{ "" }
   , port_no{ 0 }
-  ,
-
 {
   FD_ZERO(&fds);
+  inet0 = std::make_shared();
 }
 
 Server::~Server() {}
 
-int
-Server::Identify(const struct addrinfo hint)
+#ifndef ACCESSOR
+
+void
+Server::Timeout(struct timeval tm)
 {
-  char host_name[NI_MAXHOST];
-  char serv_name[NI_MAXSERV];
-  errcode = getaddrinfo(NULL, port_no, &hints, &);
-  if () {
-    (void)fprintf(stderr, "getaddrinfo():%s\n", gai_strerror(errcode));
-    return (-1);
+  timeout = tm;
+}
+
+void
+Server::Timeout(time_t sec, suseconds_t usec)
+{
+  timeout.tv_sec = sec;
+  timeout.tv_usec = usec;
+}
+
+struct timeval
+Server::Timeout() const
+{
+  return timeout;
+}
+
+void
+Server::IP(std::string ip_address)
+{
+  ip = ip_address;
+}
+
+std::string
+Server::IP() const
+{
+  return ip;
+}
+
+void
+Server::Port(u_short port_no)
+{
+  this->port_no = port_no;
+}
+
+int
+Server::Port() const
+{
+  return port_no;
+}
+
+#endif // ACCESSOR
+
+/// @brief ヒント情報からアドレス情報を決定する
+/// @param hint
+/// @param port_no
+/// @return
+int
+Server::Identify(struct addrinfo hint, u_short port_no)
+{
+  auto port = std::to_string(static_cast<int>(port_no));
+  auto err = getaddrinfo(NULL, port.data(), &hints, &(inet0->get()));
+  if (err != 0) {
+    std::cerr << "getaddrinfo(): " << *gai_strerror(errcode) << std::endl;
+    return -1;
   }
+
+  err = getnameinfo(inet0->ai_addr,
+                    inet0->ai_addrlen,
+                    host_name,
+                    sizeof(host_name),
+                    server_name,
+                    sizeof(serv_name),
+                    NI_NUMERICHOST | NI_NUMERICSERV);
+  if (err != 0) {
+    std::cerr << "getnameinfo(): " << *gai_strerror(errcode) << std::endl;
+    freeaddrinfo(inet0);
+    return -1;
+  }
+  return 0;
 }
 
 bool
 Server::Establish()
 {
-  if (server->FD() < 0) {
+  if (fd < 0) {
     // FDが無効の場合だけソケットを作る
-    if (server->MakeSocket() < 0) {
+    fd = socket(address.sin_family, socket_type, 0);
+    if (fd < 0) {
       perror("make socket");
       return false;
     }
@@ -85,49 +151,6 @@ Server::ReuseAddress()
     return false;
   }
   return true;
-}
-
-void
-Server::Timeout(struct timeval tm)
-{
-  timeout = tm;
-}
-
-void
-Server::Timeout(time_t sec, suseconds_t usec)
-{
-  timeout.tv_sec = sec;
-  timeout.tv_usec = usec;
-}
-
-struct timeval
-Server::Timeout() const
-{
-  return timeout;
-}
-
-void
-Server::IP(std::string ip_address)
-{
-  ip = ip_address;
-}
-
-std::string
-Server::IP() const
-{
-  return ip;
-}
-
-void
-Server::Port(u_short port_no)
-{
-  this->port_no = port_no;
-}
-
-int
-Server::Port() const
-{
-  return port_no;
 }
 
 /// @brief Select待ちループ
