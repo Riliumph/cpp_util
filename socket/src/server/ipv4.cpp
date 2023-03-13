@@ -8,10 +8,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-namespace tcp {
-namespace ipv4 {
 Server::Server()
-  : fd{ 0 }
+  : server_fd{ 0 }
   , ip{ "" }
   , port_no{ 0 }
 {
@@ -19,7 +17,10 @@ Server::Server()
   inet0 = std::make_shared();
 }
 
-Server::~Server() {}
+Server::~Server()
+{
+  SafeClose();
+}
 
 #ifndef ACCESSOR
 
@@ -57,26 +58,34 @@ Server::IP() const
 void
 Server::Port(u_short port_no)
 {
-  this->port_no = port_no;
+  port_ = port_no;
 }
 
 int
 Server::Port() const
 {
-  return port_no;
+  return port_;
 }
 
 #endif // ACCESSOR
 
 /// @brief ヒント情報からアドレス情報を決定する
-/// @param hint
-/// @param port_no
+/// @param hint 不完全なaddrinfo構造体
+/// @param service_name サービス名
+/// Linux: /etc/services
+/// Windows: C:\Windows\system32\drivers\etc\services
 /// @return
 int
-Server::Identify(struct addrinfo hint, u_short port_no)
+Server::Identify(struct addrinfo hint, std::string service_name)
 {
-  auto port = std::to_string(static_cast<int>(port_no));
-  auto err = getaddrinfo(NULL, port.data(), &hints, &(inet0->get()));
+  if (service_name.empty()) {
+    service_name = std::to_string(port_);
+  }
+  // ヒント変数からアドレスを決定し、inet0変数へ設定
+  // 第１引数は、eth0とloの両方から受信できるようにNULLを指定する。
+  // 第２引数は、サーバーにおいて短命ポートは使いにくいので指定する。
+  // 第３引数は、addrinfo型のinet0はリンクリストを形成することに注意。
+  auto err = getaddrinfo(NULL, service_name.data(), &hint, &(inet0->get()));
   if (err != 0) {
     std::cerr << "getaddrinfo(): " << *gai_strerror(errcode) << std::endl;
     return -1;
@@ -97,32 +106,41 @@ Server::Identify(struct addrinfo hint, u_short port_no)
   return 0;
 }
 
-bool
-Server::Establish()
+int
+Server::Socket()
 {
-  if (fd < 0) {
-    // FDが無効の場合だけソケットを作る
-    fd = socket(address.sin_family, socket_type, 0);
-    if (fd < 0) {
+  // addrinfo型はリンクリストを形成するため、forで対応する
+  for (auto info = inet0; info != nullptr; info = info->ai_next) {
+    server_fd =
+      socket(inet0->ai_family, inet0->ai_socktype, inet0->ai_protocol);
+    if (server_fd < 0) {
       perror("make socket");
-      return false;
+      continue;
     }
+    // bindのチェックまでやった方がいい
   }
-  if (server->Port() == 0) {
-    // port番号が0の時はバインドしない
-    return true;
-  }
-  if (server->Bind() < 0) {
-    perror("bind");
-    return false;
-  }
-  return true;
 }
 
-bool
+int
+Server::Bind()
+{
+  auto err = ReuseAddress();
+  if (err < 0) {
+    return err;
+  }
+  err = bind(server_fd, inet0->ai_addr, inet0->ai_addrlen);
+  if (err < 0) {
+    perror("bind");
+    return err;
+  }
+  return err;
+}
+
+int
 Server::Listen()
 {
-  if (listen(server->FD(), SOMAXCONN) < 0) {
+  listen(server_fd, QUEUE_SIZE);
+  if () {
     perror("listen");
     return false;
   }
@@ -134,13 +152,14 @@ Server::Listen()
 int
 Server::Accept()
 {
-  auto client_fd = accept(server->FD(), 0, 0);
+  auto client_fd = accept(server_fd, 0, 0);
   return client_fd;
 }
 
 /// @brief TIME_WAIT状態のポートを再利用する設定を有効化する
 /// @return 成功可否
-bool
+/// bind前に実行すること
+int
 Server::ReuseAddress()
 {
   int on = 1;
@@ -148,9 +167,20 @@ Server::ReuseAddress()
     setsockopt(accepting_, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
   if (result < 0) {
     perror("setsockopt(,,SO_REUSEADDR)");
-    return false;
+    return result;
   }
-  return true;
+  return result;
+}
+
+void
+Server::SafeClose()
+{
+  if (0 < server_fd) {
+    close(server_fd);
+  }
+  if (inet0.get() != nullptr) {
+    freeaddrinfo(inet0.get());
+  }
 }
 
 /// @brief Select待ちループ
@@ -160,7 +190,7 @@ bool
 Server::LoopBySelect(std::function<bool(int)> fn)
 {
   FD_ZERO(&fds);
-  FD_SET(server->FD(), &fds);
+  FD_SET(server_fd, &fds);
   while (1) {
     fd_set readable = fds;
     std::printf("wait select ...\n");
@@ -245,5 +275,3 @@ Server::LoopByEPoll(std::function<bool(int)> fn)
   }
 }
 #endif // EPOLL
-} // namespace ipv4
-} // namespace tcp

@@ -6,13 +6,16 @@
 #include <vector>
 // System
 #include <sys/select.h>
-#include <sys/time.h>
+#include <sys/socket.h>
+#include <sys/types.h>
 
-namespace tcp {
-namespace ipv4 {
+#include <netdb.h>
+
 /// @brief IPv4でTCP通信を行うサーバー
 class Server
 {
+  static const int QUEUE_SIZE = SOMAXCONN;
+
 public: // constructor
   Server();
   ~Server();
@@ -26,10 +29,10 @@ public: // accessor
   struct timeval Timeout() const;
 
 public:
-  int Identify(struct addrinfo, u_short);
-  bool Establish();
-  bool ReuseAddress();
-  bool Listen();
+  int Identify(struct addrinfo, std::string = "");
+  int Socket();
+  int Bind();
+  int Listen();
   int Accept();
 
   bool LoopBySelect(std::function<bool(int)>);
@@ -37,20 +40,23 @@ public:
   bool LoopByEPoll(std::function<bool(int)>);
 #endif // EPOLL
 
+private:
+  int ReuseAddress();
+  void SafeClose();
+
 private: // File Descriptor
   fd_set fds;
-  int fd; // サーバー接続を待ち受けているソケットFD
+  int server_fd; // サーバー接続を待ち受けているソケットFD
+  std::vector<int> client_fds;
 
 protected: // IP config
   std::shared_ptr<struct addrinfo> inet0;
   std::string ip;
-  u_short port_no;
+  u_short port_;
 
 protected: // Server Config
   char host_name[NI_MAXHOST];
   char serv_name[NI_MAXSERV];
   struct timeval timeout;
 };
-} // namespace ipv4
-} // namespace tcp
 #endif // TCP_SERVER_HPP
