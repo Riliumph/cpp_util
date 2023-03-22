@@ -11,10 +11,10 @@
 Server::Server()
   : server_fd{ 0 }
   , ip{ "" }
-  , port_no{ 0 }
+  , port_{ 0 }
+  , inet0{ nullptr }
 {
   FD_ZERO(&fds);
-  inet0 = std::make_shared();
 }
 
 Server::~Server()
@@ -43,11 +43,11 @@ Server::Timeout() const
   return timeout;
 }
 
-void
-Server::IP(std::string ip_address)
-{
-  ip = ip_address;
-}
+// void
+// Server::IP(std::string ip_address)
+// {
+//   ip = ip_address;
+// }
 
 std::string
 Server::IP() const
@@ -85,9 +85,9 @@ Server::Identify(struct addrinfo hint, std::string service_name)
   // 第１引数は、eth0とloの両方から受信できるようにNULLを指定する。
   // 第２引数は、サーバーにおいて短命ポートは使いにくいので指定する。
   // 第３引数は、addrinfo型のinet0はリンクリストを形成することに注意。
-  auto err = getaddrinfo(NULL, service_name.data(), &hint, &(inet0->get()));
+  auto err = getaddrinfo(NULL, service_name.data(), &hint, &inet0);
   if (err != 0) {
-    std::cerr << "getaddrinfo(): " << *gai_strerror(errcode) << std::endl;
+    std::cerr << "getaddrinfo(): " << *gai_strerror(err) << std::endl;
     return -1;
   }
 
@@ -95,11 +95,11 @@ Server::Identify(struct addrinfo hint, std::string service_name)
                     inet0->ai_addrlen,
                     host_name,
                     sizeof(host_name),
-                    server_name,
+                    serv_name,
                     sizeof(serv_name),
                     NI_NUMERICHOST | NI_NUMERICSERV);
   if (err != 0) {
-    std::cerr << "getnameinfo(): " << *gai_strerror(errcode) << std::endl;
+    std::cerr << "getnameinfo(): " << *gai_strerror(err) << std::endl;
     freeaddrinfo(inet0);
     return -1;
   }
@@ -119,6 +119,7 @@ Server::Socket()
     }
     // bindのチェックまでやった方がいい
   }
+  return server_fd;
 }
 
 int
@@ -139,12 +140,12 @@ Server::Bind()
 int
 Server::Listen()
 {
-  listen(server_fd, QUEUE_SIZE);
-  if () {
+  auto err = listen(server_fd, QUEUE_SIZE);
+  if (err < 0) {
     perror("listen");
-    return false;
+    return err;
   }
-  return true;
+  return err;
 }
 
 /// @brief Accept処理
@@ -153,6 +154,11 @@ int
 Server::Accept()
 {
   auto client_fd = accept(server_fd, 0, 0);
+  if (client_fd < 0) {
+    perror("accept");
+    return client_fd;
+  }
+  client_fds.emplace_back(client_fd);
   return client_fd;
 }
 
@@ -164,7 +170,7 @@ Server::ReuseAddress()
 {
   int on = 1;
   auto result =
-    setsockopt(accepting_, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
   if (result < 0) {
     perror("setsockopt(,,SO_REUSEADDR)");
     return result;
@@ -173,13 +179,23 @@ Server::ReuseAddress()
 }
 
 void
+Server::CloseClient(int fd)
+{
+  client_fds.erase(std::remove(client_fds.begin(), client_fds.end(), fd),
+                   client_fds.end());
+}
+
+void
 Server::SafeClose()
 {
   if (0 < server_fd) {
     close(server_fd);
   }
-  if (inet0.get() != nullptr) {
-    freeaddrinfo(inet0.get());
+  if (inet0 != nullptr) {
+    freeaddrinfo(inet0);
+  }
+  for (const auto& client_fd : client_fds) {
+    CloseClient(client_fd);
   }
 }
 
@@ -200,26 +216,25 @@ Server::LoopBySelect(std::function<bool(int)> fn)
       exit(1);
     }
     // Accept
-    if (FD_ISSET(server->FD(), &readable)) {
-      FD_CLR(server->FD(), &readable);
+    if (FD_ISSET(server_fd, &readable)) {
+      FD_CLR(server_fd, &readable);
       std::printf(
-        "[PID:%d][FD:%d] accepting connections ...\n", getpid(), server->FD());
+        "[PID:%d][FD:%d] accepting connections ...\n", getpid(), server_fd);
       auto client_fd = Accept();
       if (client_fd < 0) {
-        perror("accept");
         return false;
       }
       FD_SET(client_fd, &fds);
     }
     // TODO:
     // FD_SETSIZEは上限値であり、接続されたFDの最大値ではないため無駄なループが回っている
-    for (auto i = 0; i < FD_SETSIZE; i++) {
-      if (FD_ISSET(i, &readable)) {
-        std::printf("[FD:%d] accepting connections ...\n", i);
-        auto success = fn(i);
+    for (const auto& client_fd : client_fds) {
+      if (FD_ISSET(client_fd, &readable)) {
+        std::printf("[FD:%d] accepting connections ...\n", client_fd);
+        auto success = fn(client_fd);
         if (!success) {
-          close(i);
-          FD_CLR(i, &fds);
+          close(client_fd);
+          FD_CLR(client_fd, &fds);
         }
       }
     }

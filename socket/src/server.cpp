@@ -18,6 +18,7 @@ main()
   hint.ai_socktype = SOCK_STREAM;
   hint.ai_flags = AI_PASSIVE;
   Server srv;
+  srv.Port(50000);
   srv.Identify(hint);
   if (srv.Socket() < 0) {
     return -1;
@@ -28,9 +29,19 @@ main()
   if (srv.Listen() < 0) {
     return -1;
   }
-  if (srv.Accept() < 0) {
-    return -1;
-  }
+  srv.LoopBySelect([](int i) {
+    std::string buffer;
+    buffer.resize(128);
+    auto recv_size = getline(i, buffer);
+    if (recv_size < 0) {
+      return false;
+    } else if (recv_size == 0) {
+      std::cout << "receive EOS." << std::endl;
+      return false;
+    }
+    std::cout << buffer << std::endl;
+    return true;
+  });
 }
 
 /// @brief 一行を読み込む関数

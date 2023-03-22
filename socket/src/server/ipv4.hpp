@@ -42,6 +42,7 @@ public:
 
 private:
   int ReuseAddress();
+  void CloseClient(int);
   void SafeClose();
 
 private: // File Descriptor
@@ -50,9 +51,9 @@ private: // File Descriptor
   std::vector<int> client_fds;
 
 protected: // IP config
-  std::shared_ptr<struct addrinfo> inet0;
   std::string ip;
   u_short port_;
+  struct addrinfo* inet0; // Linux変数はC++で定義しない
 
 protected: // Server Config
   char host_name[NI_MAXHOST];
