@@ -22,7 +22,7 @@ TEST(server, convert_ip)
     { AF_INET, htons(8080), { inet_addr("127.0.0.1") }, { 0 } }
   };
 
-  std::vector<test_data> tests = { { "ipv4",
+  std::vector<test_data> tests = { { "NULLを指定しているため0.0.0.0である",
                                      { AI_PASSIVE,
                                        AF_INET,
                                        SOCK_STREAM,
@@ -31,10 +31,11 @@ TEST(server, convert_ip)
                                        (struct sockaddr*)(&ipv4s[0]),
                                        nullptr,
                                        nullptr },
-                                     "192.168.0.1" } };
+                                     "0.0.0.0" } };
   // test開始
   Server srv;
-  for (const auto& test : tests) {
+  srv.Port(8080);
+  for (auto& test : tests) {
     auto err = srv.Identify(test.hint);
     if (err < 0) {
       FAIL() << "Identify: " << strerror(errno) << std::endl;

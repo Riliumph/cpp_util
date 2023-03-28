@@ -11,6 +11,17 @@
 			"options": {},
 			"group": "build",
 			"detail": "compiler: /usr/bin/cpp"
+		},
+		{
+			"type": "shell",
+			"label": "test",
+			"command": "make",
+			"args": [
+				"test"
+			],
+			"options": {},
+			"group": "build",
+			"detail": "compiler: /usr/bin/cpp"
 		}
 	]
 }

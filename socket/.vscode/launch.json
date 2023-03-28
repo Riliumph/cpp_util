@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "gdb",
+            "name": "server",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/bin/${workspaceFolderBasename}",
+            "program": "${workspaceRoot}/bin/server",
             "args": [],
             "stopAtEntry": false,
             "MIMode": "gdb",
@@ -16,6 +16,20 @@
             "environment": [],
             "externalConsole": false,
             "preLaunchTask": "make",
+            "miDebuggerPath": "/usr/bin/gdb"
+        },
+        {
+            "name": "test",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/bin/test",
+            "args": [],
+            "stopAtEntry": false,
+            "MIMode": "gdb",
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "preLaunchTask": "test",
             "miDebuggerPath": "/usr/bin/gdb"
         }
     ]

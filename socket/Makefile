@@ -12,7 +12,8 @@ EXCLUDE = .git%
 TEST_EXT= %_test.cpp
 
 # binary setting
-TARGET  = $(shell basename $$(pwd))
+SERVER  = server
+CLIENT  =
 BINROOT = bin
 
 # source setting
@@ -24,10 +25,12 @@ SRCDIRS = $(dir $(SRCS))
 OBJROOT = obj
 OBJDIRS = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%, %, $(SRCDIRS)))
 OBJS    = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%.cpp, %.o, $(SRCS)))
+SERVER_OBJS = $(OBJS)
 
 # test setting
+TESTEXCLUDE = $(shell grep -lr --include="*.cpp" "main" $(SRCROOT))
 TESTROOT = src
-TESTS    = $(filter-out $(EXCLUDE) main.cpp, $(shell find $(SRCROOT) -name "*.cpp"))
+TESTS    = $(filter-out $(EXCLUDE) $(TESTEXCLUDE), $(shell find $(SRCROOT) -name "*.cpp"))
 TESTDIRS = $(dir $(SRCS))
 TESTLIBS = $(LIBS) -lpthread -lgtest -lgtest_main
 
@@ -39,16 +42,16 @@ DEPS = $(OBJS:.o=.d)
 echo:
 	@echo $(SRCS)
 	@echo $(OBJS)
+	@echo $(SERVER_OBJS)
 
 test:
 	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
 	$(COMPILER) $(TESTS) $(CXXFLAGS) $(LDFLAGS) $(TESTLIBS) $(INCLUDE) -o $(BINROOT)/test
-	$(BINROOT)/test
 
-all: $(OBJS) $(TARGET)
+all: $(OBJS) $(SERVER)
 	@echo "make all"
 
-$(TARGET): $(OBJS)
+$(SERVER): $(SERVER_OBJS)
 	@echo "build exe $@"
 	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
 	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(LIBS)
