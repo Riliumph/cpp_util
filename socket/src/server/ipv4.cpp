@@ -2,7 +2,9 @@
 // STL
 #include <iostream>
 #include <stdlib.h>
+#include <string>
 // system
+#include <arpa/inet.h>
 #include <sys/epoll.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -52,7 +54,25 @@ Server::Timeout() const
 std::string
 Server::IP() const
 {
-  return ip;
+  if (inet0 == nullptr) {
+    return "";
+  }
+
+  std::string buf;
+  buf.resize(INET_ADDRSTRLEN);
+  auto ipv4 = reinterpret_cast<struct sockaddr_in*>(inet0->ai_addr);
+  auto ptr = inet_ntop(inet0->ai_family,
+                       &ipv4->sin_addr,
+                       buf.data(),
+                       buf.size());
+  if (ptr == nullptr) {
+    perror("get ip");
+    return "";
+  }
+  // NULL文字が含まれていることがあるため削除
+  buf.erase(std::remove(buf.begin(), buf.end(), '\0'), buf.end());
+  buf.shrink_to_fit();
+  return buf;
 }
 
 void
@@ -76,18 +96,16 @@ Server::Port() const
 /// Windows: C:\Windows\system32\drivers\etc\services
 /// @return
 int
-Server::Identify(struct addrinfo hint, std::string service_name)
+Server::Identify(struct addrinfo& hint, std::string service_name)
 {
   if (service_name.empty()) {
     service_name = std::to_string(port_);
   }
   // ヒント変数からアドレスを決定し、inet0変数へ設定
-  // 第１引数は、eth0とloの両方から受信できるようにNULLを指定する。
-  // 第２引数は、サーバーにおいて短命ポートは使いにくいので指定する。
-  // 第３引数は、addrinfo型のinet0はリンクリストを形成することに注意。
+  // docに解説有り
   auto err = getaddrinfo(NULL, service_name.data(), &hint, &inet0);
   if (err != 0) {
-    std::cerr << "getaddrinfo(): " << *gai_strerror(err) << std::endl;
+    std::cerr << "getaddrinfo(): " << gai_strerror(err) << std::endl;
     return -1;
   }
 
@@ -95,11 +113,11 @@ Server::Identify(struct addrinfo hint, std::string service_name)
                     inet0->ai_addrlen,
                     host_name,
                     sizeof(host_name),
-                    serv_name,
+                    serv_name, // Port番号もしくはサービス名
                     sizeof(serv_name),
                     NI_NUMERICHOST | NI_NUMERICSERV);
   if (err != 0) {
-    std::cerr << "getnameinfo(): " << *gai_strerror(err) << std::endl;
+    std::cerr << "getnameinfo(): " << gai_strerror(err) << std::endl;
     freeaddrinfo(inet0);
     return -1;
   }

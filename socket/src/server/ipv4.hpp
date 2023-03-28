@@ -29,7 +29,7 @@ public: // accessor
   struct timeval Timeout() const;
 
 public:
-  int Identify(struct addrinfo, std::string = "");
+  int Identify(struct addrinfo&, std::string = "");
   int Socket();
   int Bind();
   int Listen();
