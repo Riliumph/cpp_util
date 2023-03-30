@@ -51,6 +51,8 @@ Server::Timeout() const
 //   ip = ip_address;
 // }
 
+/// @brief サーバーのIPアドレスを取得する
+/// @return IPアドレス
 std::string
 Server::IP() const
 {
@@ -61,10 +63,8 @@ Server::IP() const
   std::string buf;
   buf.resize(INET_ADDRSTRLEN);
   auto ipv4 = reinterpret_cast<struct sockaddr_in*>(inet0->ai_addr);
-  auto ptr = inet_ntop(inet0->ai_family,
-                       &ipv4->sin_addr,
-                       buf.data(),
-                       buf.size());
+  auto ptr =
+    inet_ntop(inet0->ai_family, &ipv4->sin_addr, buf.data(), buf.size());
   if (ptr == nullptr) {
     perror("get ip");
     return "";
@@ -81,10 +81,20 @@ Server::Port(u_short port_no)
   port_ = port_no;
 }
 
+/// @brief サーバーのポート番号を取得する
+/// @return ポート番号
 int
 Server::Port() const
 {
-  return port_;
+  if (inet0 == nullptr) {
+    return -1;
+  }
+  int port = 0;
+  for (auto info = inet0; info != nullptr; info = info->ai_next) {
+    auto ipv4 = (struct sockaddr_in*)info->ai_addr;
+    port = static_cast<int>(ntohs(ipv4->sin_port));
+  }
+  return port;
 }
 
 #endif // ACCESSOR
@@ -248,7 +258,7 @@ Server::LoopBySelect(std::function<bool(int)> fn)
     // FD_SETSIZEは上限値であり、接続されたFDの最大値ではないため無駄なループが回っている
     for (const auto& client_fd : client_fds) {
       if (FD_ISSET(client_fd, &readable)) {
-        std::printf("[FD:%d] accepting connections ...\n", client_fd);
+        std::printf("[FD:%d] accepteding connections ...\n", client_fd);
         auto success = fn(client_fd);
         if (!success) {
           close(client_fd);
