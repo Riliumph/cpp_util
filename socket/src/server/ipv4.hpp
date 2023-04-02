@@ -4,12 +4,12 @@
 #include <functional>
 #include <memory>
 #include <vector>
+// Standard
+#include <netdb.h>
 // System
 #include <sys/select.h>
 #include <sys/socket.h>
 #include <sys/types.h>
-
-#include <netdb.h>
 
 /// @brief IPv4でTCP通信を行うサーバー
 class Server
@@ -21,6 +21,8 @@ public: // constructor
   ~Server();
 
 public: // accessor
+  void Hint(struct addrinfo&);
+  struct addrinfo Hint();
   std::string IP() const;
   int Port() const;
   void Port(u_short);
@@ -29,7 +31,7 @@ public: // accessor
   struct timeval Timeout() const;
 
 public:
-  int Identify(struct addrinfo&, std::string = "");
+  int Identify(std::string);
   int Socket();
   int Bind();
   int Listen();
@@ -54,6 +56,7 @@ protected: // IP config
   std::string ip;
   u_short port_;
   struct addrinfo* inet0; // Linux変数はC++で定義しない
+  struct addrinfo* hint;
 
 protected: // Server Config
   char host_name[NI_MAXHOST];

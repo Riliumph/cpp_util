@@ -18,8 +18,9 @@ main()
   hint.ai_socktype = SOCK_STREAM;
   hint.ai_flags = AI_PASSIVE;
   Server srv;
+  srv.Hint(hint);
   srv.Port(50000);
-  srv.Identify(hint);
+  srv.Identify("");
   if (srv.Socket() < 0) {
     return -1;
   }

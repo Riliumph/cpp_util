@@ -9,12 +9,15 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+// original
+#include "util/addrinfo.h"
 
 Server::Server()
   : server_fd{ 0 }
   , ip{ "" }
   , port_{ 0 }
   , inet0{ nullptr }
+  , hint{ nullptr }
 {
   FD_ZERO(&fds);
 }
@@ -43,6 +46,20 @@ struct timeval
 Server::Timeout() const
 {
   return timeout;
+}
+
+/// @brief サーバーを構築するネットワーク情報のヒントを設定する
+/// @param hint ヒント
+void
+Server::Hint(struct addrinfo& hint_data)
+{ // deep copyを行う
+  DeepCopy(&hint_data, &hint);
+}
+
+struct addrinfo
+Server::Hint()
+{
+  return *hint;
 }
 
 // void
@@ -106,14 +123,14 @@ Server::Port() const
 /// Windows: C:\Windows\system32\drivers\etc\services
 /// @return
 int
-Server::Identify(struct addrinfo& hint, std::string service_name)
+Server::Identify(std::string service_name)
 {
   if (service_name.empty()) {
     service_name = std::to_string(port_);
   }
   // ヒント変数からアドレスを決定し、inet0変数へ設定
   // docに解説有り
-  auto err = getaddrinfo(NULL, service_name.data(), &hint, &inet0);
+  auto err = getaddrinfo(NULL, service_name.data(), hint, &inet0);
   if (err != 0) {
     std::cerr << "getaddrinfo(): " << gai_strerror(err) << std::endl;
     return -1;
@@ -221,6 +238,9 @@ Server::SafeClose()
   }
   if (inet0 != nullptr) {
     freeaddrinfo(inet0);
+  }
+  if (hint != nullptr) {
+    freeaddrinfo(hint);
   }
   for (const auto& client_fd : client_fds) {
     CloseClient(client_fd);
