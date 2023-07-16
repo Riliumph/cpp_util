@@ -3,18 +3,32 @@ version: '3.1'
 services:
   db:
     build:
-      context: .
-      dockerfile: Dockerfile
-    # image: postgres:latest Dockerfileに移行
+      context: ./dockerfiles
+      dockerfile: db.Dockerfile
     restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_HOST_AUTH_METHOD: trust # パスワード入力を無効化
+    hostname: db_server
+    networks:
+      - db_nw
     volumes:
-      - type: bind
-        source: ./share
+      - type: volume
+        source: db-storage
         target: /var/lib/postgresql/data
+    # ホストからDBeaver用にポートを公開
     ports:
-      - "5432:5432"
-    tty: true
+      - target: 5432
+        published: 5432
+    stdin_open: false
+    tty: false
+
+volumes:
+  db-storage:
+    name: db-storage
+    external: false
+
+networks:
+  db_nw:
+    external: false
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.10.10.0/24
