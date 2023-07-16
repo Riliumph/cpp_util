@@ -19,6 +19,26 @@ services:
         published: 5432
     stdin_open: false
     tty: false
+  builder:
+    build:
+      context: ./dockerfiles
+      dockerfile: build.dockerfile
+      args:
+        - UID=${UID}
+        - GID=${GID}
+        - USERNAME=${USERNAME}
+        - WORKDIR=${WORKDIR}
+    restart: always
+    hostname: builder
+    networks:
+      - cicd_nw
+      - db_nw
+    volumes:
+      - type: bind
+        source: ./
+        target: ${WORKDIR}
+    stdin_open: true
+    tty: true
 
 volumes:
   db-storage:
@@ -32,3 +52,9 @@ networks:
       driver: default
       config:
         - subnet: 10.10.10.0/24
+  cicd_nw:
+    external: false
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.10.30.0/24
