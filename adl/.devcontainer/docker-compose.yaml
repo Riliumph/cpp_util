@@ -1,0 +1,15 @@
+version: "3"
+services:
+  dev:
+    build:
+      context: ../
+      dockerfile: .devcontainer/dev.dockerfile
+      args:
+        HADOLINT_URL: ${HADOLINT_URL}
+    hostname: builder
+    volumes:
+      - type: bind
+        source: ../
+        target: /workspace
+    stdin_open: true
+    tty: true
