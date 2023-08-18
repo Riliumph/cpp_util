@@ -29,12 +29,10 @@ DEPS = $(OBJS:.o=.d)
 
 .PHONY: clean all
 
-echo:
-	@echo $(SRCS)
-	@echo $(OBJDORS)
+goodcase: $(TARGET)
 
-all: $(OBJS) $(TARGET)
-	@echo "make all"
+badcase: CXXFLAGS += -DADL_ERROR
+badcase: $(TARGET)
 
 $(TARGET): $(OBJS)
 	@echo "build exe $@"

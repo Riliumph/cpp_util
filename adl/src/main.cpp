@@ -1,4 +1,3 @@
-#define ADL_ERROR
 // STL
 #include <iostream>
 // orignal
