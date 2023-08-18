@@ -1,18 +1,19 @@
-#include <chrono>
+// STL
 #include <cmath>
 #include <ctime>
 #include <iostream>
-#include <ostream>
 #include <thread>
-
-#include "util/chrono.hpp"
+// original
+#include "chrono.hpp"
 
 using namespace std::literals::chrono_literals;
-using namespace std::chrono;
+using minutes = std::chrono::minutes;
 
-void scheduled_task(double);
+void
+scheduled_task(double);
 
-int main()
+int
+main()
 {
   std::cout << "current time" << std::endl;
   auto now = std::chrono::system_clock::now();
@@ -30,7 +31,7 @@ int main()
   auto now_1m = now + 1min;
   std::cout << now_1m;
 
-  //　秒フィールドの取得(C++17)
+  // 　秒フィールドの取得(C++17)
 
   // 時計の秒単位で動作する
   scheduled_task(5.0);
@@ -42,11 +43,12 @@ int main()
 /// 端的に言って、Linuxのcronを使え。
 /// そっちの方が長年の安全性があり、
 /// @param n 時計の時刻の秒数
-void scheduled_task(double n)
+void
+scheduled_task(double n)
 {
   auto now = time(NULL);                        // 現在時刻を取得
   auto local = localtime(&now);                 // 地方時に変換
-  auto quotient = std::ceil(local->tm_sec / n); //切り上げるが型は高精度を保つ
+  auto quotient = std::ceil(local->tm_sec / n); // 切り上げるが型は高精度を保つ
   auto next = n * quotient;
   auto diff = static_cast<int>(next - local->tm_sec);
   std::printf("quot: %f(=%d/%f)\n", quotient, local->tm_sec, n);

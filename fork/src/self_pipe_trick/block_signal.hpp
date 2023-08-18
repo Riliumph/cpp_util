@@ -1,10 +1,9 @@
-#ifndef SELF_PIPE_TRICK_SIGNAL_BLOCKER_HPP
-#define SELF_PIPE_TRICK_SIGNAL_BLOCKER_HPP
+#ifndef INCLUDE_SELF_PIPE_TRICK_SIGNAL_BLOCKER_HPP
+#define INCLUDE_SELF_PIPE_TRICK_SIGNAL_BLOCKER_HPP
 // system
 #include <signal.h>
 
 namespace self_pipe_trick {
-
 class SignalBlocker
 {
 public:
@@ -19,4 +18,4 @@ private:
 };
 } // namespace self_pipe_trick
 
-#endif // SELF_PIPE_TRICK_SIGNAL_BLOCKER_HPP
+#endif // INCLUDE_SELF_PIPE_TRICK_SIGNAL_BLOCKER_HPP

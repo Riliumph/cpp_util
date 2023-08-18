@@ -1,5 +1,5 @@
-#ifndef UTIL_VALIANT_OPERATOR_IO_HPP
-#define UTIL_VALIANT_OPERATOR_IO_HPP
+#ifndef INCLUDE_VALIANT_OPERATOR_IO_HPP
+#define INCLUDE_VALIANT_OPERATOR_IO_HPP
 // STL
 #include <ostream>
 #include <variant>
@@ -15,4 +15,4 @@ operator<<(std::ostream& os, const std::variant<T0, Ts...>& lv)
   std::visit([&](const auto& x) { os << x; }, lv);
   return os;
 }
-#endif // UTIL_VALIANT_OPERATOR_IO_HPP
+#endif // INCLUDE_VALIANT_OPERATOR_IO_HPP

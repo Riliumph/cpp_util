@@ -1,5 +1,5 @@
-#ifndef UTIL_VARIANT_TABLE_HPP
-#define UTIL_VARIANT_TABLE_HPP
+#ifndef INCLUDE_VARIANT_TABLE_HPP
+#define INCLUDE_VARIANT_TABLE_HPP
 // STL
 #include <map>
 #include <utility>
@@ -30,4 +30,4 @@ operator<<(std::ostream& os, const table<T0, Ts...>& lv)
   }
   return os;
 }
-#endif // UTIL_VARIANT_TABLE_HPP
+#endif // INCLUDE_VARIANT_TABLE_HPP

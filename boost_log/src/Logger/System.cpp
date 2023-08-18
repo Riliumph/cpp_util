@@ -3,11 +3,11 @@
 #include "ConsoleSink.h"
 #include "FileSink.h"
 
-namespace Log
+namespace Log {
+void
+BootLogSystem()
 {
-	void BootLogSystem()
-	{
-		Console::ConfigureSink();
-		File::ConfigureSink();
-	}
+  Console::ConfigureSink();
+  File::ConfigureSink();
+}
 } // namespace Log

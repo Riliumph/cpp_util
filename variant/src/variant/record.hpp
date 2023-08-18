@@ -1,5 +1,5 @@
-#ifndef UTIL_VARIANT_RECORD_HPP
-#define UTIL_VARIANT_RECORD_HPP
+#ifndef INCLUDE_VARIANT_RECORD_HPP
+#define INCLUDE_VARIANT_RECORD_HPP
 // STL
 #include <map>
 #include <utility>
@@ -20,4 +20,4 @@ operator<<(std::ostream& os, const record<T0, Ts...>& lv)
   }
   return os;
 }
-#endif // UTIL_VARIANT_RECORD_HPP
+#endif // INCLUDE_VARIANT_RECORD_HPP

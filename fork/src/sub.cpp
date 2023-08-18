@@ -10,9 +10,10 @@
 int
 main(int argc, char** argv)
 {
+  // sleep(30);
   printf("argc: %d\n", argc);
   for (auto i = 0; i < argc; ++i) {
-    printf("argv[%d]: %s\n", i, *argv[i]);
+    printf("argv[%d]: %s\n", i, argv[i]);
   }
   return 0;
 }

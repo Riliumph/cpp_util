@@ -1,5 +1,5 @@
-#ifndef UTIL_VALIANT_HPP
-#define UTIL_VALIANT_HPP
+#ifndef INCLUDE_VALIANT_HPP
+#define INCLUDE_VALIANT_HPP
 #ifdef BOOST_VARIANT_HPP
 // boost::variant
 #else
@@ -9,4 +9,4 @@
 #include "variant/table.hpp"
 #endif
 // both
-#endif // UTIL_VALIANT_HPP
+#endif // INCLUDE_VALIANT_HPP
