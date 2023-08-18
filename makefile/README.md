@@ -35,10 +35,10 @@ $ sudo make install
 ### 実行手順
 
 ```bash
-(*'_')<   0 $ make test
+$ make test
 ... ... ...
 ... ... ...
-Running main() from /home/riliumph/project/googletest/googletest/src/gtest_main.cc
+Running main() from /usr/src/googletest/googletest/src/gtest_main.cc
 [==========] Running 1 test from 1 test suite.
 [----------] Global test environment set-up.
 [----------] 1 test from TEST_CASE
