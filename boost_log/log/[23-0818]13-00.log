@@ -1,4 +1,0 @@
-[2023-08-18 13:00:07][0x0000622b:0x00007fa20d915b80:workspace][Info] Info!! at main(src/main.cpp:10)
-[2023-08-18 13:00:07][0x0000622b:0x00007fa20d915b80:workspace][Warn] Warn!! at main(src/main.cpp:11)
-[2023-08-18 13:00:07][0x0000622b:0x00007fa20d915b80:workspace][Error] Error!! at main(src/main.cpp:12)
-[2023-08-18 13:00:07][0x0000622b:0x00007fa20d915b80:workspace][Fatal] Fatal!! at main(src/main.cpp:13)
