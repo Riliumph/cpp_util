@@ -75,7 +75,7 @@ NULLを設定された場合に割り当てられる具体的なアドレスは`
 > サービス情報データに記載されている関係のこと
 >
 > - Linux: `/etc/services`
-> - Windows: `C:\Windowws\system32\drivers\etc\services`
+> - Windows: `C:\Windows\system32\drivers\etc\services`
 >
 > 動的ポートとは  
 > OSが自動的に未使用ポートを割り当てる便利機能。  

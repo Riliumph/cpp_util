@@ -1,23 +1,12 @@
-# テスト方法
-
-```bash
-$ sudo apt-get install cmake
-$ git clone https://github.com/google/googletest.git
-$ cd googletest
-$ mkdir build
-$ cd build
-$ cmake ..
-$ make
-$ sudo make install
-```
+# std::variant型の実験
 
 ## TEST
 
-```bash
-(*'_')<   0 $ make test
+```console
+$ make test
 ... ... ...
 ... ... ...
-Running main() from /home/riliumph/project/googletest/googletest/src/gtest_main.cc
+Running main() from /usr/src/googletest/googletest/src/gtest_main.cc
 [==========] Running 1 test from 1 test suite.
 [----------] Global test environment set-up.
 [----------] 1 test from Equal

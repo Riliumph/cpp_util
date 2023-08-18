@@ -33,11 +33,11 @@ using frontend_t = sink::synchronous_sink<backend_t>;
  * @return backend
  */
 static boost::shared_ptr<backend_t>
-CreateBacksink()
+CreateBackSink()
 {
   auto backend = boost::make_shared<backend_t>();
-  boost::shared_ptr<std::ostream> destination(&std::clog,
-                                              boost::null_deleter());
+  auto destination =
+    boost::make_shared<std::ostream>(&std::clog, boost::null_deleter());
   backend->add_stream(destination);
   backend->auto_flush(true);
   return backend;
@@ -50,7 +50,7 @@ CreateBacksink()
  * @return frontend
  */
 static boost::shared_ptr<frontend_t>
-CreateFrontsink(const boost::shared_ptr<backend_t>& backend)
+CreateFrontSink(const boost::shared_ptr<backend_t>& backend)
 {
 #if (_MSC_VER == 1900) && defined(_DEBUG)
   using line_t = long;
@@ -80,9 +80,9 @@ CreateFrontsink(const boost::shared_ptr<backend_t>& backend)
 void
 ConfigureSink()
 {
-  auto backsink = CreateBacksink();
-  auto frontsink = CreateFrontsink(backsink);
-  boost::log::core::get()->add_sink(frontsink);
+  auto back_sink = CreateBackSink();
+  auto front_sink = CreateFrontSink(back_sink);
+  boost::log::core::get()->add_sink(front_sink);
 }
 } // namespace Console
 } // namespace Log

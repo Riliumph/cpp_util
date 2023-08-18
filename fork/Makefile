@@ -38,7 +38,7 @@ echo:
 	@echo $(TARGET2)
 	@echo $(TARGET2_OBJ)
 
-all: $(OBJS) $(TARGET1) $(TARGET2)
+all: $(TARGET1) $(TARGET2)
 	@echo "make all"
 
 $(TARGET1): $(TARGET1_OBJ)
