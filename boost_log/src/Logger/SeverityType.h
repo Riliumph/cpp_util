@@ -21,7 +21,7 @@ typedef enum struct SEVERITY_TYPE
  * define struct severity
  * @param severity [i] declare struct name
  * @param "severity" [i] struct attribute name
- * @param Log::Lv [i] instance tag
+ * @param Lv [i] instance tag
  */
 BOOST_LOG_ATTRIBUTE_KEYWORD(severity, "Severity", Log::Lv);
 } // namespace Log

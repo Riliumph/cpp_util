@@ -4,28 +4,35 @@ CXXFLAGS = -g -MMD -Wall -Wextra -Winit-self -std=c++17
 
 # library setting
 LDFLAGS = -L/usr/local/lib
-LIBS    = -lstdc++ -lpthread
+LIBS    = -lstdc++
 
 # include setting
 INCLUDE = -I$(SRCROOT)/
 EXCLUDE = .git%
+TEST_EXT= %_test.cpp
 
 # binary setting
-TARGET1  = $(shell basename $$(pwd))
-TARGET2  = $(shell basename $$(pwd))_sub
+SERVER  = server
+CLIENT  =
 BINROOT = bin
 
 # source setting
 SRCROOT = src
-SRCS    = $(filter-out $(EXCLUDE), $(shell find $(SRCROOT) -name "*.cpp"))
+SRCS    = $(filter-out $(EXCLUDE) $(TEST_EXT), $(shell find $(SRCROOT) -name "*.cpp"))
 SRCDIRS = $(dir $(SRCS))
 
 # object setting
 OBJROOT = obj
 OBJDIRS = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%, %, $(SRCDIRS)))
 OBJS    = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%.cpp, %.o, $(SRCS)))
-TARGET1_OBJ = $(filter-out %/sub.o, $(OBJS))
-TARGET2_OBJ = $(filter-out %/main.o, $(OBJS))
+SERVER_OBJS = $(OBJS)
+
+# test setting
+TESTEXCLUDE = $(shell grep -lr --include="*.cpp" "main" $(SRCROOT))
+TESTROOT = src
+TESTS    = $(filter-out $(EXCLUDE) $(TESTEXCLUDE), $(shell find $(SRCROOT) -name "*.cpp"))
+TESTDIRS = $(dir $(SRCS))
+TESTLIBS = $(LIBS) -lpthread -lgtest -lgtest_main
 
 # dependency setting
 DEPS = $(OBJS:.o=.d)
@@ -33,20 +40,18 @@ DEPS = $(OBJS:.o=.d)
 .PHONY: clean all
 
 echo:
-	@echo $(TARGET1)
-	@echo $(TARGET1_OBJ)
-	@echo $(TARGET2)
-	@echo $(TARGET2_OBJ)
+	@echo $(SRCS)
+	@echo $(OBJS)
+	@echo $(SERVER_OBJS)
 
-all: $(TARGET1) $(TARGET2)
+test:
+	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
+	$(COMPILER) $(TESTS) $(CXXFLAGS) $(LDFLAGS) $(TESTLIBS) $(INCLUDE) -o $(BINROOT)/test
+
+all: $(OBJS) $(SERVER)
 	@echo "make all"
 
-$(TARGET1): $(TARGET1_OBJ)
-	@echo "build exe $@"
-	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
-	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(LIBS)
-
-$(TARGET2): $(TARGET2_OBJ)
+$(SERVER): $(SERVER_OBJS)
 	@echo "build exe $@"
 	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
 	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(LIBS)

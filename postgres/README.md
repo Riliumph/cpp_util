@@ -1,39 +1,46 @@
 # 解説
 
-エラーに関するTipsは[こちら](./ERROR.md)を参照すること。
+## ビルド
 
-## インストール
-
-PostgreSQLの接続ライブラリをインストール
-
-```bash
-$ sudo apt install libpqxx-dev
-$ sudo apt install postgresql-client
-$ ls /usr/include | grep pqxx
-drwxr-xr-x   3 root root 4.0K yy-mm-dd hh:mm:ss pqxx/
+```console
+$ docker compose build --no-cache
+[+] Building 0.0s (0/1)
+[+] Building 1.1s (6/6) FINISHED
+[+] Building 34.5s (11/11) FINISHED
 ```
 
-## PostgreSQLの実行・接続
+## 起動
 
-```bash
-$ docker-compose up -d
+```console
+$ docker compose up -d
 [+] Running 2/2
- ⠿ Network postgres_default  Created  0.7s
- ⠿ Container postgres-db-1   Started  1.3s
-$ psql -h 0.0.0.0 -p 5432 -U postgres
-psql (12.12 (Ubuntu 12.12-0ubuntu0.20.04.1), server 14.5 (Debian 14.5-1.pgdg110+1))
-WARNING: psql major version 12, server major version 14.
-         Some psql features might not work.
+ ✔ Container postgres-builder-1  Started   1.3s
+ ✔ Container postgres-db-1       Started   1.0s
+```
+
+## デバッグ
+
+```console
+$ docker compose exec -it builder /bin/bash
+dockeruser@builder(10.10.30.2 10.10.10.3):/code make all
+```
+
+VScodeを使う場合、remote-containerプラグインによってコンテナに接続する。  
+F5デバッグ、コードジャンプなども可能。
+
+## PostgreSQLサーバーへのログイン
+
+### コンテナに直接入る方法
+
+```console
+$ docker compose exec -it db /bin/bash
+root@db_server(10.10.10.2):/ # psql -h 0.0.0.0 -p 5432 -U postgres
+psql (15.3)
 Type "help" for help.
 
-postgres=# 
+postgres=#
 ```
 
-## PostgreSQLコンテナサーバーへの接続
+### DBeaverなどでホストから入る場合
 
-```bash
-$ docker ps
-CONTAINER ID   IMAGE         COMMAND                  CREATED         STATUS         PORTS                    NAMES
-6ec621688b6c   postgres-db   "docker-entrypoint.s…"   5 minutes ago   Up 5 minutes   0.0.0.0:5432->5432/tcp   postgres-db-1
-$ docker exec -it postgres-db-1 bash
-```
+ホスト環境のポート番号5432へポートフォワードしているためホスト環境にインストールされているものと同様の方法で接続可能

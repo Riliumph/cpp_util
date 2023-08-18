@@ -11,6 +11,8 @@
 #else
 #include <boost/variant.hpp>
 #endif
+// 3rd
+#include <pqxx/pqxx>
 
 /// @brief Pythonライクなint str doubleなどカラム毎に自由な型を入れれられるmap
 namespace py {
