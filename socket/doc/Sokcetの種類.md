@@ -15,7 +15,7 @@
 
 ![OSI](./img/osi-Socket.drawio.png)
 
-### INET4 Domain
+## INET4 Domain
 
 IPv4でソケット通信を行う。  
 IPv4アドレスとポート番号で相手を特定する。  
@@ -23,14 +23,14 @@ IPヘッダを付与するし、TCPヘッダも付与するので通信データ
 ともしたら輻輳制御までしてるかもしれない。  
 当然、処理速度はネットワークの速度に律速する。
 
-### INET6 Domain
+## INET6 Domain
 
 INET4 Domainと基本は同じ。  
 裏側ではIPv4より強化されたセキュリティ処理が動いてるのでINET4よりも重たいと思われる。
 
-### Unix Domain
+## Unix Domain
 
-同一のUnixの中で通信されるIPC。  
+同一のUnixの中で通信されるIPC。
 
 - pros
   - ポート番号を消費しない
@@ -50,20 +50,20 @@ for Inter-process Communication](http://osnet.cs.binghamton.edu/publications/TR-
 - 無名
 - 抽象名前空間
 
-#### ファイルシステムパス名
+### ファイルシステムパス名
 
 一番一般的な手法。  
 [bind(2)](http://linuxjm.osdn.jp/html/LDP_man-pages/man2/bind.2.html)を使用して、NULL終端(\0)されたファイルシステム上のパスに結びつけることができる。  
 ファイルを使用しているため、パーミッションを調整する必要がある。  
 サーバプロセスが終了するときには、[unlink(2)](http://linuxjm.osdn.jp/html/LDP_man-pages/man2/unlink.2.html)で名前を削除し、場合によってはそれが参照しているファイルも削除するのがお作法。
 
-#### 無名
+### 無名
 
 [bind(2)](http://linuxjm.osdn.jp/html/LDP_man-pages/man2/bind.2.html)を使ってパス名に結び付けることができないストリーム型のソケットは名前を持たない。  
 [socketpair(2)](http://linuxjm.osdn.jp/html/LDP_man-pages/man2/socketpair.2.html)を使うと、名前のついていない CONNECTED なソケットのペアが生成される。  
 [fork(2)](https://linuxjm.osdn.jp/html/LDP_man-pages/man2/fork.2.html)してFDを繋ぎ直してあげれば、[pipe](https://linuxjm.osdn.jp/html/LDP_man-pages/man2/pipe.2.html)で実現するのと同じような双方向のプロセス間通信ができる。
 
-#### 抽象名前空間
+### 抽象名前空間
 
 sun_pathにファイルシステムのパスではなく、NULLバイト(\0)であることで区別される。  
 NULLバイト以降に名前(文字列)を渡すが、ファイルパス名とは関係ない。  
