@@ -25,7 +25,7 @@ TEST(variant, operator_equal_composite)
 
 TEST(variant, operator_plus_primitive)
 {
-  std::variant < int v = 1;
+  std::variant<int> v = 1;
   auto actual = std::get<int>(v) + 1;
   auto result = v + 1;
   EXPECT_EQ(actual, std::get<int>(result));
@@ -36,7 +36,7 @@ TEST(variant, operator_plus_primitive)
 TEST(variant, operator_plus_composite)
 {
   std::variant<int, std::string> v = "foo"s;
-  auto actual = std::get<std::string>(v) + "foo"s;
+  auto actual = std::get<std::string>(v) + "bar"s;
   auto result = v + "bar"s;
   EXPECT_EQ(actual, std::get<std::string>(result));
   actual = "bar"s + std::get<std::string>(v);
@@ -66,7 +66,7 @@ TEST(variant, operator_division_primitive)
 {
   std::variant<int, std::string> v = 1;
   auto result = v / 2;
-  EXPECT_EQ(2, std::get<int>(result));
+  EXPECT_EQ(0, std::get<int>(result));
   result = 2 * v;
   EXPECT_EQ(2, std::get<int>(result));
 }
