@@ -1,7 +1,6 @@
 version: "3"
 services:
   dev:
-    container_name: builder
     build:
       context: ../
       dockerfile: .devcontainer/dev.dockerfile
