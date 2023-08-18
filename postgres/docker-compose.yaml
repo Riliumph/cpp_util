@@ -3,18 +3,58 @@ version: '3.1'
 services:
   db:
     build:
-      context: .
-      dockerfile: Dockerfile
-    # image: postgres:latest Dockerfileに移行
+      context: ./dockerfiles
+      dockerfile: db.Dockerfile
     restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_HOST_AUTH_METHOD: trust # パスワード入力を無効化
+    hostname: db_server
+    networks:
+      - db_nw
+    volumes:
+      - type: volume
+        source: db-storage
+        target: /var/lib/postgresql/data
+    # ホストからDBeaver用にポートを公開
+    ports:
+      - target: 5432
+        published: 5432
+    stdin_open: false
+    tty: false
+  builder:
+    build:
+      context: ./dockerfiles
+      dockerfile: build.dockerfile
+      args:
+        - UID=${UID}
+        - GID=${GID}
+        - USERNAME=${USERNAME}
+        - WORKDIR=${WORKDIR}
+    restart: always
+    hostname: builder
+    networks:
+      - cicd_nw
+      - db_nw
     volumes:
       - type: bind
-        source: ./share
-        target: /var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+        source: ./
+        target: ${WORKDIR}
+    stdin_open: true
     tty: true
+
+volumes:
+  db-storage:
+    name: db-storage
+    external: false
+
+networks:
+  db_nw:
+    external: false
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.10.10.0/24
+  cicd_nw:
+    external: false
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.10.30.0/24
