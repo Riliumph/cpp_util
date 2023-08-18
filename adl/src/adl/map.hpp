@@ -3,6 +3,7 @@
 // STL
 #include <ostream>
 #include <string>
+#include <unordered_map>
 #include <vector>
 // 3rd
 #include <boost/variant.hpp>

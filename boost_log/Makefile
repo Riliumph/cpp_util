@@ -1,13 +1,13 @@
 # compiler setting
 COMPILER = g++ -v
-CXXFLAGS = -g -MMD -Wall -Wextra -Winit-self -std=c++17
+CXXFLAGS = -g -MMD -Wall -Wextra -Winit-self -std=c++17 -DBOOST_LOG_DYN_LINK
 
 # library setting
-LDFLAGS = -L/usr/local/lib -L/usr/lib/x86_64-linux-gnu
-LIBS    = -lstdc++ -lboost_log -lpthread
+LDFLAGS = -L/usr/local/lib
+LIBS    = -lstdc++ -lpthread -lboost_thread -lboost_log
 
 # include setting
-INCLUDE = -I$(SRCROOT)/
+INCLUDE = -I$(SRCROOT)
 EXCLUDE = .git%
 
 # binary setting
@@ -39,7 +39,7 @@ all: $(OBJS) $(TARGET)
 $(TARGET): $(OBJS)
 	@echo "build exe $@"
 	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
-	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(LIBS)
+	$(COMPILER) $(INCLUDE) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(LIBS)
 
 $(OBJROOT)/%.o: $(SRCROOT)/%.cpp
 	@echo "build $@ from $<"
