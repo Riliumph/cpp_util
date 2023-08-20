@@ -30,6 +30,37 @@ F5デバッグ、コードジャンプなども可能。
 
 ## PostgreSQLサーバーへのログイン
 
+![network](./doc/img/network.drawio.svg)
+
+### ポート番号の確認
+
+WSL上でポート番号を確認する。
+
+```console
+$ ss -tnl
+State    Recv-Q   Send-Q   Local Address:Port    Peer Address:Port   Process
+LISTEN   0        511          127.0.0.1:37021        0.0.0.0:*             
+LISTEN   0        4096                 *:5432               *:*             
+```
+
+> - -t: TCPのみ
+> - -n: ポート番号のまま表示
+> - -l: listenしているポート
+
+ポート番号
+
+```console
+$ nmap -p 5432 localhost
+Starting Nmap 7.80 ( https://nmap.org ) at 2023-08-20 23:23 JST
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.000056s latency).
+
+PORT     STATE SERVICE
+5432/tcp open  postgresql
+
+Nmap done: 1 IP address (1 host up) scanned in 0.02 seconds
+```
+
 ### コンテナに直接入る方法
 
 ```console

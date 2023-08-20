@@ -1,4 +1,4 @@
-version: "3"
+version: "3.8"
 services:
   dev:
     init: true
@@ -8,66 +8,13 @@ services:
       args:
         HADOLINT_URL: ${HADOLINT_URL}
     hostname: builder
+    # ホストからDBeaver用にポートを公開
+    ports:
+      - target: 5432
+        published: 5432
     volumes:
       - type: bind
         source: ../
         target: /workspace
     stdin_open: true
     tty: true
-  db:
-    build:
-      context: ./dockerfiles
-      dockerfile: db.Dockerfile
-    restart: always
-    hostname: db_server
-    networks:
-      - db_nw
-    volumes:
-      - type: volume
-        source: db-storage
-        target: /var/lib/postgresql/data
-    # ホストからDBeaver用にポートを公開
-    ports:
-      - target: 5432
-        published: 5432
-    stdin_open: false
-    tty: false
-  builder:
-    build:
-      context: ./dockerfiles
-      dockerfile: build.dockerfile
-      args:
-        - UID=${UID}
-        - GID=${GID}
-        - USERNAME=${USERNAME}
-        - WORKDIR=${WORKDIR}
-    restart: always
-    hostname: builder
-    networks:
-      - cicd_nw
-      - db_nw
-    volumes:
-      - type: bind
-        source: ./
-        target: ${WORKDIR}
-    stdin_open: true
-    tty: true
-
-volumes:
-  db-storage:
-    name: db-storage
-    external: false
-
-networks:
-  db_nw:
-    external: false
-    ipam:
-      driver: default
-      config:
-        - subnet: 10.10.10.0/24
-  cicd_nw:
-    external: false
-    ipam:
-      driver: default
-      config:
-        - subnet: 10.10.30.0/24
