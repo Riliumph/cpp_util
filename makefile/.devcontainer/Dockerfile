@@ -1,6 +1,7 @@
 #FROM debian:bookworm-slim
 FROM ubuntu:latest
 
+ARG HADOLINT_URL
 #ENV DEBIAN_FRONTEND=noninteractive
 RUN sed -i 's@archive.ubuntu.com@ftp.jaist.ac.jp/pub/Linux@g' /etc/apt/sources.list \
     && apt-get update \
@@ -8,7 +9,6 @@ RUN sed -i 's@archive.ubuntu.com@ftp.jaist.ac.jp/pub/Linux@g' /etc/apt/sources.l
     sudo\
     wget\
     build-essential\
-    libpqxx-dev\
     gdb\
     googletest\
     cmake\
