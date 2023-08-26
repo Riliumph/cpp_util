@@ -12,6 +12,7 @@ RUN sed -i 's@archive.ubuntu.com@ftp.jaist.ac.jp/pub/Linux@g' /etc/apt/sources.l
     gdb\
     googletest\
     cmake\
+    cppcheck\
     && apt-get clean\
     && rm -rf /var/lib/apt/lists/*
 # hadolint for docker
