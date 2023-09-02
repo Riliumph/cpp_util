@@ -35,12 +35,10 @@ TESTDIRS = $(dir $(TESTSRCS))
 # dependency setting
 DEPS = $(OBJS:.o=.d)
 
-.PHONY: clean all
+.PHONY: clean all analyze
 
-echo:
-	@echo "SRCS: $(SRCDIRS)"
-	@echo "$(SRCROOT)/%.cpp"
-	@echo "OBJS: $(OBJS)"
+analyze:
+	cppcheck --std=c++17 --enable=all $(SRCROOT)
 
 test:
 	@echo "[make test]"

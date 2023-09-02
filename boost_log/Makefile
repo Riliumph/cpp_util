@@ -24,14 +24,20 @@ OBJROOT = obj
 OBJDIRS = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%, %, $(SRCDIRS)))
 OBJS    = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%.cpp, %.o, $(SRCS)))
 
+# test setting
+TESTLIBS = $(LIBS) -lpthread -lgtest -lgtest_main
+TESTROOT = src
+TESTSRCS = $(filter-out $(EXCLUDE), $(shell find $(SRCROOT) -name "*_test.cpp"))
+TESTOBJS = $(addprefix $(OBJROOT)/, $(patsubst $(TESTROOT)/%.cpp, %.o, $(TESTSRCS)))
+TESTDIRS = $(dir $(TESTSRCS))
+
 # dependency setting
 DEPS = $(OBJS:.o=.d)
 
-.PHONY: clean all
+.PHONY: clean all analyze
 
-echo:
-	@echo $(SRCS)
-	@echo $(OBJDORS)
+analyze:
+	cppcheck --std=c++17 --enable=all $(SRCROOT)
 
 all: $(OBJS) $(TARGET)
 	@echo "make all"
@@ -45,6 +51,9 @@ $(OBJROOT)/%.o: $(SRCROOT)/%.cpp
 	@echo "build $@ from $<"
 	@[ -d $@ ] || mkdir -p $(dir $@)
 	$(COMPILER) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
+
+analyze:
+	cppcheck --std=c++17 --enable=all $(SRCROOT)
 
 fix_lib:
 	@ldconfig

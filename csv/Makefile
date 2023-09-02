@@ -27,11 +27,10 @@ OBJS    = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%.c, %.o, $(SRCS)))
 # dependency setting
 DEPS = $(OBJS:.o=.d)
 
-.PHONY: clean all
+.PHONY: clean all analyze
 
-echo:
-	@echo $(SRCS)
-	@echo $(OBJDORS)
+analyze:
+	cppcheck --std=c++17 --enable=all $(SRCROOT)
 
 all: $(TARGET)
 	@echo "make all"

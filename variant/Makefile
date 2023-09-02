@@ -34,11 +34,10 @@ TESTLIBS = $(LIBS) -lpthread -lgtest -lgtest_main
 # dependency setting
 DEPS = $(OBJS:.o=.d)
 
-.PHONY: clean all
+.PHONY: clean all analyze
 
-echo:
-	@echo $(SRCS)
-	@echo $(OBJS)
+analyze:
+	cppcheck --std=c++17 --enable=all $(SRCROOT)
 
 test:
 	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
