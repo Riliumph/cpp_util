@@ -1,38 +1,26 @@
-#FROM debian:bookworm-slim
-FROM ubuntu:latest
+FROM mcr.microsoft.com/devcontainers/cpp:debian
 
-ARG HADOLINT_URL
-#ENV DEBIAN_FRONTEND=noninteractive
-RUN sed -i 's@archive.ubuntu.com@ftp.jaist.ac.jp/pub/Linux@g' /etc/apt/sources.list \
-    && apt-get update \
-    && apt-get install --no-install-recommends -y\
-    sudo\
-    wget\
-    build-essential\
-    libboost-all-dev\
-    gdb\
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y\
+    libboost1.81-all-dev\
     googletest\
-    cmake\
-    cppcheck\
     && apt-get clean\
     && rm -rf /var/lib/apt/lists/*
+
 # hadolint for docker
 ARG HADOLINT_URL
-RUN wget --progress=dot:giga -O /bin/hadolint ${HADOLINT_URL} --no-check-certificate
+RUN wget --progress=dot:giga -O /usr/local/bin/hadolint ${HADOLINT_URL} --no-check-certificate\
+    && chmod +x /usr/local/bin/hadolint
+
 # build googletest
 WORKDIR /usr/src/googletest/
 RUN cmake .\
     && make\
     && make install
 
-# New user
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-RUN groupadd -g 1000 docker\
-    && useradd -l -u 1000 -g docker -G sudo -m -s /bin/bash docker\
-    && echo 'docker:docker' | chpasswd\
-    && echo 'ALL ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-USER docker
-RUN printf "PS1='\u@\h(\$(hostname -i)):\w \n\\$ '" >> ~/.bashrc
+# user defined in devcontainers
+USER 1000
+RUN printf "PS1='\[\$(tput setaf 4)\]\u\[\$(tput sgr0)\]@\[\$(tput setaf 2)\]\h(\$(hostname -i))\[\$(tput sgr0)\]:\[\$(tput setaf 3)\]\w\\n\[\$(tput sgr0)\]\\$ '" >> ~/.bashrc
 WORKDIR /workspace
 
 ENTRYPOINT [ "/bin/bash" ]
