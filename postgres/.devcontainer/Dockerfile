@@ -10,7 +10,7 @@ RUN apt-get update \
 
 # hadolint for docker
 ARG HADOLINT_URL
-RUN wget --progress=dot:giga -O /usr/local/bin/hadolint ${HADOLINT_URL} --no-check-certificate\
+RUN wget -q -O /usr/local/bin/hadolint ${HADOLINT_URL} --no-check-certificate\
     && chmod +x /usr/local/bin/hadolint
 
 # build googletest

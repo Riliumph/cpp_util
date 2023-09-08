@@ -17,7 +17,7 @@ RUN sed -i 's@archive.ubuntu.com@ftp.jaist.ac.jp/pub/Linux@g' /etc/apt/sources.l
     && rm -rf /var/lib/apt/lists/*
 # hadolint for docker
 ARG HADOLINT_URL
-RUN wget --progress=dot:giga -O /bin/hadolint ${HADOLINT_URL} --no-check-certificate
+RUN wget -q -O /bin/hadolint ${HADOLINT_URL} --no-check-certificate
 # build googletest
 WORKDIR /usr/src/googletest/
 RUN cmake .\
