@@ -64,8 +64,7 @@ Nmap done: 1 IP address (1 host up) scanned in 0.02 seconds
 ### コンテナに直接入る方法
 
 ```console
-$ docker compose exec -it db /bin/bash
-root@db_server(10.10.10.2):/ # psql -h 0.0.0.0 -p 5432 -U postgres
+$ docker compose exec -it db psql -h 0.0.0.0 -p 5432 -U postgres
 psql (15.3)
 Type "help" for help.
 
