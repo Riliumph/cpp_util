@@ -2,28 +2,6 @@
 #include <ostream>
 // original
 #include "py/map.hpp"
-
-namespace py {
-/// @brief すべてのテーブルを表現できるpy::mapへ変換する関数。
-/// デフォルトではテーブル定義が不明なため値の型はすべてstd::string型とする。
-/// @param result pqxxの結果
-/// @return すべてstd::string型となったpy::map
-py::map
-Convert2PyMap(pqxx::result& result)
-{
-  py::map data;
-  for (const auto& row : result) {
-    py::record record;
-    for (const auto& col : row) {
-      auto name = std::string(col.name());
-      record[name] = col.c_str();
-    }
-    data.emplace_back(record);
-  }
-  return data;
-}
-} // namespace py
-
 /// @brief なんでも格納できるpy::mapをストリームに出力する
 /// 1段目の出力：1行目データを精査してヘッダーとしてカラム情報を出力する。
 /// 2段目以降の出力：2行目からは格納された実データを出力する。

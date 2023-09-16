@@ -34,9 +34,6 @@ using record = std::unordered_map<std::string, value_t>;
 /// オブジェクト指向とは仕様確定後には強烈な利点があるが、joinなど自由な処理をする場合には
 /// 自由分の定義が必要になってしまう点がデメリット。
 using map = std::vector<record>;
-
-py::map
-Convert2PyMap(pqxx::result&);
 } // namespace py
 
 std::ostream&
