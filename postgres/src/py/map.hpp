@@ -21,7 +21,7 @@ namespace py {
 using value_t = std::variant<int, double, std::string>;
 #else
 // boost::serializationはboost::variantをエンコードできる。
-using value_t = boost::variant<int, double, std::string>;
+using value_t = boost::variant<bool, int, long, float, double, std::string>;
 #endif
 /// DBのレコードを表現する型。
 /// 文字列でキー情報を持ち、バリュー情報はあらゆる型で格納することができる。

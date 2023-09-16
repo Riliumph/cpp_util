@@ -5,16 +5,16 @@
 // 3rd
 #include <pqxx/pqxx>
 // original
+#include "any/py_any.hpp"
 #include "postgres/result_set.hpp"
-#include "user/py_user.hpp"
 
 int
 main()
 {
   try {
-    auto db_conn = std::make_unique<pqxx::connection>("host=db_server"
+    auto db_conn = std::make_unique<pqxx::connection>("host=localhost"
                                                       " port=5432"
-                                                      " dbname=sample_db"
+                                                      " dbname=postgres"
                                                       " user=postgres"
                                                       " password=postgres");
     pqxx::work transactor(*db_conn);
@@ -23,7 +23,7 @@ main()
     transactor.commit();
 
     std::cout << "map like python" << std::endl;
-    auto users = py::Convert2User(res);
+    auto users = py::Convert2Any(res);
     std::cout << users << std::endl;
 
   } catch (const pqxx::sql_error& e) {

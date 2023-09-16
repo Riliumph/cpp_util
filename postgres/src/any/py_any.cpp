@@ -1,7 +1,23 @@
+#include <iostream>
+#include <pqxx/pqxx>
 // original
 #include "any/py_any.hpp"
-
 namespace py {
+enum OID
+{
+  BOOL = 16,
+  CHAR = 18,
+  INT8 = 20,
+  INT2 = 21,
+  INT4 = 23,
+  TEXT = 25,
+  FLOAT4 = 700,
+  FLOAT8 = 701,
+  JSON = 114,
+  TS = 1114,
+  TSTZ = 1184
+};
+
 /// @brief すべてのテーブルを表現できるpy::mapへ変換する関数。
 /// キー名がif文に無ければすべてstd::string型として登録される。
 /// そのため、以下のDB設計さえ守られていればjoinなどを行われても対応できる。
@@ -19,27 +35,34 @@ Convert2Any(pqxx::result& result)
     py::record record;
     for (const auto& col : row) {
       auto name = std::string(col.name());
-      if (name == "id") {
-        record[name] = std::stoi(col.c_str());
-      } else if (name == "name") {
-        record[name] = col.c_str();
-      } else if (name == "age") {
-        record[name] = std::stoi(col.c_str());
-      } else if (name == "student_id") {
-        record[name] = col.c_str();
-      } else if (name == "test_name") {
-        record[name] = col.c_str();
-      } else if (name == "subject") {
-        record[name] = col.c_str();
-      } else if (name == "score") {
-        record[name] = std::stoi(col.c_str());
-      } else if (name == "modify_at") {
-        record[name] = col.c_str();
-      } else if (name == "created_at") {
-        record[name] = col.c_str();
-      } else {
-        // カラム名がサポートされていなければstd::stringで格納
-        record[name] = col.c_str();
+      auto type_oid = col.type();
+      switch (type_oid) {
+        case OID::BOOL:
+          record[name] = col.as<bool>();
+          break;
+        case OID::INT4:
+          record[name] = col.as<int32_t>();
+          break;
+        case OID::INT8:
+          record[name] = col.as<int64_t>();
+          break;
+        case OID::TEXT:
+          record[name] = std::string(col.c_str());
+          break;
+        case OID::FLOAT4:
+          record[name] = col.as<float>();
+          break;
+        case OID::FLOAT8:
+          record[name] = col.as<double>();
+          break;
+        case OID::TS:
+          record[name] = std::string(col.c_str());
+          break;
+        case OID::TSTZ:
+          record[name] = std::string(col.c_str());
+          break;
+        default:
+          std::cerr << "not supported type(" << type_oid << ")" << std::endl;
       }
     }
     data.emplace_back(record);
