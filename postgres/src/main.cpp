@@ -5,7 +5,6 @@
 // 3rd
 #include <pqxx/pqxx>
 // original
-#include "any/py_any.hpp"
 #include "postgres/result_set.hpp"
 
 int
@@ -23,7 +22,7 @@ main()
     transactor.commit();
 
     std::cout << "map like python" << std::endl;
-    auto users = py::Convert2Any(res);
+    auto users = postgres::ResultSet(res);
     std::cout << users << std::endl;
 
   } catch (const pqxx::sql_error& e) {

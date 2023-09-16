@@ -7,33 +7,43 @@
 #include <vector>
 // 3rd
 #include <pqxx/pqxx>
-
 // original
-// #include "postgres/record.hpp"
+#include "py/map.hpp"
 
 namespace postgres {
+enum OID
+{
+  BOOL = 16,
+  CHAR = 18,
+  INT8 = 20,
+  INT2 = 21,
+  INT4 = 23,
+  TEXT = 25,
+  FLOAT4 = 700,
+  FLOAT8 = 701,
+  JSON = 114,
+  TS = 1114,
+  TSTZ = 1184
+};
+
 /// @brief PostgreSQLの結果を管理するクラス
 class ResultSet
 {
 public:
-  /// @brief 一レコードを表現するクラス
-  using Record = std::map<std::string, std::string>;
-
   ResultSet();
   ResultSet(pqxx::result);
   ~ResultSet();
   friend std::ostream& operator<<(std::ostream&, const ResultSet&);
 
-  std::vector<Record> Map();
-  void Map(std::vector<Record> data);
+  py::map Map();
+  void Map(py::map data);
   pqxx::result Raw();
   void Raw(pqxx::result);
 
 private:
   pqxx::result result_set;
-  std::vector<Record> data;
-
-  std::vector<Record> MakeMap();
+  py::map data;
+  py::map Convert2Any(pqxx::result&);
 };
 
 std::ostream&

@@ -12,7 +12,7 @@ ResultSet::ResultSet() {}
 ResultSet::ResultSet(pqxx::result result)
   : result_set(result)
 {
-  Map(MakeMap());
+  Map(Convert2Any(result_set));
 }
 
 /// @brief デストラクタ
@@ -22,7 +22,7 @@ ResultSet::~ResultSet() {}
 #ifndef ACCESSOR
 /// @brief Query結果を二次元マップで取得する
 /// @return Query結果の二次元マップ
-std::vector<ResultSet::Record>
+py::map
 ResultSet::Map()
 {
   return this->data;
@@ -32,7 +32,7 @@ ResultSet::Map()
 /// デバッグ用のメソッド
 /// @param data Query結果
 void
-ResultSet::Map(std::vector<Record> data)
+ResultSet::Map(py::map data)
 {
   this->data = data;
 }
@@ -58,19 +58,47 @@ ResultSet::Raw(pqxx::result result)
 #endif // ACCESSOR
 
 /// @brief
-std::vector<ResultSet::Record>
-ResultSet::MakeMap()
+py::map
+ResultSet::Convert2Any(pqxx::result& result)
 {
-  std::vector<Record> result_map;
-  for (const auto& row : result_set) {
-    Record record;
+  py::map data;
+  for (const auto& row : result) {
+    py::record record;
     for (const auto& col : row) {
-      // DBに名前重複は無いためチェック不要
-      record[col.name()] = col.c_str();
+      auto name = std::string(col.name());
+      auto type_oid = col.type();
+      switch (type_oid) {
+        case OID::BOOL:
+          record[name] = col.as<bool>();
+          break;
+        case OID::INT4:
+          record[name] = col.as<int32_t>();
+          break;
+        case OID::INT8:
+          record[name] = col.as<int64_t>();
+          break;
+        case OID::TEXT:
+          record[name] = std::string(col.c_str());
+          break;
+        case OID::FLOAT4:
+          record[name] = col.as<float>();
+          break;
+        case OID::FLOAT8:
+          record[name] = col.as<double>();
+          break;
+        case OID::TS:
+          record[name] = std::string(col.c_str());
+          break;
+        case OID::TSTZ:
+          record[name] = std::string(col.c_str());
+          break;
+        default:
+          std::cerr << "not supported type(" << type_oid << ")" << std::endl;
+      }
     }
-    result_map.emplace_back(record);
+    data.emplace_back(record);
   }
-  return result_map;
+  return data;
 }
 
 #ifndef OPERATOR_OVERLOAD
