@@ -8,23 +8,9 @@
 // 3rd
 #include <pqxx/pqxx>
 // original
-#include "py/map.hpp"
+#include "define.hpp"
 
 namespace postgres {
-enum OID
-{
-  BOOL = 16,
-  CHAR = 18,
-  INT8 = 20,
-  INT2 = 21,
-  INT4 = 23,
-  TEXT = 25,
-  FLOAT4 = 700,
-  FLOAT8 = 701,
-  JSON = 114,
-  TS = 1114,
-  TSTZ = 1184
-};
 
 /// @brief PostgreSQLの結果を管理するクラス
 class ResultSet
@@ -35,15 +21,15 @@ public:
   ~ResultSet();
   friend std::ostream& operator<<(std::ostream&, const ResultSet&);
 
-  py::map Map();
-  void Map(py::map data);
+  db_table Map();
+  void Map(db_table data);
   pqxx::result Raw();
   void Raw(pqxx::result);
 
 private:
   pqxx::result result_set;
-  py::map data;
-  py::map Convert2Any(pqxx::result&);
+  db_table data;
+  db_table Convert2Any(pqxx::result&);
 };
 
 std::ostream&

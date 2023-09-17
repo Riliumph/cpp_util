@@ -22,7 +22,7 @@ ResultSet::~ResultSet() {}
 #ifndef ACCESSOR
 /// @brief Query結果を二次元マップで取得する
 /// @return Query結果の二次元マップ
-py::map
+postgres::db_table
 ResultSet::Map()
 {
   return this->data;
@@ -32,7 +32,7 @@ ResultSet::Map()
 /// デバッグ用のメソッド
 /// @param data Query結果
 void
-ResultSet::Map(py::map data)
+ResultSet::Map(postgres::db_table data)
 {
   this->data = data;
 }
@@ -58,12 +58,12 @@ ResultSet::Raw(pqxx::result result)
 #endif // ACCESSOR
 
 /// @brief
-py::map
+postgres::db_table
 ResultSet::Convert2Any(pqxx::result& result)
 {
-  py::map data;
+  postgres::db_table data;
   for (const auto& row : result) {
-    py::record record;
+    postgres::db_record record;
     for (const auto& col : row) {
       auto name = std::string(col.name());
       auto type_oid = col.type();
