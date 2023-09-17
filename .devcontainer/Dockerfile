@@ -3,8 +3,8 @@ FROM mcr.microsoft.com/devcontainers/cpp:debian
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y\
     libboost1.81-all-dev\
-    libpqxx-dev\
     googletest\
+    libpqxx-dev\
     peco\
     silversearcher-ag\
     && apt-get clean\
@@ -23,6 +23,3 @@ RUN cmake .\
 
 # user defined in devcontainers
 USER 1000
-WORKDIR /workspace
-
-ENTRYPOINT [ "/bin/bash" ]

@@ -12,8 +12,8 @@
 		"--hostname",
 		"dev-container"
 	],
-	"workspaceFolder": "/workspace",
-	"workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+	"workspaceFolder": "/${localWorkspaceFolderBasename}",
+	"workspaceMount": "source=${localWorkspaceFolder},target=/${localWorkspaceFolderBasename},type=bind",
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
 		"docker-in-docker": {
@@ -22,7 +22,9 @@
 		}
 	},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [],
+	"forwardPorts": [
+		5432
+	],
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "gcc -v",
 	// Configure tool-specific properties.
@@ -37,13 +39,15 @@
 				"ms-vscode.cpptools-extension-pack",
 				"ms-vscode.cmake-tools",
 				"ms-vscode.makefile-tools",
+				"DavidSchuldenfrei.gtest-adapter",
 				"streetsidesoftware.code-spell-checker",
 				"ms-azuretools.vscode-docker",
 				"exiasr.hadolint",
 				"ionutvmi.path-autocomplete",
 				"shardulm94.trailing-spaces",
 				"DavidAnson.vscode-markdownlint",
-				"richie5um2.vscode-sort-json"
+				"richie5um2.vscode-sort-json",
+				"adpyke.vscode-sql-formatter"
 			]
 		}
 	}
