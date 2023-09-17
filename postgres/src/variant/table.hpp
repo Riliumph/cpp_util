@@ -2,6 +2,7 @@
 #define INCLUDE_VARIANT_TABLE_HPP
 // STL
 #include <map>
+#include <ostream>
 #include <utility>
 #include <variant>
 #include <vector>
