@@ -5,6 +5,8 @@ RUN apt-get update \
     libboost1.81-all-dev\
     libpqxx-dev\
     googletest\
+    peco\
+    silversearcher-ag\
     && apt-get clean\
     && rm -rf /var/lib/apt/lists/*
 
