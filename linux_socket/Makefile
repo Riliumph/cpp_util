@@ -25,9 +25,10 @@ OBJDIRS = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%, %, $(SRCDIRS)))
 OBJS    = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%.cpp, %.o, $(SRCS)))
 
 # test setting
+TEST_EXT= %_test.cpp
 TESTLIBS = $(LIBS) -lpthread -lgtest -lgtest_main
 TESTROOT = src
-TESTSRCS = $(filter-out $(EXCLUDE), $(shell find $(SRCROOT) -name "*_test.cpp"))
+TESTSRCS = $(filter-out $(EXCLUDE) %main.cpp, $(shell find $(SRCROOT) -name "*.cpp"))
 TESTOBJS = $(addprefix $(OBJROOT)/, $(patsubst $(TESTROOT)/%.cpp, %.o, $(TESTSRCS)))
 TESTDIRS = $(dir $(TESTSRCS))
 

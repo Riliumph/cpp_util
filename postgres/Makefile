@@ -38,25 +38,22 @@ DEPS = $(OBJS:.o=.d)
 .PHONY: clean all analyze
 
 all: $(OBJS) $(TARGET)
-	@echo "-- make all"
+	@echo "make all"
 
 test: $(TESTOBJS)
-	@echo "-- build $@"
+	@echo "build $< -> $@"
 	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
 	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(TESTLIBS)
 
 $(TARGET): $(OBJS)
-	@echo "-- build exe $@"
+	@echo "build $< -> $@"
 	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
 	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(LIBS)
 
 $(OBJROOT)/%.o: $(SRCROOT)/%.cpp
-	@echo "-- build $@ from $<"
+	@echo "build $< -> $@"
 	@[ -d $@ ] || mkdir -p $(dir $@)
 	$(COMPILER) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
-
-echo:
-	echo $(TESTSRCS)
 
 analyze:
 	cppcheck --std=c++17 --enable=all $(SRCROOT)

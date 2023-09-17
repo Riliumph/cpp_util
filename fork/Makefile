@@ -17,7 +17,7 @@ BINROOT = bin
 
 # source setting
 SRCROOT = src
-SRCS    = $(filter-out $(EXCLUDE), $(shell find $(SRCROOT) -name "*.cpp"))
+SRCS    = $(filter-out $(EXCLUDE) $(TEST_EXT), $(shell find $(SRCROOT) -name "*.cpp"))
 SRCDIRS = $(dir $(SRCS))
 
 # object setting
@@ -28,9 +28,10 @@ TARGET1_OBJ = $(filter-out %/sub.o, $(OBJS))
 TARGET2_OBJ = $(filter-out %/main.o, $(OBJS))
 
 # test setting
+TEST_EXT= %_test.cpp
 TESTLIBS = $(LIBS) -lpthread -lgtest -lgtest_main
 TESTROOT = src
-TESTSRCS = $(filter-out $(EXCLUDE), $(shell find $(SRCROOT) -name "*_test.cpp"))
+TESTSRCS = $(filter-out $(EXCLUDE) %main.cpp, $(shell find $(SRCROOT) -name "*.cpp"))
 TESTOBJS = $(addprefix $(OBJROOT)/, $(patsubst $(TESTROOT)/%.cpp, %.o, $(TESTSRCS)))
 TESTDIRS = $(dir $(TESTSRCS))
 
@@ -39,11 +40,13 @@ DEPS = $(OBJS:.o=.d)
 
 .PHONY: clean all analyze
 
-analyze:
-	cppcheck --std=c++17 --enable=all $(SRCROOT)
-
 all: $(TARGET1) $(TARGET2)
 	@echo "make all"
+
+test: $(TESTOBJS)
+	@echo "build $< -> $@"
+	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
+	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(TESTLIBS)
 
 $(TARGET1): $(TARGET1_OBJ)
 	@echo "build exe $@"
@@ -56,9 +59,12 @@ $(TARGET2): $(TARGET2_OBJ)
 	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(LIBS)
 
 $(OBJROOT)/%.o: $(SRCROOT)/%.cpp
-	@echo "build $@ from $<"
+	@echo "build $< -> $@"
 	@[ -d $@ ] || mkdir -p $(dir $@)
 	$(COMPILER) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
+
+analyze:
+	cppcheck --std=c++17 --enable=all $(SRCROOT)
 
 fix_lib:
 	@ldconfig

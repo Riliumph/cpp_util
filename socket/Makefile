@@ -9,7 +9,6 @@ LIBS    = -lstdc++
 # include setting
 INCLUDE = -I$(SRCROOT)/
 EXCLUDE = .git%
-TEST_EXT= %_test.cpp
 
 # binary setting
 SERVER  = server
@@ -28,26 +27,25 @@ OBJS    = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%.cpp, %.o, $(SRCS)))
 SERVER_OBJS = $(OBJS)
 
 # test setting
-TESTEXCLUDE = $(shell grep -lr --include="*.cpp" "main" $(SRCROOT))
-TESTROOT = src
-TESTS    = $(filter-out $(EXCLUDE) $(TESTEXCLUDE), $(shell find $(SRCROOT) -name "*.cpp"))
-TESTDIRS = $(dir $(SRCS))
+TEST_EXT= %_test.cpp
 TESTLIBS = $(LIBS) -lpthread -lgtest -lgtest_main
+TESTROOT = src
+TESTSRCS = $(filter-out $(EXCLUDE) %main.cpp, $(shell find $(SRCROOT) -name "*.cpp"))
+TESTOBJS = $(addprefix $(OBJROOT)/, $(patsubst $(TESTROOT)/%.cpp, %.o, $(TESTSRCS)))
+TESTDIRS = $(dir $(TESTSRCS))
 
 # dependency setting
 DEPS = $(OBJS:.o=.d)
 
 .PHONY: clean all analyze
 
-analyze:
-	cppcheck --std=c++17 --enable=all $(SRCROOT)
-
-test:
-	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
-	$(COMPILER) $(TESTS) $(CXXFLAGS) $(LDFLAGS) $(TESTLIBS) $(INCLUDE) -o $(BINROOT)/test
-
 all: $(OBJS) $(SERVER)
 	@echo "make all"
+
+test: $(TESTOBJS)
+	@echo "build $< -> $@"
+	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
+	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(TESTLIBS)
 
 $(SERVER): $(SERVER_OBJS)
 	@echo "build exe $@"
@@ -55,9 +53,12 @@ $(SERVER): $(SERVER_OBJS)
 	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(LIBS)
 
 $(OBJROOT)/%.o: $(SRCROOT)/%.cpp
-	@echo "build $@ from $<"
+	@echo "build $< -> $@"
 	@[ -d $@ ] || mkdir -p $(dir $@)
 	$(COMPILER) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
+
+analyze:
+	cppcheck --std=c++17 --enable=all $(SRCROOT)
 
 fix_lib:
 	@ldconfig
