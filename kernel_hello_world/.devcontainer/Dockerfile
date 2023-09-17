@@ -31,7 +31,6 @@ RUN groupadd -g 1000 docker\
     && echo 'docker:docker' | chpasswd\
     && echo 'ALL ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER docker
-RUN printf "PS1='\u@\h(\$(hostname -i)):\w \n\\$ '" >> ~/.bashrc
 WORKDIR /workspace
 
 ENTRYPOINT [ "/bin/bash" ]

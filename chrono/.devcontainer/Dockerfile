@@ -20,7 +20,6 @@ RUN cmake .\
 
 # user defined in devcontainers
 USER 1000
-RUN printf "PS1='\[\$(tput setaf 4)\]\u\[\$(tput sgr0)\]@\[\$(tput setaf 2)\]\h(\$(hostname -i))\[\$(tput sgr0)\]:\[\$(tput setaf 3)\]\w\\n\[\$(tput sgr0)\]\\$ '" >> ~/.bashrc
 WORKDIR /workspace
 
 ENTRYPOINT [ "/bin/bash" ]
