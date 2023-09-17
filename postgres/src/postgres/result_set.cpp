@@ -39,7 +39,7 @@ ResultSet::Map(postgres::db_table data)
 
 /// @brief Query結果を生で取得する
 /// より自由なことがしたい場合のIF
-/// @return Quety結果
+/// @return Query結果
 pqxx::result
 ResultSet::Raw()
 {

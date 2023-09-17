@@ -8,7 +8,7 @@
 // 3rd
 #include <pqxx/pqxx>
 // original
-#include "define.hpp"
+#include "postgres/define.hpp"
 
 namespace postgres {
 
