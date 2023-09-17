@@ -36,3 +36,6 @@ bin/
 # Draw.io
 *.bkp
 *.dtmp
+
+# log
+*.log
