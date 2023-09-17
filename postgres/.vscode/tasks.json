@@ -3,10 +3,21 @@
 	"tasks": [
 		{
 			"type": "shell",
-			"label": "make",
+			"label": "debug",
 			"command": "make",
 			"args": [
 				"all"
+			],
+			"options": {},
+			"group": "build",
+			"detail": "compiler: /usr/bin/cpp"
+		},
+		{
+			"type": "shell",
+			"label": "test",
+			"command": "make",
+			"args": [
+				"test"
 			],
 			"options": {},
 			"group": "build",

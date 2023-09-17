@@ -5,7 +5,7 @@
 // 3rd
 #include <pqxx/pqxx>
 // original
-#include "postgres/result_set.hpp"
+#include "postgres.hpp"
 
 int
 main()
