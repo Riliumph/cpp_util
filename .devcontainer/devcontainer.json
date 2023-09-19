@@ -47,7 +47,10 @@
 				"shardulm94.trailing-spaces",
 				"DavidAnson.vscode-markdownlint",
 				"richie5um2.vscode-sort-json",
-				"adpyke.vscode-sql-formatter"
+				"adpyke.vscode-sql-formatter",
+				"eamodio.gitlens",
+				"mhutchie.git-graph",
+				"donjayamanne.githistory"
 			]
 		}
 	}
