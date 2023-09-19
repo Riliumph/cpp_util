@@ -1,8 +1,10 @@
-// #ifdef DB_TEST
 #include "postgres/result_set.hpp"
-#include <gtest/gtest.h>
+// STL
 #include <memory>
 #include <typeinfo>
+
+#include <gtest/gtest.h>
+
 namespace postgres {
 TEST(ResultSet, Convert2Any)
 {
@@ -45,4 +47,3 @@ TEST(ResultSet, Convert2Any)
   }
 }
 }
-// #endif

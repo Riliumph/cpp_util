@@ -1,7 +1,6 @@
+#include "postgres/result_set.hpp"
 // STL
 #include <iostream>
-// original
-#include "postgres/result_set.hpp"
 
 namespace postgres {
 #ifndef CONSTRUCTOR

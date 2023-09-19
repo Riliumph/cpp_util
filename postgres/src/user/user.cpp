@@ -1,4 +1,3 @@
-// original
 #include "user/user.hpp"
 
 namespace entity {
