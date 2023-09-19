@@ -14,7 +14,7 @@
 		},
 		{
 			"type": "shell",
-			"label": "test",
+			"label": "unit test",
 			"command": "make",
 			"args": [
 				"test"

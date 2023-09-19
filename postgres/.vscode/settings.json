@@ -2,7 +2,7 @@
     "[c++]": {
         "editor.formatOnSave": true,
         "editor.tabSize": 2,
-        "files.insertFinalNewline": true
+        "files.insertFinalNewline": true,
     },
     "[sql]": {
         "editor.formatOnSave": false,
@@ -12,6 +12,7 @@
     "C_Cpp.autoAddFileAssociations": false,
     "C_Cpp.clang_format_fallbackStyle": "Mozilla",
     "C_Cpp.clang_format_style": "Mozilla",
+    "C_Cpp.clang_format_sortIncludes": true,
     "cSpell.words": [
         "pqxx"
     ],
@@ -32,13 +33,14 @@
             {
                 "scope": "googletest.run",
                 "settings": {
-                    "foreground": "#0f0"
+                    "foreground": "#00f"
                 }
             }
         ]
     },
     "gtest-adapter.debugConfig": [
-        "gtest"
+        "Unit Test",
     ],
-    "gtest-adapter.supportLocation": true
+    "gtest-adapter.supportLocation": true,
+    "sql-formatter.uppercase": true,
 }
