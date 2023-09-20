@@ -5,81 +5,54 @@
 // Google Test
 #include <gtest/gtest.h>
 
-TEST(sample, sample)
+TEST(simple, simple)
 {
   struct Arg
   {
     int arg1;
     int arg2;
   };
-  struct TestTable
+  struct Test
   {
-    std::string testname;
+    std::string test_name;
     struct Arg arg;
     int want;
   };
-  std::vector<struct TestTable> tt = {
+  std::vector<struct Test> tests = {
     { "Case1", { 1, 1 }, 2 },
     { "Case2", { 1, 3 }, 4 },
   };
-  for (const auto& t : tt) {
+  for (const auto& t : tests) {
     auto actual = t.arg.arg1 + t.arg.arg2;
     EXPECT_EQ(t.want, actual);
   }
 }
 
-TEST(sample, sample1)
+TEST(simple, exception)
 {
   struct Arg
   {
-    int arg1;
-    int arg2;
+    bool can_throw_exception;
   };
-  struct TestTable
+  struct Test
   {
-    std::string testname;
+    std::string test_name;
     struct Arg arg;
-    std::optional<std::vector<std::string>> want;
+    int want;
   };
-  std::vector<struct TestTable> tt = {
-    { "Case1: optional::nullopt check", { 1, 1 }, std::nullopt },
-    { "Case2: vector first element", { 2, 2 }, { { "4", "2" } } }
+  std::vector<struct Test> tests = {
+    { "Case1", { false }, 1 },
+    { "Case2", { true }, 1 },
   };
+  for (const auto& t : tests) {
+    try {
+      if (t.arg.can_throw_exception) {
+        throw std::runtime_error("runtime error message");
+      }
+    } catch (std::exception& e) {
 
-  for (const auto& t : tt) {
-    auto actual = t.arg.arg1 + t.arg.arg2;
-    if (actual == 2) {
-      EXPECT_EQ(t.want, std::nullopt);
-    } else {
-      EXPECT_EQ(t.want.value()[0], std::to_string(actual));
+      FAIL() << "exception: " << e.what();
     }
-  }
-}
-
-TEST(sample, null_test)
-{
-  struct Arg
-  {
-    int arg1;
-    int arg2;
-  };
-  struct TestTable
-  {
-    std::string testname;
-    struct Arg arg;
-    std::optional<std::vector<std::string>> want;
-  };
-  std::vector<struct TestTable> tt = {
-    { "Case1: optional::nullopt check", { 1, 1 }, std::nullopt },
-    { "Case2: vector first element", { 2, 2 }, { { "4", "2" } } }
-  };
-
-  for (const auto& t : tt) {
-    auto actual = t.arg.arg1 + t.arg.arg2;
-    if (actual == 2) {
-      EXPECT_EQ(t.want, std::nullopt);
-    } else {
-      EXPECT_EQ(t.want.value()[0], std::to_string(actual));
-    }
+    EXPECT_EQ(t.want, 1);
   }
 }
