@@ -10,9 +10,12 @@ services:
     networks:
       - db_nw
     volumes:
-      - type: volume
-        source: db-storage
-        target: /var/lib/postgresql/data
+      # - type: volume
+      #   source: db-storage
+      #   target: /var/lib/postgresql/data
+      - type: bind
+        source: initdb
+        target: /docker-entrypoint-initdb.d
     # ホストからDBeaver用にポートを公開
     ports:
       - target: 5432
@@ -20,10 +23,10 @@ services:
     stdin_open: false
     tty: false
 
-volumes:
-  db-storage:
-    name: db-storage
-    external: false
+# volumes:
+#   db-storage:
+#     name: db-storage
+#     external: false
 
 networks:
   db_nw:
