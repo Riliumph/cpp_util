@@ -3,10 +3,10 @@
 	"tasks": [
 		{
 			"type": "shell",
-			"label": "goodcase_task",
+			"label": "debug",
 			"command": "make",
 			"args": [
-				"goodcase"
+				"all"
 			],
 			"options": {},
 			"group": "build",
@@ -14,10 +14,10 @@
 		},
 		{
 			"type": "shell",
-			"label": "badcase_task",
+			"label": "unit test",
 			"command": "make",
 			"args": [
-				"badcase"
+				"test"
 			],
 			"options": {},
 			"group": "build",
