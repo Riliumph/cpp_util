@@ -27,5 +27,3 @@ RUN cmake .\
     && make\
     && make install
 
-# user defined in devcontainers
-USER 1000

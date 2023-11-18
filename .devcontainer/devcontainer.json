@@ -16,7 +16,7 @@
 	"workspaceMount": "source=${localWorkspaceFolder},target=/${localWorkspaceFolderBasename},type=bind",
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
-		"docker-in-docker": {
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
 			"version": "latest",
 			"dockerDashComposeVersion": "v2"
 		}
@@ -26,7 +26,10 @@
 		5432
 	],
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "gcc -v",
+	"onCreateCommand": [
+		"/${localWorkspaceFolderBasename}/.devcontainer/make_completion.sh"
+	],
+	"postCreateCommand": [],
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
@@ -53,7 +56,7 @@
 				"donjayamanne.githistory"
 			]
 		}
-	}
+	},
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+	"remoteUser": "vscode"
 }
