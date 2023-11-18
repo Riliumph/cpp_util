@@ -26,4 +26,5 @@ WORKDIR /usr/src/googletest/
 RUN cmake .\
     && make\
     && make install
-
+WORKDIR /usr/src
+RUN rm -rf googletest
