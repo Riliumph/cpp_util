@@ -5,44 +5,69 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <vector>
+namespace ring_buffer {
 
-class RingBuffer2
+template<typename T>
+class CustomRingBuffer
 {
 public:
-  explicit RingBuffer2(size_t size)
-    : buffer_(size)
+  /// @brief コンストラクタ
+  /// @param buffer_size 2のべき乗である必要がある
+  explicit CustomRingBuffer(size_t buffer_size)
+    : buffer_(buffer_size)
   {
   }
 
-  // Returns true on success. Fails if the buffer is full.
-  bool enqueue(int item)
+  bool enqueue(T item)
   {
-    uint64_t write_idx = write_idx_.load(std::memory_order_relaxed);
-    uint64_t read_idx = read_idx_.load(std::memory_order_acquire);
-    if (write_idx - read_idx == buffer_.size()) {
+    auto write_idx = write_idx_.load(std::memory_order_relaxed);
+    auto read_idx = read_idx_.load(std::memory_order_acquire);
+    if (is_full(write_idx, read_idx)) {
       return false;
     }
-    buffer_[write_idx & (buffer_.size() - 1)] = item;
-    write_idx_.store(write_idx + 1, std::memory_order_release);
+    buffer_[true_idx(write_idx)] = item;
+    move_next_write_idx(write_idx);
     return true;
   }
 
-  // Returns true on success. Fails if the buffer is empty.
-  bool dequeue(int* dest)
+  bool dequeue(T* dest)
   {
-    uint64_t read_idx = read_idx_.load(std::memory_order_relaxed);
-    uint64_t write_idx = write_idx_.load(std::memory_order_acquire);
-    if (write_idx == read_idx) {
+    auto read_idx = read_idx_.load(std::memory_order_relaxed);
+    auto write_idx = write_idx_.load(std::memory_order_acquire);
+    if (is_empty(write_idx, read_idx)) {
       return false;
     }
-    *dest = buffer_[read_idx & (buffer_.size() - 1)];
-    read_idx_.store(read_idx + 1, std::memory_order_release);
+    *dest = buffer_[true_idx(read_idx)];
+    move_next_read_idx(read_idx);
     return true;
   }
 
 private:
-  std::vector<int> buffer_;
+  std::vector<T> buffer_;
   std::atomic<uint64_t> read_idx_{ 0 };
   std::atomic<uint64_t> write_idx_{ 0 };
+
+  bool is_full(const uint64_t write_idx, const uint64_t read_idx) const
+  {
+    write_idx - read_idx == buffer_.size();
+  }
+
+  bool is_empty(const uint64_t write_idx, const uint64_t read_idx) const
+  {
+    return write_idx == read_idx;
+  }
+
+  bool true_idx(const uint64_t idx) const { return idx & (buffer_.size() - 1); }
+
+  void move_next_read_idx(const uint64_t read_idx)
+  {
+    read_idx_.store(read_idx + 1, std::memory_order_release);
+  }
+
+  void move_next_write_idx(const uint64_t write_idx)
+  {
+    write_idx_.store(write_idx + 1, std::memory_order_release);
+  }
 };
+}
 #endif
