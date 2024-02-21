@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  redis:
+    image: "redis:latest"
+    restart: always
+    hostname: redis
+    volumes:
+      - type: bind
+        source: redis.conf
+        target: /etc/redis.conf
+      - type: volume
+        source: redis-storage
+        target: /data
+    ports:
+      - target: 6379
+        published: 6379
+    stdin_open: false
+    tty: false
+
+volumes:
+  redis-storage:
+    name: redis-storage
+    external: false
