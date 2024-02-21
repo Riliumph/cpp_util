@@ -22,3 +22,14 @@ $ make
 $ sudo make install
 $ cd ..
 ```
+
+## Redisへの接続
+
+```console
+$  docker compose exec redis /bin/bash
+```
+
+```console
+root@redis:/data# redis-cli
+127.0.0.1:6379>
+```
