@@ -34,7 +34,8 @@
 	"customizations": {
 		"vscode": {
 			"settings": {
-				"terminal.integrated.shell.linux": "/bin/bash"
+				"terminal.integrated.shell.linux": "/bin/bash",
+				"extensions.verifySignature": false
 			},
 			"extensions": [
 				"ms-vscode.cpptools-themes",
