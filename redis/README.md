@@ -23,6 +23,12 @@ $ sudo make install
 $ cd ..
 ```
 
+### ハッシュ型のためのjsonライブラリ
+
+```console
+$ apt install nlohmann-json3-dev
+```
+
 ## Redisへの接続
 
 ```console

@@ -17,7 +17,8 @@ main()
   redis::input_list_data(redis);
   redis::input_capped_list_data(redis);
   redis::operate_queue(redis);
-
+  redis::operate_hash(redis);
+  redis::operate_json1(redis);
   std::cout << "終了" << std::endl;
   return 0;
 };
