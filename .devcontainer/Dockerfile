@@ -5,6 +5,7 @@ RUN apt-get update \
     libboost1.81-all-dev\
     googletest\
     libpqxx-dev\
+    nlohmann-json3-dev\
     peco\
     silversearcher-ag\
     vim\
