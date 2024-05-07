@@ -1,5 +1,6 @@
 {
     "configurations": [
+        // intellisense用設定
         {
             "name": "Linux",
             "includePath": [
@@ -11,10 +12,18 @@
                 "_DEBUG"
             ],
             "compilerPath": "/usr/bin/gcc",
-            "cStandard": "gnu17",
-            "cppStandard": "gnu++17",
+            "compilerArgs": [
+                "-Wall",
+                "-Wextra",
+                "-std=c++23"
+            ],
+            "cStandard": "c23",
+            "cppStandard": "c++23",
             "intelliSenseMode": "linux-gcc-x64",
-            "configurationProvider": "ms-vscode.makefile-tools"
+            "configurationProvider": "ms-vscode.makefile-tools",
+            "browse": {
+                // TagParser用設定
+            }
         }
     ],
     "version": 4
