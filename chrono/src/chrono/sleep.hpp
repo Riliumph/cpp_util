@@ -22,9 +22,12 @@ TimeUnit
 fps_sleep(std::chrono::system_clock::time_point start,
           std::chrono::system_clock::time_point end)
 {
-  constexpr auto time_per_frame = 1000 /*ms*/ / FPS;
+  constexpr auto one_sec = std::chrono::seconds(1);
+  constexpr auto unit_time_in_sec =
+    std::chrono::duration_cast<TimeUnit>(one_sec);
+  constexpr int unit_time_in_frame = unit_time_in_sec.count() / FPS;
   auto elapsed_time = std::chrono::duration_cast<TimeUnit>(end - start);
-  auto sleep_time = TimeUnit(time_per_frame - elapsed_time.count());
+  auto sleep_time = TimeUnit(unit_time_in_frame - elapsed_time.count());
   std::this_thread::sleep_for(sleep_time);
   return sleep_time;
 }
