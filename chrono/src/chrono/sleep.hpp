@@ -43,17 +43,10 @@ template<
 TimeUnit
 fps_sleep(std::function<void()> fn)
 {
-  auto frame_time = std::chrono::duration<double>(1.0 / FPS);
   auto start = std::chrono::system_clock::now();
   fn();
   auto end = std::chrono::system_clock::now();
-  auto elapsed_time = std::chrono::duration_cast<TimeUnit>(end - start);
-  auto sleep_time = frame_time - elapsed_time;
-  if (0 < sleep_time.count()) {
-    std::this_thread::sleep_for(sleep_time);
-  } else {
-    std::cerr << "over time(" << sleep_time.count() << ")" << std::endl;
-  }
+  auto sleep_time = fps_sleep<FPS, TimeUnit>(start, end);
   return sleep_time;
 }
 
