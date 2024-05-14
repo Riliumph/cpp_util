@@ -29,9 +29,7 @@ fps_sleep(std::chrono::system_clock::time_point start,
   constexpr int unit_time_in_frame = unit_time_in_sec.count() / FPS;
   auto elapsed_time = std::chrono::duration_cast<TimeUnit>(end - start);
   auto sleep_time = TimeUnit(unit_time_in_frame - elapsed_time.count());
-  if (0 < sleep_time.count()) {
-    std::this_thread::sleep_for(sleep_time);
-  }
+  std::this_thread::sleep_for(sleep_time);
   return sleep_time;
 }
 
@@ -62,7 +60,7 @@ dynamic_sleep(TimeUnit drive_time,
               std::chrono::system_clock::time_point end)
 {
   auto elapsed_time = std::chrono::duration_cast<TimeUnit>(end - start);
-  TimeUnit sleep_time(std::max(0L, drive_time.count() - elapsed_time.count()));
+  auto sleep_time = TimeUnit(drive_time - elapsed_time);
   std::this_thread::sleep_for(sleep_time);
   return sleep_time;
 }

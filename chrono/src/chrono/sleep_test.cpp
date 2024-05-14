@@ -30,16 +30,8 @@ TEST(fps_sleep, fps60_msec)
 
   auto now = time_point_cast<msecs>(system_clock::now());
   struct test_set tt[] = {
-    {
-      "待機するケース",
-      {
-        now,
-        now + 10ms,
-      },
-      {
-        6ms,
-      },
-    },
+    { "待機するケース", { now, now + 10ms }, { 6ms } },
+    { "待機しないケース", { now, now + 20ms }, { -4ms } },
   };
   for (const auto& t : tt) {
     auto actual = fps_sleep<60, msecs>(t.i.start, t.i.end);
@@ -67,16 +59,8 @@ TEST(fps_sleep, fps30_msec)
 
   auto now = time_point_cast<msecs>(system_clock::now());
   struct test_set tt[] = {
-    {
-      "待機するケース",
-      {
-        now,
-        now + 10ms,
-      },
-      {
-        23ms,
-      },
-    },
+    { "待機するケース", { now, now + 10ms }, { 23ms } },
+    { "待機しないケース", { now, now + 40ms }, { -7ms } },
   };
   for (const auto& t : tt) {
     auto actual = fps_sleep<30, msecs>(t.i.start, t.i.end);
@@ -104,16 +88,8 @@ TEST(fps_sleep, fps60_usec)
 
   auto now = time_point_cast<usecs>(system_clock::now());
   struct test_set tt[] = {
-    {
-      "待機するケース",
-      {
-        now,
-        now + 10ms,
-      },
-      {
-        6666us,
-      },
-    },
+    { "待機するケース", { now, now + 10ms }, { 6666us } },
+    { "待機しないケース", { now, now + 20ms }, { -3334us } },
   };
   for (const auto& t : tt) {
     auto actual = fps_sleep<60, usecs>(t.i.start, t.i.end);
@@ -143,6 +119,7 @@ TEST(dynamic_sleep, msec)
   auto now = time_point_cast<usecs>(system_clock::now());
   struct test_set tt[] = {
     { "待機するケース", { 80ms, now, now + 10ms }, { 70ms } },
+    { "待機しないケース", { 80ms, now, now + 100ms }, { -20ms } },
   };
   for (const auto& t : tt) {
     auto actual = dynamic_sleep(t.i.sleep_time, t.i.start, t.i.end);
