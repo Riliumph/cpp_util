@@ -8,6 +8,7 @@
 #include <thread>
 #include <type_traits>
 // original
+#include "chrono/frame/frame.hpp"
 #include "chrono/operator_io.hpp"
 
 /// @brief FPSを計算して余剰時間を待機する関数
@@ -26,12 +27,9 @@ TimeUnit
 fps_sleep(std::chrono::system_clock::time_point start,
           std::chrono::system_clock::time_point end)
 {
-  constexpr auto one_sec = std::chrono::seconds(1);
-  constexpr auto unit_time_in_sec =
-    std::chrono::duration_cast<TimeUnit>(one_sec);
-  constexpr int unit_time_in_frame = unit_time_in_sec.count() / FPS;
+  constexpr auto TPF = time_per_frame<FPS, TimeUnit>();
   auto elapsed_time = std::chrono::duration_cast<TimeUnit>(end - start);
-  auto sleep_time = TimeUnit(unit_time_in_frame - elapsed_time.count());
+  auto sleep_time = TimeUnit(TPF - elapsed_time.count());
   std::this_thread::sleep_for(sleep_time);
   return sleep_time;
 }

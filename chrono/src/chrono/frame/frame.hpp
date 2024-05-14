@@ -1,14 +1,15 @@
 #ifndef INCLUDE_CHRONO_FRAME_FRAME_HPP
 #define INCLUDE_CHRONO_FRAME_FRAME_HPP
+#include <chrono>
 
-template<typename UnitTime>
-int
-FrameCountInSec()
+template<uint32_t FPS, typename TimeUnit>
+constexpr int
+time_per_frame()
 {
-  constexpr auto one_sec = std::chrono::seconds(1);
-  auto one_sec_duration = std::chrono::duration_cast<UnitTime>(one_second);
-  int frames_in_sec = one_second_duration / UnitTime(1);
-  return frames_in_sec;
+  auto one_sec = std::chrono::seconds(1);
+  auto unit_time_in_sec = std::chrono::duration_cast<TimeUnit>(one_sec);
+  int unit_time_in_frame = unit_time_in_sec.count() / FPS;
+  return unit_time_in_frame;
 }
 
 #endif // INCLUDE_CHRONO_FRAME_FRAME_HPP
