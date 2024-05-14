@@ -8,11 +8,17 @@
 #include <thread>
 #include <type_traits>
 // original
-#include "operator_io.hpp"
+#include "chrono/operator_io.hpp"
 
 std::chrono::seconds
 cron_sleep(double);
 
+/// @brief 指定した周期の余剰時間を待機する関数
+/// @tparam TimeUnit 採用する時間単位
+/// @param drive_time 周期時間
+/// @param start 開始時刻
+/// @param end 終了時刻
+/// @return 待機した時間
 template<
   typename TimeUnit,
   typename = typename std::enable_if<std::is_base_of<
@@ -29,13 +35,18 @@ dynamic_sleep(TimeUnit drive_time,
   return sleep_time;
 }
 
+/// @brief dynamic_sleepのヘルパーメソッド（オーバーロード定義）
+/// @tparam TimeUnit 採用した時間単位
+/// @param drive_time 周期時間
+/// @param fn 実行する関数
+/// @return 待機した時間
 template<
   typename TimeUnit,
   typename = typename std::enable_if<std::is_base_of<
     std::chrono::duration<typename TimeUnit::rep, typename TimeUnit::period>,
     TimeUnit>::value>::type>
 TimeUnit
-dynamic_sleep_helper(TimeUnit drive_time, std::function<void()> fn)
+dynamic_sleep(TimeUnit drive_time, std::function<void()> fn)
 {
   auto start = std::chrono::system_clock::now();
   fn();

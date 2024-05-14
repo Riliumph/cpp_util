@@ -1,5 +1,5 @@
-#ifndef INCLUDE_CHRONO_OPERATOR_HPP
-#define INCLUDE_CHRONO_OPERATOR_HPP
+#ifndef INCLUDE_CHRONO_OPERATOR_IO_HPP
+#define INCLUDE_CHRONO_OPERATOR_IO_HPP
 #include <chrono>
 #include <ostream>
 
@@ -35,4 +35,4 @@ operator<<(std::ostream& os, const std::chrono::duration<Rep, Period>& lv)
   }
   return os;
 }
-#endif // INCLUDE_CHRONO_OPERATOR_HPP
+#endif // INCLUDE_CHRONO_OPERATOR_IO_HPP
