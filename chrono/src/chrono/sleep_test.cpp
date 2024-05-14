@@ -120,3 +120,32 @@ TEST(fps_sleep, fps60_usec)
     EXPECT_EQ(t.o.expected, actual);
   }
 }
+
+TEST(dynamic_sleep, msec)
+{
+  struct test_data
+  {
+    msecs sleep_time;
+    system_clock::time_point start;
+    system_clock::time_point end;
+  };
+  struct test_result
+  {
+    msecs expected;
+  };
+  struct test_set
+  {
+    const std::string name;
+    struct test_data i;
+    struct test_result o;
+  };
+
+  auto now = time_point_cast<usecs>(system_clock::now());
+  struct test_set tt[] = {
+    { "待機するケース", { 80ms, now, now + 10ms }, { 70ms } },
+  };
+  for (const auto& t : tt) {
+    auto actual = dynamic_sleep(t.i.sleep_time, t.i.start, t.i.end);
+    EXPECT_EQ(t.o.expected, actual);
+  }
+}
