@@ -1,7 +1,6 @@
+#include "operator_io.hpp"
 // STL
 #include <ctime>
-// original
-#include "operator.hpp"
 
 std::ostream&
 operator<<(std::ostream& os, const std::chrono::system_clock::time_point& tp)
