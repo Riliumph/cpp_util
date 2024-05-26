@@ -10,7 +10,7 @@
 using namespace std::chrono;
 using namespace std::literals::chrono_literals;
 
-TEST(fps_sleep, fps60_msec)
+TEST(sleep, fps60_msec)
 {
   struct test_data
   {
@@ -34,12 +34,12 @@ TEST(fps_sleep, fps60_msec)
     { "待機しないケース", { now, now + 20ms }, { -4ms } },
   };
   for (const auto& t : tt) {
-    auto actual = fps_sleep<60, msecs>(t.i.start, t.i.end);
+    auto actual = sleep<60, msecs>(t.i.start, t.i.end);
     EXPECT_EQ(t.o.expected, actual);
   }
 }
 
-TEST(fps_sleep, fps30_msec)
+TEST(sleep, fps30_msec)
 {
   struct test_data
   {
@@ -63,12 +63,12 @@ TEST(fps_sleep, fps30_msec)
     { "待機しないケース", { now, now + 40ms }, { -7ms } },
   };
   for (const auto& t : tt) {
-    auto actual = fps_sleep<30, msecs>(t.i.start, t.i.end);
+    auto actual = sleep<30, msecs>(t.i.start, t.i.end);
     EXPECT_EQ(t.o.expected, actual);
   }
 }
 
-TEST(fps_sleep, fps60_usec)
+TEST(sleep, fps60_usec)
 {
   struct test_data
   {
@@ -92,7 +92,7 @@ TEST(fps_sleep, fps60_usec)
     { "待機しないケース", { now, now + 20ms }, { -3334us } },
   };
   for (const auto& t : tt) {
-    auto actual = fps_sleep<60, usecs>(t.i.start, t.i.end);
+    auto actual = sleep<60, usecs>(t.i.start, t.i.end);
     EXPECT_EQ(t.o.expected, actual);
   }
 }

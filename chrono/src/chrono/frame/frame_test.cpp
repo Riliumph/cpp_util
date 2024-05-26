@@ -10,50 +10,50 @@
 using namespace std::chrono;
 using namespace std::literals::chrono_literals;
 
-TEST(time_per_frame, fps60_ms)
+TEST(time_per_period, fps60_ms)
 {
   struct test_data
   {};
   struct test_result
   {
-    int expected;
+    int msec;
   };
   struct test_set
   {
     const std::string name;
     struct test_data i;
-    struct test_result o;
+    struct test_result expected;
   };
 
   struct test_set tt[] = {
-    { "60FPSのミリ秒計算", {}, { 16 } },
+    { "60FPS(Hz)は何ミリ秒？", {}, { 16 } },
   };
   for (const auto& t : tt) {
-    auto actual = time_per_frame<60, msecs>();
-    EXPECT_EQ(t.o.expected, actual);
+    auto actual = time_per_period<60, msecs>();
+    EXPECT_EQ(t.expected.msec, actual);
   }
 }
 
-TEST(time_per_frame, fps60_us)
+TEST(time_per_period, fps60_us)
 {
   struct test_data
   {};
   struct test_result
   {
-    int expected;
+    int usec;
   };
   struct test_set
   {
     const std::string name;
     struct test_data i;
-    struct test_result o;
+    struct test_result expected;
   };
 
   struct test_set tt[] = {
-    { "60FPSのマイクロ秒計算", {}, { 16666 } },
+    { "60FPS(Hz)は何マイクロ秒？", {}, { 16666 } },
   };
   for (const auto& t : tt) {
-    auto actual = time_per_frame<60, usecs>();
-    EXPECT_EQ(t.o.expected, actual);
+    auto actual = time_per_period<60, usecs>();
+    EXPECT_EQ(t.expected.usec, actual);
   }
 }
