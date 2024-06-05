@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/devcontainers/cpp:debian
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y\
     libboost1.81-all-dev\
-    googletest\
+    libgtest-dev\
     libpqxx-dev\
     nlohmann-json3-dev\
     peco\
@@ -22,10 +22,3 @@ RUN make\
     && chmod o+x diff-highlight\
     && ln -s /usr/share/doc/git/contrib/diff-highlight/diff-highlight /usr/local/bin
 
-# build googletest
-WORKDIR /usr/src/googletest/
-RUN cmake .\
-    && make\
-    && make install
-WORKDIR /usr/src
-RUN rm -rf googletest
