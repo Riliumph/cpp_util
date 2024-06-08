@@ -7,40 +7,49 @@
 
 TEST(simple, simple)
 {
-  struct Arg
+  struct TestData
   {
     int arg1;
     int arg2;
   };
-  struct Test
+  struct TestResult
   {
-    std::string test_name;
-    struct Arg arg;
     int want;
   };
-  std::vector<struct Test> tests = {
+  struct TestSet
+  {
+    std::string test_name;
+    struct TestData arg;
+    struct TestResult expected;
+  };
+  struct TestSet tt[] = {
     { "Case1", { 1, 1 }, 2 },
     { "Case2", { 1, 3 }, 4 },
   };
-  for (const auto& t : tests) {
+  for (const auto& t : tt) {
     auto actual = t.arg.arg1 + t.arg.arg2;
-    EXPECT_EQ(t.want, actual);
+    EXPECT_EQ(t.expected.want, actual);
   }
 }
 
 TEST(simple, exception)
 {
-  struct Arg
+  struct TestData
   {
     bool can_throw_exception;
   };
-  struct Test
+  struct TestResult
   {
-    std::string test_name;
-    struct Arg arg;
     int want;
   };
-  std::vector<struct Test> tests = {
+  struct TestSet
+  {
+    std::string test_name;
+    struct TestData arg;
+    struct TestResult expected;
+  };
+
+  std::vector<struct TestSet> tests = {
     { "Case1", { false }, 1 },
     { "Case2", { true }, 1 },
   };
@@ -50,9 +59,8 @@ TEST(simple, exception)
         throw std::runtime_error("runtime error message");
       }
     } catch (std::exception& e) {
-
       FAIL() << "exception: " << e.what();
     }
-    EXPECT_EQ(t.want, 1);
+    EXPECT_EQ(t.expected.want, 1);
   }
 }

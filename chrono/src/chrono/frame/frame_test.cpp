@@ -12,20 +12,20 @@ using namespace std::literals::chrono_literals;
 
 TEST(time_per_period, fps60_ms)
 {
-  struct test_data
+  struct TestData
   {};
-  struct test_result
+  struct TestResult
   {
     int msec;
   };
-  struct test_set
+  struct TestSet
   {
-    const std::string name;
-    struct test_data i;
-    struct test_result expected;
+    std::string name;
+    struct TestData arg;
+    struct TestResult expected;
   };
 
-  struct test_set tt[] = {
+  struct TestSet tt[] = {
     { "60FPS(Hz)は何ミリ秒？", {}, { 16 } },
   };
   for (const auto& t : tt) {
@@ -36,20 +36,20 @@ TEST(time_per_period, fps60_ms)
 
 TEST(time_per_period, fps60_us)
 {
-  struct test_data
+  struct TestData
   {};
-  struct test_result
+  struct TestResult
   {
     int usec;
   };
-  struct test_set
+  struct TestSet
   {
-    const std::string name;
-    struct test_data i;
-    struct test_result expected;
+    std::string name;
+    struct TestData arg;
+    struct TestResult expected;
   };
 
-  struct test_set tt[] = {
+  struct TestSet tt[] = {
     { "60FPS(Hz)は何マイクロ秒？", {}, { 16666 } },
   };
   for (const auto& t : tt) {

@@ -12,87 +12,87 @@ using namespace std::literals::chrono_literals;
 
 TEST(sleep, fps60_msec)
 {
-  struct test_data
+  struct TestData
   {
     system_clock::time_point start;
     system_clock::time_point end;
   };
-  struct test_result
+  struct TestResult
   {
-    msecs expected;
+    msecs slept_time;
   };
-  struct test_set
+  struct TestSet
   {
     const std::string name;
-    struct test_data i;
-    struct test_result o;
+    struct TestData arg;
+    struct TestResult expected;
   };
 
   auto now = time_point_cast<msecs>(system_clock::now());
-  struct test_set tt[] = {
+  struct TestSet tt[] = {
     { "待機するケース", { now, now + 10ms }, { 6ms } },
     { "待機しないケース", { now, now + 20ms }, { -4ms } },
   };
   for (const auto& t : tt) {
-    auto actual = sleep<60, msecs>(t.i.start, t.i.end);
-    EXPECT_EQ(t.o.expected, actual);
+    auto actual = sleep<60, msecs>(t.arg.start, t.arg.end);
+    EXPECT_EQ(t.expected.slept_time, actual);
   }
 }
 
 TEST(sleep, fps30_msec)
 {
-  struct test_data
+  struct TestData
   {
     system_clock::time_point start;
     system_clock::time_point end;
   };
-  struct test_result
+  struct TestResult
   {
-    msecs expected;
+    msecs slept_time;
   };
-  struct test_set
+  struct TestSet
   {
     const std::string name;
-    struct test_data i;
-    struct test_result o;
+    struct TestData arg;
+    struct TestResult expected;
   };
 
   auto now = time_point_cast<msecs>(system_clock::now());
-  struct test_set tt[] = {
+  struct TestSet tt[] = {
     { "待機するケース", { now, now + 10ms }, { 23ms } },
     { "待機しないケース", { now, now + 40ms }, { -7ms } },
   };
   for (const auto& t : tt) {
-    auto actual = sleep<30, msecs>(t.i.start, t.i.end);
-    EXPECT_EQ(t.o.expected, actual);
+    auto actual = sleep<30, msecs>(t.arg.start, t.arg.end);
+    EXPECT_EQ(t.expected.slept_time, actual);
   }
 }
 
 TEST(sleep, fps60_usec)
 {
-  struct test_data
+  struct TestData
   {
     system_clock::time_point start;
     system_clock::time_point end;
   };
-  struct test_result
+  struct TestResult
   {
-    usecs expected;
+    usecs slept_time;
   };
-  struct test_set
+  struct TestSet
   {
     const std::string name;
-    struct test_data i;
-    struct test_result o;
+    struct TestData arg;
+    struct TestResult expected;
   };
 
   auto now = time_point_cast<usecs>(system_clock::now());
-  struct test_set tt[] = {
+  struct TestSet tt[] = {
     { "待機するケース", { now, now + 10ms }, { 6666us } },
     { "待機しないケース", { now, now + 20ms }, { -3334us } },
   };
   for (const auto& t : tt) {
-    auto actual = sleep<60, usecs>(t.i.start, t.i.end);
-    EXPECT_EQ(t.o.expected, actual);
+    auto actual = sleep<60, usecs>(t.arg.start, t.arg.end);
+    EXPECT_EQ(t.expected.slept_time, actual);
   }
 }

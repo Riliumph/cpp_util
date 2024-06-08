@@ -10,7 +10,7 @@
 
 TEST(server, convert_ip)
 {
-  struct test_data
+  struct TestData
   {
     std::string name;
     struct addrinfo hint;
@@ -22,16 +22,16 @@ TEST(server, convert_ip)
     { AF_INET, htons(8080), { inet_addr("127.0.0.1") }, { 0 } }
   };
 
-  std::vector<test_data> tests = { { "NULLを指定しているため0.0.0.0である",
-                                     { AI_PASSIVE,
-                                       AF_INET,
-                                       SOCK_STREAM,
-                                       IPPROTO_TCP,
-                                       (socklen_t)sizeof(sockaddr_in),
-                                       (struct sockaddr*)(&ipv4s[0]),
-                                       nullptr,
-                                       nullptr },
-                                     "0.0.0.0" } };
+  std::vector<TestData> tests = { { "NULLを指定しているため0.0.0.0である",
+                                    { AI_PASSIVE,
+                                      AF_INET,
+                                      SOCK_STREAM,
+                                      IPPROTO_TCP,
+                                      (socklen_t)sizeof(sockaddr_in),
+                                      (struct sockaddr*)(&ipv4s[0]),
+                                      nullptr,
+                                      nullptr },
+                                    "0.0.0.0" } };
   // test開始
   for (auto& test : tests) {
     Server srv;
@@ -48,7 +48,7 @@ TEST(server, convert_ip)
 
 TEST(server, get_port_number)
 {
-  struct test_data
+  struct TestData
   {
     std::string name;
     struct addrinfo hint;
@@ -60,16 +60,16 @@ TEST(server, get_port_number)
     { AF_INET, htons(8080), { inet_addr("127.0.0.1") }, { 0 } }
   };
 
-  std::vector<test_data> tests = { { "正常系：ポート番号が正しいか",
-                                     { AI_PASSIVE,
-                                       AF_INET,
-                                       SOCK_STREAM,
-                                       IPPROTO_TCP,
-                                       (socklen_t)sizeof(sockaddr_in),
-                                       (struct sockaddr*)(&ipv4s[0]),
-                                       nullptr,
-                                       nullptr },
-                                     8080 } };
+  std::vector<TestData> tests = { { "正常系：ポート番号が正しいか",
+                                    { AI_PASSIVE,
+                                      AF_INET,
+                                      SOCK_STREAM,
+                                      IPPROTO_TCP,
+                                      (socklen_t)sizeof(sockaddr_in),
+                                      (struct sockaddr*)(&ipv4s[0]),
+                                      nullptr,
+                                      nullptr },
+                                    8080 } };
   // test開始
   for (auto& test : tests) {
     Server srv;
@@ -86,7 +86,7 @@ TEST(server, get_port_number)
 
 TEST(server, setter_hint)
 {
-  struct test_data
+  struct TestData
   {
     std::string name;
     struct addrinfo hint;
@@ -97,15 +97,15 @@ TEST(server, setter_hint)
     { AF_INET, htons(8080), { inet_addr("127.0.0.1") }, { 0 } }
   };
 
-  std::vector<test_data> tests = { { "正常系：ポート番号が正しいか",
-                                     { AI_PASSIVE,
-                                       AF_INET,
-                                       SOCK_STREAM,
-                                       IPPROTO_TCP,
-                                       (socklen_t)sizeof(sockaddr_in),
-                                       (struct sockaddr*)(&ipv4s[0]),
-                                       nullptr,
-                                       nullptr } } };
+  std::vector<TestData> tests = { { "正常系：ポート番号が正しいか",
+                                    { AI_PASSIVE,
+                                      AF_INET,
+                                      SOCK_STREAM,
+                                      IPPROTO_TCP,
+                                      (socklen_t)sizeof(sockaddr_in),
+                                      (struct sockaddr*)(&ipv4s[0]),
+                                      nullptr,
+                                      nullptr } } };
   // test開始
   for (auto& test : tests) {
     Server srv;
