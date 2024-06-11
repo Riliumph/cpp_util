@@ -1,6 +1,14 @@
 # compiler setting
-COMPILER = g++ -v
-CXXFLAGS = -g -MMD -Wall -Wextra -Winit-self -std=c++17
+CXXVER   = c++17
+COMPILER = g++
+CXXFLAGS = -MMD
+CXXFLAGS+= -Wall -Wextra -Winit-self
+CXXFLAGS+= -std=$(CXXVER)
+# debug mode
+DEBUG_CXXFLAGS = -g
+DEBUG_CXXFLAGS+= -DDEBUG_
+# release mode
+RELEASE_CXXFLAGS = -O2
 
 # library setting
 LDFLAGS = -L/usr/local/lib
@@ -27,7 +35,7 @@ OBJS    = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%.cpp, %.o, $(SRCS)))
 # test setting
 TEST_EXT= %_test.cpp
 TESTLIBS = $(LIBS) -lpthread -lgtest -lgtest_main
-TESTROOT = src
+TESTROOT = $(SRCROOT)
 TESTSRCS = $(filter-out $(EXCLUDE) %main.cpp, $(shell find $(SRCROOT) -name "*.cpp"))
 TESTOBJS = $(addprefix $(OBJROOT)/, $(patsubst $(TESTROOT)/%.cpp, %.o, $(TESTSRCS)))
 TESTDIRS = $(dir $(TESTSRCS))
@@ -35,20 +43,32 @@ TESTDIRS = $(dir $(TESTSRCS))
 # dependency setting
 DEPS = $(OBJS:.o=.d)
 
-.PHONY: clean all analyze
+.PHONY: clean all debug release test analyze
 
-goodcase: $(TARGET)
+all: debug
 
-badcase: CXXFLAGS += -DADL_ERROR
-badcase: $(TARGET)
+goodcase: clean $(TARGET)
 
+badcase: CXXFLAGS+= -DADL_ERROR
+badcase: clean $(TARGET)
+
+test: CXXFLAGS+= $(DEBUG_CXXFLAGS)
 test: $(TESTOBJS)
-	@echo "build $< -> $@"
+	@echo "--- TEST MODE ---"
 	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
 	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(TESTLIBS)
+	$(BINROOT)/$@
+
+debug: CXXFLAGS+= $(DEBUG_CXXFLAGS)
+debug: $(TARGET)
+	@echo "--- DEBUG MODE ---"
+
+release: CXXFLAGS+= $(RELEASE_CXXFLAGS)
+release: $(TARGET)
+	@echo "--- RELEASE MODE ---"
 
 $(TARGET): $(OBJS)
-	@echo "build exe $@"
+	@echo "build $< -> $@"
 	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
 	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(LIBS)
 
@@ -58,8 +78,7 @@ $(OBJROOT)/%.o: $(SRCROOT)/%.cpp
 	$(COMPILER) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
 
 analyze:
-	cppcheck --std=c++17 --enable=all $(SRCROOT)
-	cppcheck --std=c++17 --enable=all -DADL_ERROR $(SRCROOT)
+	cppcheck --std=$(CXXVER) --enable=all $(SRCROOT)
 
 fix_lib:
 	@ldconfig

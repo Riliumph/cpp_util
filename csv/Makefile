@@ -1,6 +1,14 @@
 # compiler setting
-COMPILER = gcc -v
-CXXFLAGS = -g -MMD -Wall -Wextra -Winit-self -std=c++17
+CXXVER   = c++17
+COMPILER = g++
+CXXFLAGS = -MMD
+CXXFLAGS+= -Wall -Wextra -Winit-self
+CXXFLAGS+= -std=$(CXXVER)
+# debug mode
+DEBUG_CXXFLAGS = -g
+DEBUG_CXXFLAGS+= -DDEBUG_
+# release mode
+RELEASE_CXXFLAGS = -O2
 
 # library setting
 LDFLAGS = -L/usr/local/lib
@@ -27,36 +35,45 @@ OBJS    = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%.c, %.o, $(SRCS)))
 # test setting
 TEST_EXT= %_test.cpp
 TESTLIBS = $(LIBS) -lpthread -lgtest -lgtest_main
-TESTROOT = src
-TESTSRCS = $(filter-out $(EXCLUDE) %main.cpp, $(shell find $(SRCROOT) -name "*.c"))
+TESTROOT = $(SRCROOT)
+TESTSRCS = $(filter-out $(EXCLUDE) %main.c, $(shell find $(SRCROOT) -name "*.c"))
 TESTOBJS = $(addprefix $(OBJROOT)/, $(patsubst $(TESTROOT)/%.c, %.o, $(TESTSRCS)))
 TESTDIRS = $(dir $(TESTSRCS))
 
 # dependency setting
 DEPS = $(OBJS:.o=.d)
 
-.PHONY: clean all analyze
+.PHONY: clean all debug release test analyze
 
-all: $(OBJS) $(TARGET)
-	@echo "make all"
+all: debug
 
+test: CXXFLAGS+= $(DEBUG_CXXFLAGS)
 test: $(TESTOBJS)
-	@echo "build $< -> $@"
+	@echo "--- TEST MODE ---"
 	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
 	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(TESTLIBS)
+	$(BINROOT)/$@
+
+debug: CXXFLAGS+= $(DEBUG_CXXFLAGS)
+debug: $(TARGET)
+	@echo "--- DEBUG MODE ---"
+
+release: CXXFLAGS+= $(RELEASE_CXXFLAGS)
+release: $(TARGET)
+	@echo "--- RELEASE MODE ---"
 
 $(TARGET): $(OBJS)
 	@echo "build $< -> $@"
 	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
 	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(LIBS)
 
-$(OBJROOT)/%.o: $(SRCROOT)/%.cpp
+$(OBJROOT)/%.o: $(SRCROOT)/%.c
 	@echo "build $< -> $@"
 	@[ -d $@ ] || mkdir -p $(dir $@)
 	$(COMPILER) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
 
 analyze:
-	cppcheck --std=c++17 --enable=all $(SRCROOT)
+	cppcheck --std=$(CXXVER) --enable=all $(SRCROOT)
 
 fix_lib:
 	@ldconfig
