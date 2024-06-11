@@ -1,6 +1,8 @@
 # compiler setting
 COMPILER = g++ -v
-CXXFLAGS = -g -MMD -Wall -Wextra -Winit-self -std=c++17
+CXXFLAGS = -g -MMD
+CXXFLAGS+= -Wall -Wextra -Winit-self
+CXXFLAGS+= -std=c++17
 
 # library setting
 LDFLAGS = -L/usr/local/lib
