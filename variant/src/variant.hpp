@@ -4,9 +4,9 @@
 // boost::variant
 #else
 // std::variant
+#include "variant/map/table.hpp"
 #include "variant/operator.hpp"
 #include "variant/operator_io.hpp"
-#include "variant/table.hpp"
 #endif
 // both
 #endif // INCLUDE_VALIANT_HPP
