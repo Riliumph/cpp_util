@@ -64,6 +64,9 @@ release: CXXFLAGS+= $(RELEASE_CXXFLAGS)
 release: $(BIN)
 	@echo "--- RELEASE MODE ---"
 
+install:
+	@cp -vf lib/$(LIB) /usr/local/lib/$(LIB)
+
 # binary build rule
 $(BIN): $(LIB) $(BIN_OBJS)
 	@echo "build bin $^ -> $@"
