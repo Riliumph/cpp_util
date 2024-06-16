@@ -1,5 +1,5 @@
-#ifndef DEFINE_HPP
-#define DEFINE_HPP
+#ifndef INCLUDE_POSTGRES_DEFINE_HPP
+#define INCLUDE_POSTGRES_DEFINE_HPP
 // STL
 #include <string>
 // original
@@ -24,4 +24,4 @@ enum OID
 using db_record = record<bool, int, long, float, double, std::string>;
 using db_table = table<bool, int, long, float, double, std::string>;
 }
-#endif // DEFINE_HPP
+#endif // INCLUDE_POSTGRES_DEFINE_HPP

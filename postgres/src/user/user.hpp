@@ -1,5 +1,5 @@
-#ifndef USER_HPP
-#define USER_HPP
+#ifndef INCLUDE_USER_HPP
+#define INCLUDE_USER_HPP
 // STL
 #include <ostream>
 
@@ -26,4 +26,4 @@ private:
 std::ostream&
 operator<<(std::ostream&, const User&);
 } // entity
-#endif // USER_HPP
+#endif // INCLUDE_USER_HPP
