@@ -4,9 +4,11 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/src/**",
                 "/usr/include/**",
-                "/usr/local/include/**"
+                "/usr/local/include/**",
+                "${workspaceFolder}/src/**",
+                "${workspaceFolder}/../chrono/src/**",
+                "${workspaceFolder}/../variant/src/**"
             ],
             "defines": [
                 "_DEBUG"
