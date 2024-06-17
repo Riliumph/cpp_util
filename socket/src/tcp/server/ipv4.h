@@ -1,8 +1,9 @@
-#ifndef TCP_SERVER_IPV4_HPP
-#define TCP_SERVER_IPV4_HPP
+#ifndef INCLUDE_TCP_SERVER_IPV4_H
+#define INCLUDE_TCP_SERVER_IPV4_H
 // STL
 #include <functional>
 #include <memory>
+#include <string>
 #include <vector>
 // Standard
 #include <netdb.h>
@@ -63,4 +64,4 @@ protected: // Server Config
   char serv_name[NI_MAXSERV];
   struct timeval timeout;
 };
-#endif // TCP_SERVER_HPP
+#endif // INCLUDE_TCP_SERVER_H

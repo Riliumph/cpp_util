@@ -1,4 +1,4 @@
-#include "ipv4.hpp"
+#include "ipv4.h"
 // STL
 #include <iostream>
 #include <stdlib.h>
@@ -10,7 +10,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 // original
-#include "util/addrinfo.h"
+#include "tcp/util.h"
 
 Server::Server()
   : server_fd{ 0 }
