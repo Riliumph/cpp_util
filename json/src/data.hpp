@@ -24,6 +24,7 @@ public:
     os << "Name: " << lv.name << std::endl;
     os << "Email: " << lv.email << std::endl;
     os << "Age: " << lv.age << std::endl;
+    return os;
   };
 
   friend void from_json(const nlohmann::json& j, Data& lv)
