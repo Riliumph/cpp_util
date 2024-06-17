@@ -1,5 +1,5 @@
-#ifndef RESULT_SET_HPP
-#define RESULT_SET_HPP
+#ifndef INCLUDE_POSTGRES_RESULT_SET_HPP
+#define INCLUDE_POSTGRES_RESULT_SET_HPP
 // STL
 #include <map>
 #include <ostream>
@@ -35,4 +35,4 @@ private:
 std::ostream&
 operator<<(std::ostream&, const ResultSet&);
 } // namespace postgres
-#endif // RESULT_SET_HPP
+#endif // INCLUDE_POSTGRES_RESULT_SET_HPP

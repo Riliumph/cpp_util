@@ -12,35 +12,37 @@ RELEASE_CXXFLAGS = -O2
 
 # library setting
 LDFLAGS = -L/usr/local/lib
+LDFLAGS+= -L./lib
 LIBS    = -lstdc++
-
 # include setting
-INCLUDE = -I$(SRCROOT)/
+INCLUDE = -I$(SRC_ROOT)/
 EXCLUDE = .git%
 
-# binary setting
-TARGET  = $(shell basename $$(pwd))
-BINROOT = bin
+# build settings
+SRC_ROOT = src
+OBJ_ROOT = obj
 
-# source setting
-SRCROOT = src
-SRCS    = $(filter-out $(EXCLUDE) $(TEST_EXT), $(shell find $(SRCROOT) -name "*.cpp"))
-SRCDIRS = $(dir $(SRCS))
+# bin target
+BIN      = $(shell basename $$(pwd))
+BIN_ROOT = bin
+BIN_SRCS = $(filter-out $(EXCLUDE) $(TEST_EXT), $(shell find $(SRC_ROOT) -mindepth 1 -maxdepth 1 -name "*.cpp"))
+BIN_OBJS = $(addprefix $(OBJ_ROOT)/, $(patsubst $(SRC_ROOT)/%.cpp, %.o, $(BIN_SRCS)))
 
-# object setting
-OBJROOT = obj
-OBJDIRS = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%, %, $(SRCDIRS)))
-OBJS    = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%.cpp, %.o, $(SRCS)))
+# static library target
+LIB      = lib$(BIN).a
+LIB_ROOT = lib
+LIB_SRCS = $(filter-out $(EXCLUDE) $(TEST_EXT), $(shell find $(SRC_ROOT) -mindepth 2 -name "*.cpp"))
+LIB_OBJS = $(addprefix $(OBJ_ROOT)/, $(patsubst $(SRC_ROOT)/%.cpp, %.o, $(LIB_SRCS)))
 
 # test setting
-TEST_EXT= %_test.cpp
-TESTLIBS = $(LIBS) -lpthread -lgtest -lgtest_main
-TESTROOT = $(SRCROOT)
-TESTSRCS = $(filter-out $(EXCLUDE) %main.cpp, $(shell find $(SRCROOT) -name "*.cpp"))
-TESTOBJS = $(addprefix $(OBJROOT)/, $(patsubst $(TESTROOT)/%.cpp, %.o, $(TESTSRCS)))
-TESTDIRS = $(dir $(TESTSRCS))
+TEST_LIBS = $(LIBS) -lpthread -lgtest -lgtest_main
+TEST_EXT  = %_test.cpp
+TEST_SRCS = $(filter-out $(EXCLUDE) %main.cpp, $(shell find $(SRC_ROOT) -name "*.cpp"))
+TEST_OBJS = $(addprefix $(OBJ_ROOT)/, $(patsubst $(SRC_ROOT)/%.cpp, %.o, $(TEST_SRCS)))
 
 # dependency setting
+OBJS = $(BIN_OBJS)
+OBJS+= $(LIB_OBJS)
 DEPS = $(OBJS:.o=.d)
 
 .PHONY: clean all debug release test analyze
@@ -48,37 +50,48 @@ DEPS = $(OBJS:.o=.d)
 all: debug
 
 test: CXXFLAGS+= $(DEBUG_CXXFLAGS)
-test: $(TESTOBJS)
+test: $(TEST_OBJS)
 	@echo "--- TEST MODE ---"
-	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
-	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(TESTLIBS)
-	$(BINROOT)/$@
+	@[ -d $(BIN_ROOT) ] || mkdir -p $(BIN_ROOT)
+	$(COMPILER) -o $(BIN_ROOT)/$@ $^ $(LDFLAGS) $(TEST_LIBS)
+	$(BIN_ROOT)/$@
 
 debug: CXXFLAGS+= $(DEBUG_CXXFLAGS)
-debug: $(TARGET)
+debug: $(BIN)
 	@echo "--- DEBUG MODE ---"
 
 release: CXXFLAGS+= $(RELEASE_CXXFLAGS)
-release: $(TARGET)
+release: $(BIN)
 	@echo "--- RELEASE MODE ---"
 
-$(TARGET): $(OBJS)
-	@echo "build $< -> $@"
-	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
-	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(LIBS)
+install:
+	@cp -vf lib/$(LIB) /usr/local/lib/$(LIB)
 
-$(OBJROOT)/%.o: $(SRCROOT)/%.cpp
-	@echo "build $< -> $@"
+# binary build rule
+$(BIN): $(LIB) $(BIN_OBJS)
+	@echo "build bin $^ -> $@"
+	@[ -d $(BIN_ROOT) ] || mkdir -p $(BIN_ROOT)
+	$(COMPILER) -o $(BIN_ROOT)/$@ $(BIN_OBJS) $(LDFLAGS) $(LIBS) -l$(BIN)
+
+# static library build rule
+$(LIB): $(LIB_OBJS)
+	@echo "build lib $^ -> $@"
+	@[ -d $(LIB_ROOT) ] || mkdir -p $(LIB_ROOT)
+	ar rcv $(LIB_ROOT)/$@ $^
+
+# object build rule
+$(OBJ_ROOT)/%.o: $(SRC_ROOT)/%.cpp
+	@echo "build obj $< -> $@"
 	@[ -d $@ ] || mkdir -p $(dir $@)
 	$(COMPILER) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
 
 analyze:
-	cppcheck --std=$(CXXVER) --enable=all $(SRCROOT)
+	cppcheck --std=$(CXXVER) --enable=all $(SRC_ROOT)
 
 fix_lib:
 	@ldconfig
 
 clean:
-	@rm -rf $(OBJROOT) $(BINROOT)
+	@rm -rf $(OBJ_ROOT) $(BIN_ROOT) $(LIB_ROOT)
 
 -include $(DEPS)

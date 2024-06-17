@@ -1,4 +1,4 @@
-#include "user/user.hpp"
+#include "user.hpp"
 
 namespace entity {
 #ifndef ACCESSOR
