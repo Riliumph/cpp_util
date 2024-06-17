@@ -1,3 +1,4 @@
+#include "ipv4.h"
 // STL
 #include <cstring>
 #include <string>
@@ -5,8 +6,6 @@
 #include <arpa/inet.h>
 // 3rd
 #include <gtest/gtest.h>
-// original
-#include "ipv4.hpp"
 
 TEST(server, convert_ip)
 {
