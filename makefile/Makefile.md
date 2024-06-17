@@ -45,7 +45,7 @@ C++なのにclangだとiostream系のC++クラスライブラリが見つかり�
 `.d`ファイルにヘッダファイル用のターゲットも出力される。  
 これにより、ヘッダファイルを削除したときにコンパイルエラーになることを防ぐことができる。
 
-#### - `Wall`
+#### `-Wall`
 
 警告をすべて表示する。警告は0にしような
 
@@ -87,6 +87,8 @@ C++17を解釈可能にする
 だって、他のやり方はシステムに干渉する可能性あるし。。。
 
 とはいえ、4は「共有ライブラリか？」と言われれば疑問は付く。
+
+1がダメな理由は[ここ](http://xahlee.info/UnixResource_dir/_/ldpath.html)
 
 ### LIBS - ライブラリ -
 
@@ -406,3 +408,9 @@ allコマンドは依存関係ファイルのビルドが自動で走ること�
 |`firstword` | 最初の名前を返す|
 |`wildcard` | ワイルドカードによりファイル名リストを返す|
 |`foreach` | 引数を複数回展開する|
+
+## 参考
+
+- [Linux共有ライブラリ「.so」の作り方](https://www.tenkaiken.com/short-articles/linux%E5%85%B1%E6%9C%89%E3%83%A9%E3%82%A4%E3%83%96%E3%83%A9%E3%83%AA-so-%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9/)
+- [gccを用いたCの共有ライブラリの作り方](https://sleepy-yoshi.hatenablog.com/entry/20090510/p1)
+- [Why LD_LIBRARY_PATH is bad](http://xahlee.info/UnixResource_dir/_/ldpath.html)
