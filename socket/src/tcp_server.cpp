@@ -5,7 +5,7 @@
 // system
 #include <unistd.h>
 // original
-#include "tcp.h"
+#include "network.h"
 
 ssize_t
 getline(int, std::string&);

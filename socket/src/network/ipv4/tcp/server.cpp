@@ -1,4 +1,4 @@
-#include "ipv4.h"
+#include "server.h"
 // STL
 #include <iostream>
 #include <stdlib.h>
@@ -10,7 +10,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 // original
-#include "tcp/util.h"
+#include "network/util.h"
 
 Server::Server()
   : server_fd{ 0 }
