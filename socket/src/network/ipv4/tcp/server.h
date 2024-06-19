@@ -42,7 +42,6 @@ public:
 #endif // EPOLL
 
 private:
-  int ReuseAddress();
   void Hint(struct addrinfo&);
   void CloseClient(int);
   void SafeClose();

@@ -156,7 +156,7 @@ Server::Socket()
 int
 Server::Bind()
 {
-  auto err = ReuseAddress();
+  auto err = ReuseAddress(server_fd);
   if (err < 0) {
     return err;
   }
@@ -191,22 +191,6 @@ Server::Accept()
   }
   client_fds.emplace_back(client_fd);
   return client_fd;
-}
-
-/// @brief TIME_WAIT状態のポートを再利用する設定を有効化する
-/// @return 成功可否
-/// bind前に実行すること
-int
-Server::ReuseAddress()
-{
-  int on = 1;
-  auto result =
-    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
-  if (result < 0) {
-    perror("setsockopt(,,SO_REUSEADDR)");
-    return result;
-  }
-  return result;
 }
 
 void
