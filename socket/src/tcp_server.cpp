@@ -19,14 +19,7 @@ main()
   hint.ai_socktype = SOCK_STREAM;
   hint.ai_flags = AI_PASSIVE;
   nw::ipv4::tcp::Server srv(port_no, hint);
-  srv.Identify("");
-  if (srv.Socket() < 0) {
-    return -1;
-  }
-  if (srv.Bind() < 0) {
-    return -1;
-  }
-  if (srv.Listen() < 0) {
+  if (srv.Establish() < 0) {
     return -1;
   }
   srv.LoopBySelect([](int i) {

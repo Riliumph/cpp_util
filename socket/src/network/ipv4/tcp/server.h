@@ -11,10 +11,12 @@
 #include <sys/select.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+// Original
+#include "network/interface/server.h"
 
 namespace nw::ipv4::tcp {
 /// @brief IPv4でTCP通信を行うサーバー
-class Server
+class Server : public nw::IF::Server
 {
   static const int QUEUE_SIZE = SOMAXCONN;
 
@@ -28,11 +30,7 @@ public: // accessor
   void Timeout(time_t, suseconds_t);
 
 public:
-  int Identify(std::string);
-  int Socket();
-  int Bind();
-  int Listen();
-  int Accept();
+  int Establish() override;
 
   bool LoopBySelect(std::function<bool(int)>);
 #ifdef EPOLL
@@ -43,6 +41,13 @@ private:
   void Hint(struct addrinfo&);
   void CloseClient(int);
   void SafeClose();
+
+private:
+  int Identify(std::string);
+  int CreateSocket();
+  int AttachAddress();
+  int Listen();
+  int Accept();
 
 private: // File Descriptor
   fd_set fds;

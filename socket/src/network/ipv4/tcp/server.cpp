@@ -52,6 +52,29 @@ Server::Timeout(time_t sec, suseconds_t usec)
   timeout.tv_usec = usec;
 }
 
+int
+Server::Establish()
+{
+  Identify();
+  auto ok = CreateSocket();
+  if (ok < 0) {
+    return ok;
+  }
+  ok = ReuseAddress(server_fd);
+  if (ok < 0) {
+    return ok;
+  }
+  ok = AttachAddress();
+  if (ok < 0) {
+    return ok;
+  }
+  ok = Listen();
+  if (ok < 0) {
+    return ok;
+  }
+  return ok;
+}
+
 /// @brief サーバーを構築するネットワーク情報のヒントを設定する
 /// @param hint ヒント
 void
@@ -69,7 +92,7 @@ Server::Hint(struct addrinfo& hint_data)
 /// Windows: C:\Windows\system32\drivers\etc\services
 /// @return
 int
-Server::Identify(std::string service_name)
+Server::Identify(std::string service_name = "")
 {
   if (service_name.empty()) {
     service_name = std::to_string(port_);
@@ -98,7 +121,7 @@ Server::Identify(std::string service_name)
 }
 
 int
-Server::Socket()
+Server::CreateSocket()
 {
   // addrinfo型はリンクリストを形成するため、forで対応する
   for (auto info = inet0; info != nullptr; info = info->ai_next) {
@@ -114,18 +137,14 @@ Server::Socket()
 }
 
 int
-Server::Bind()
+Server::AttachAddress()
 {
-  auto err = ReuseAddress(server_fd);
-  if (err < 0) {
-    return err;
-  }
-  err = bind(server_fd, inet0->ai_addr, inet0->ai_addrlen);
-  if (err < 0) {
+  auto ok = bind(server_fd, inet0->ai_addr, inet0->ai_addrlen);
+  if (ok < 0) {
     perror("bind");
-    return err;
+    return ok;
   }
-  return err;
+  return ok;
 }
 
 int
@@ -183,7 +202,6 @@ Server::SafeClose()
 bool
 Server::LoopBySelect(std::function<bool(int)> fn)
 {
-  FD_ZERO(&fds);
   FD_SET(server_fd, &fds);
   while (1) {
     fd_set readable = fds;
@@ -194,7 +212,7 @@ Server::LoopBySelect(std::function<bool(int)> fn)
       exit(1);
     } else if (updated_fd_num == 0) {
       perror("select timeout");
-      exit(1);
+      continue;
     }
     // Accept
     if (FD_ISSET(server_fd, &readable)) {

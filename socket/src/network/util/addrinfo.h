@@ -5,6 +5,7 @@
 #include <string>
 // C
 #include <netdb.h>
+
 void
 FreeAddrinfo(struct addrinfo*);
 int
