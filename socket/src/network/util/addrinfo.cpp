@@ -1,6 +1,11 @@
 #include "addrinfo.h"
+// STL
+#include <algorithm>
+// C
 #include <stdlib.h>
 #include <string.h>
+// Linux
+#include <arpa/inet.h>
 
 void
 FreeAddrinfo(struct addrinfo* info)
@@ -58,4 +63,40 @@ DeepCopy(const struct addrinfo* src, struct addrinfo** dst)
     }
   }
   return 0;
+}
+
+/// @brief 構造体addrinfoからIPアドレスを取得する関数
+/// 取得できるバイナリ形式からpresentation形式（文字列）への変換も行う。
+/// @param inet アドレス構造体
+/// @return IPアドレスの文字列
+std::optional<std::string>
+ConvertIPv4(struct addrinfo* inet)
+{
+  std::string buf;
+  buf.resize(INET_ADDRSTRLEN);
+  auto ipv4 = reinterpret_cast<struct sockaddr_in*>(inet->ai_addr);
+  auto p = inet_ntop(inet->ai_family, &ipv4->sin_addr, buf.data(), buf.size());
+  if (p == nullptr) {
+    perror("get ip");
+    return std::nullopt;
+  }
+  // NULL文字が含まれていることがあるため削除
+  buf.erase(std::remove(buf.begin(), buf.end(), '\0'), buf.end());
+  buf.shrink_to_fit();
+  return buf;
+}
+
+/// @brief 構造体addrinfoからポート番号を取得する関数
+/// ネットワークバイトオーダーからホストバイトオーダーへの変換も行う。
+/// @param inet アドレス構造体
+/// @return ポート番号
+int
+ConvertPort(struct addrinfo* inet)
+{
+  int port = 0;
+  for (auto info = inet; info != nullptr; info = info->ai_next) {
+    auto ipv4 = (struct sockaddr_in*)info->ai_addr;
+    port = static_cast<int>(ntohs(ipv4->sin_port));
+  }
+  return port;
 }

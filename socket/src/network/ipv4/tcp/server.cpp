@@ -60,46 +60,6 @@ Server::Hint(struct addrinfo& hint_data)
   DeepCopy(&hint_data, &hint);
 }
 
-/// @brief サーバーのIPアドレスを取得する
-/// @return IPアドレス
-std::string
-Server::IP() const
-{
-  if (inet0 == nullptr) {
-    return "";
-  }
-
-  std::string buf;
-  buf.resize(INET_ADDRSTRLEN);
-  auto ipv4 = reinterpret_cast<struct sockaddr_in*>(inet0->ai_addr);
-  auto ptr =
-    inet_ntop(inet0->ai_family, &ipv4->sin_addr, buf.data(), buf.size());
-  if (ptr == nullptr) {
-    perror("get ip");
-    return "";
-  }
-  // NULL文字が含まれていることがあるため削除
-  buf.erase(std::remove(buf.begin(), buf.end(), '\0'), buf.end());
-  buf.shrink_to_fit();
-  return buf;
-}
-
-/// @brief サーバーのポート番号を取得する
-/// @return ポート番号
-int
-Server::Port() const
-{
-  if (inet0 == nullptr) {
-    return -1;
-  }
-  int port = 0;
-  for (auto info = inet0; info != nullptr; info = info->ai_next) {
-    auto ipv4 = (struct sockaddr_in*)info->ai_addr;
-    port = static_cast<int>(ntohs(ipv4->sin_port));
-  }
-  return port;
-}
-
 #endif // ACCESSOR
 
 /// @brief ヒント情報からアドレス情報を決定する

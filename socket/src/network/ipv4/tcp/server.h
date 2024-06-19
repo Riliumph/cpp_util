@@ -24,8 +24,6 @@ public: // constructor
   ~Server();
 
 public: // accessor
-  std::string IP() const;
-  int Port() const;
   void Timeout(struct timeval);
   void Timeout(time_t, suseconds_t);
 
