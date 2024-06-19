@@ -20,17 +20,14 @@ class Server
 
 public: // constructor
   Server();
+  Server(const u_short, const struct addrinfo);
   ~Server();
 
 public: // accessor
-  void Hint(struct addrinfo&);
-  struct addrinfo Hint();
   std::string IP() const;
   int Port() const;
-  void Port(u_short);
   void Timeout(struct timeval);
   void Timeout(time_t, suseconds_t);
-  struct timeval Timeout() const;
 
 public:
   int Identify(std::string);
@@ -46,6 +43,7 @@ public:
 
 private:
   int ReuseAddress();
+  void Hint(struct addrinfo&);
   void CloseClient(int);
   void SafeClose();
 

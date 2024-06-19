@@ -21,6 +21,16 @@ Server::Server()
 {
   FD_ZERO(&fds);
 }
+Server::Server(const u_short port, struct addrinfo hint)
+  : server_fd{ 0 }
+  , ip{ "" }
+  , port_{ port }
+  , inet0{ nullptr }
+  , hint{ nullptr }
+{
+  FD_ZERO(&fds);
+  Hint(hint);
+}
 
 Server::~Server()
 {
@@ -42,12 +52,6 @@ Server::Timeout(time_t sec, suseconds_t usec)
   timeout.tv_usec = usec;
 }
 
-struct timeval
-Server::Timeout() const
-{
-  return timeout;
-}
-
 /// @brief サーバーを構築するネットワーク情報のヒントを設定する
 /// @param hint ヒント
 void
@@ -55,18 +59,6 @@ Server::Hint(struct addrinfo& hint_data)
 { // deep copyを行う
   DeepCopy(&hint_data, &hint);
 }
-
-struct addrinfo
-Server::Hint()
-{
-  return *hint;
-}
-
-// void
-// Server::IP(std::string ip_address)
-// {
-//   ip = ip_address;
-// }
 
 /// @brief サーバーのIPアドレスを取得する
 /// @return IPアドレス
@@ -90,12 +82,6 @@ Server::IP() const
   buf.erase(std::remove(buf.begin(), buf.end(), '\0'), buf.end());
   buf.shrink_to_fit();
   return buf;
-}
-
-void
-Server::Port(u_short port_no)
-{
-  port_ = port_no;
 }
 
 /// @brief サーバーのポート番号を取得する

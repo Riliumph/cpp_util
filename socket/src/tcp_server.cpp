@@ -13,13 +13,12 @@ getline(int, std::string&);
 int
 main()
 {
+  u_short port_no = 50000;
   struct addrinfo hint;
   hint.ai_family = AF_INET;
   hint.ai_socktype = SOCK_STREAM;
   hint.ai_flags = AI_PASSIVE;
-  nw::ipv4::tcp::Server srv;
-  srv.Hint(hint);
-  srv.Port(50000);
+  nw::ipv4::tcp::Server srv(port_no, hint);
   srv.Identify("");
   if (srv.Socket() < 0) {
     return -1;
