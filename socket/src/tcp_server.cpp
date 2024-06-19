@@ -17,7 +17,7 @@ main()
   hint.ai_family = AF_INET;
   hint.ai_socktype = SOCK_STREAM;
   hint.ai_flags = AI_PASSIVE;
-  Server srv;
+  nw::ipv4::tcp::Server srv;
   srv.Hint(hint);
   srv.Port(50000);
   srv.Identify("");

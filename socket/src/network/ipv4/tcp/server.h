@@ -12,6 +12,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 
+namespace nw::ipv4::tcp {
 /// @brief IPv4でTCP通信を行うサーバー
 class Server
 {
@@ -64,5 +65,5 @@ protected: // Server Config
   char serv_name[NI_MAXSERV];
   struct timeval timeout;
 };
-
+}
 #endif // INCLUDE_NETWORK_IPV4_TCP_SERVER_H

@@ -11,7 +11,7 @@
 #include <unistd.h>
 // original
 #include "network/util.h"
-
+namespace nw::ipv4::tcp {
 Server::Server()
   : server_fd{ 0 }
   , ip{ "" }
@@ -259,8 +259,11 @@ Server::LoopBySelect(std::function<bool(int)> fn)
     fd_set readable = fds;
     std::printf("wait select ...\n");
     auto updated_fd_num = select(FD_SETSIZE, &readable, 0, 0, &timeout);
-    if (updated_fd_num <= 0) {
+    if (updated_fd_num < 0) {
       perror("select");
+      exit(1);
+    } else if (updated_fd_num == 0) {
+      perror("select timeout");
       exit(1);
     }
     // Accept
@@ -338,3 +341,4 @@ Server::LoopByEPoll(std::function<bool(int)> fn)
   }
 }
 #endif // EPOLL
+}
