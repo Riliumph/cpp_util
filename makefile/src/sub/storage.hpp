@@ -6,17 +6,16 @@
 class Storage
 {
 public:
-  Storage() = default;
-  Storage(std::string);
+  Storage(const std::string&);
   ~Storage() = default;
-  friend std::ostream& operator<<(std::ostream&, const Storage&);
-  std::string Data();
-  void Data(std::string);
+  friend std::ostream& operator<<(std::ostream& os, const Storage& lv)
+  {
+    os << lv.data_;
+    return os;
+  }
 
 private:
   std::string data_;
 };
 
-std::ostream&
-operator<<(std::ostream&, const Storage&);
 #endif // SUB_STORAGE_HPP
