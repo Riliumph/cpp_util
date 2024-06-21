@@ -54,7 +54,7 @@ test: $(TEST_OBJS)
 	@echo "--- TEST MODE ---"
 	@[ -d $(BIN_ROOT) ] || mkdir -p $(BIN_ROOT)
 	$(COMPILER) -o $(BIN_ROOT)/$@ $^ $(LDFLAGS) $(TEST_LIBS)
-	$(BIN_ROOT)/$@
+#	$(BIN_ROOT)/$@ 自動実行するとVSCodeのテストデバッガが動かない
 
 debug: CXXFLAGS+= $(DEBUG_CXXFLAGS)
 debug: $(BIN)
