@@ -3,10 +3,9 @@
 #include <cmath>
 #include <ctime>
 #include <iostream>
-#include <thread>
 // original
-#include "name.hpp"
 #include "operator_io.hpp"
+#include "type.hpp"
 
 using namespace std::literals::chrono_literals;
 

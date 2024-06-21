@@ -1,15 +1,12 @@
 #ifndef INCLUDE_CHRONO_FRAME_SLEEP_HPP
 #define INCLUDE_CHRONO_FRAME_SLEEP_HPP
 // STL
-#include <algorithm>
 #include <chrono>
 #include <functional>
-#include <iostream>
 #include <thread>
 #include <type_traits>
 // original
-#include "chrono/frame/frame.hpp"
-#include "chrono/operator_io.hpp"
+#include "frame.hpp"
 
 /// @brief Hz駆動して余剰時間を待機する関数
 /// @tparam TimeUnit 採用する時間単位

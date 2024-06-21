@@ -1,7 +1,10 @@
 #ifndef INCLUDE_CHRONO_OPERATOR_IO_HPP
 #define INCLUDE_CHRONO_OPERATOR_IO_HPP
+// STL
 #include <chrono>
 #include <ostream>
+// original
+#include "type.hpp"
 
 std::ostream&
 operator<<(std::ostream&, const std::chrono::system_clock::time_point&);
@@ -10,14 +13,6 @@ template<typename Rep, typename Period>
 std::ostream&
 operator<<(std::ostream& os, const std::chrono::duration<Rep, Period>& lv)
 {
-  using namespace std::chrono;
-  using nsecs = std::chrono::nanoseconds;
-  using usecs = std::chrono::microseconds;
-  using msecs = std::chrono::milliseconds;
-  using secs = std::chrono::seconds;
-  using mins = std::chrono::minutes;
-  using hours = std::chrono::hours;
-
   if constexpr (std::ratio_equal_v<Period, nsecs::period>) {
     os << lv.count() << "ns";
   } else if constexpr (std::ratio_equal_v<Period, usecs::period>) {

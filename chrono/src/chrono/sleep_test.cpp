@@ -4,8 +4,7 @@
 // 3rd
 #include <gtest/gtest.h>
 // original
-#include "name.hpp"
-#include "operator_io.hpp"
+#include "type.hpp"
 
 using namespace std::chrono;
 using namespace std::literals::chrono_literals;

@@ -1,14 +1,10 @@
 #ifndef INCLUDE_CHRONO_SLEEP_HPP
 #define INCLUDE_CHRONO_SLEEP_HPP
 // STL
-#include <algorithm>
 #include <chrono>
 #include <functional>
-#include <iostream>
 #include <thread>
 #include <type_traits>
-// original
-#include "chrono/operator_io.hpp"
 
 std::chrono::seconds
 cron_sleep(double);
