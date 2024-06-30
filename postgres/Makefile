@@ -59,7 +59,6 @@ test: $(TEST_OBJS)
 	@echo "--- TEST MODE ---"
 	@[ -d $(BIN_ROOT) ] || mkdir -p $(BIN_ROOT)
 	$(COMPILER) -o $(BIN_ROOT)/$@ $^ $(LDFLAGS) $(TEST_LIBS)
-	$(BIN_ROOT)/$@
 
 debug: CXXFLAGS+= $(DEBUG_CXXFLAGS)
 debug: $(BIN)
@@ -68,6 +67,12 @@ debug: $(BIN)
 release: CXXFLAGS+= $(RELEASE_CXXFLAGS)
 release: $(BIN)
 	@echo "--- RELEASE MODE ---"
+
+install:
+	@echo "--- INSTALL ---"
+	@mkdir -p /etc/cpp_util/postgres/lib
+	@cp bin/postgres /etc/cpp_util/postgres
+	@cp -rf lib /etc/cpp_util/postgres
 
 # binary build rule
 $(BIN): $(LIB) $(BIN_OBJS)

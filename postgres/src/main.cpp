@@ -1,15 +1,19 @@
 // STL
 #include <algorithm>
+#include <chrono>
 #include <iostream>
 #include <memory>
 // 3rd
 #include <pqxx/pqxx>
 // original
+#include "chrono.hpp"
 #include "postgres.hpp"
 
 int
 main()
 {
+  auto now = std::chrono::system_clock::now();
+  std::cout << now << std::endl;
   try {
     auto db_conn = std::make_unique<pqxx::connection>("host=localhost"
                                                       " port=5432"
