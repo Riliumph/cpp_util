@@ -9,6 +9,8 @@ RUN apt-get update \
     peco\
     silversearcher-ag\
     vim\
+    # network
+    telnet\
     && apt-get clean\
     && rm -rf /var/lib/apt/lists/*
 
