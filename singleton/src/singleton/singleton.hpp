@@ -4,20 +4,25 @@
 #include <cassert>
 #include <memory>
 #include <mutex>
-
 template<typename T>
 class Singleton final
 {
 public:
-  static T& Get()
+  template<typename... Args>
+  static T& Get(Args&&... args)
   {
-    std::call_once(is_initialized, create);
+    std::call_once(
+      is_initialized, create<Args...>, std::forward<Args>(args)...);
     assert(instance);
     return *instance;
   }
 
 private:
-  static void create() { instance = std::make_unique<T>(); }
+  template<typename... Args>
+  static void create(Args&&... args)
+  {
+    instance = std::make_unique<T>(std::forward<Args>(args)...);
+  }
 
   static inline std::once_flag is_initialized;
   static inline std::unique_ptr<T> instance;
