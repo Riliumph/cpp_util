@@ -19,12 +19,8 @@ public:
 private:
   static void create() { instance = std::make_unique<T>(); }
 
-  static std::once_flag is_initialized;
-  static std::unique_ptr<T> instance;
+  static inline std::once_flag is_initialized;
+  static inline std::unique_ptr<T> instance;
 };
 
-template<typename T>
-std::once_flag Singleton<T>::is_initialized;
-template<typename T>
-std::unique_ptr<T> Singleton<T>::instance;
 #endif // INCLUDE_SINGLETON_SINGLETON_HPP
