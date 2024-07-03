@@ -4,6 +4,9 @@
 #include <cassert>
 #include <memory>
 #include <mutex>
+// original
+#include "finalizer.hpp"
+
 template<typename T>
 class Singleton final
 {
@@ -22,6 +25,7 @@ private:
   static void create(Args&&... args)
   {
     instance = std::make_unique<T>(std::forward<Args>(args)...);
+    Finalizer::Add([&]() { instance.reset(nullptr); });
   }
 
   static inline std::once_flag is_initialized;
