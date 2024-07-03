@@ -7,8 +7,9 @@
 // original
 #include "finalizer.hpp"
 
+namespace singleton {
 template<typename T>
-class Singleton final
+class Factory final
 {
 public:
   template<typename... Args>
@@ -31,5 +32,5 @@ private:
   static inline std::once_flag is_initialized;
   static inline std::unique_ptr<T> instance;
 };
-
+}
 #endif // INCLUDE_SINGLETON_SINGLETON_HPP

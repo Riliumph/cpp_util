@@ -6,6 +6,7 @@
 #include <mutex>
 #include <vector>
 
+namespace singleton {
 class Finalizer final
 {
 public:
@@ -24,5 +25,5 @@ private:
   Finalizer() = delete;
   static inline std::vector<std::function<void()>> finalizers;
 };
-
+}
 #endif // INCLUDE_SINGLETON_FINALIZER_HPP
