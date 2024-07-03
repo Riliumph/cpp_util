@@ -41,7 +41,7 @@
         ]
     },
     "gtest-adapter.debugConfig": [
-        "Unit Test",
+        "UnitTest"
     ],
     "gtest-adapter.supportLocation": true,
     "sql-formatter.uppercase": true,

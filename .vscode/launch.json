@@ -38,11 +38,12 @@
             ]
         },
         {
-            "name": "Unit Test",
+            "name": "UnitTest",
             "type": "cppdbg",
             "request": "launch",
-            "cwd": "${fileDirname}",
+            "cwd": "${workspaceFolder}",
             "program": "${workspaceFolder}/bin/test",
+            "additionalSOLibSearchPath": "${workspaceFolder}/lib",
             "args": [],
             "environment": [],
             "externalConsole": false,
