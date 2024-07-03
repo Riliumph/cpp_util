@@ -4,27 +4,33 @@
 #include <cassert>
 #include <memory>
 #include <mutex>
+// original
+#include "finalizer.hpp"
 
+namespace singleton {
 template<typename T>
-class Singleton final
+class Factory final
 {
 public:
-  static T& Get()
+  template<typename... Args>
+  static T& Get(Args&&... args)
   {
-    std::call_once(is_initialized, create);
+    std::call_once(
+      is_initialized, create<Args...>, std::forward<Args>(args)...);
     assert(instance);
     return *instance;
   }
 
 private:
-  static void create() { instance = std::make_unique<T>(); }
+  template<typename... Args>
+  static void create(Args&&... args)
+  {
+    instance = std::make_unique<T>(std::forward<Args>(args)...);
+    Finalizer::Add([&]() { instance.reset(nullptr); });
+  }
 
-  static std::once_flag is_initialized;
-  static std::unique_ptr<T> instance;
+  static inline std::once_flag is_initialized;
+  static inline std::unique_ptr<T> instance;
 };
-
-template<typename T>
-std::once_flag Singleton<T>::is_initialized;
-template<typename T>
-std::unique_ptr<T> Singleton<T>::instance;
+}
 #endif // INCLUDE_SINGLETON_SINGLETON_HPP

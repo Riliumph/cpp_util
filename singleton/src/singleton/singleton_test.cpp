@@ -23,14 +23,14 @@ TEST(singleton, rewrite)
   auto call_by_val = [](int d) {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-    auto only_one = Singleton<TestData>::Get();
+    auto only_one = singleton::Factory<TestData>::Get();
 #pragma GCC diagnostic pop
     only_one.data = d;
   };
 
   auto call_by_ref = [](int d) {
-    // Singleton<TestData>::Get().data = dと同等
-    auto& only_one = Singleton<TestData>::Get();
+    // Factory<TestData>::Get().data = dと同等
+    auto& only_one = singleton::Factory<TestData>::Get();
     only_one.data = d;
   };
 
@@ -41,7 +41,7 @@ TEST(singleton, rewrite)
   };
   for (const auto& t : tt) {
     t.test(t.arg.data);
-    auto new_v = Singleton<TestData>::Get().data;
+    auto new_v = singleton::Factory<TestData>::Get().data;
     // テスト関数の実行後に新規で取得した値は期待する値であること
     EXPECT_EQ(t.expected.data, new_v);
   }
