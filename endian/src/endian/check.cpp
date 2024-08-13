@@ -1,7 +1,8 @@
 #include "check.hpp"
 
+namespace endian {
 bool
-IsLittleEndian()
+IsLittle()
 {
 #ifdef __LITTLE_ENDIAN__
   return true;
@@ -11,4 +12,5 @@ IsLittleEndian()
   int t = 1;
   return *reinterpret_cast<char*>(&t) == 1;
 #endif
+}
 }

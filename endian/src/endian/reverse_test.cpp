@@ -4,6 +4,8 @@
 // 3rd
 #include <gtest/gtest.h>
 
+using namespace endian;
+
 TEST(little_to_big, byte4)
 {
   typedef union
@@ -31,7 +33,7 @@ TEST(little_to_big, byte4)
 
   for (const auto& t : tt) {
     byte_data actual;
-    actual.b4 = ReverseEndian(t.arg.data.b4);
+    actual.b4 = Reverse(t.arg.data.b4);
     for (size_t i = 0; i < sizeof(byte_data); ++i) {
       EXPECT_EQ(t.expected.b1[i], actual.b1[i]);
     }
@@ -73,7 +75,7 @@ TEST(little_to_big, byte8)
 
   for (const auto& t : tt) {
     byte_data actual;
-    actual.b4 = ReverseEndian(t.arg.data.b4);
+    actual.b4 = Reverse(t.arg.data.b4);
     for (size_t i = 0; i < sizeof(byte_data); ++i) {
       EXPECT_EQ(t.expected.b1[i], actual.b1[i]);
     }

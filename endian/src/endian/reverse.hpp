@@ -2,6 +2,9 @@
 #define INCLUDE_ENDIAN_REVERSE_HPP
 #include <algorithm>
 #include <type_traits>
+
+namespace endian {
+
 extern void* enabler;
 
 template<bool B, typename T = void>
@@ -20,7 +23,7 @@ template<typename T,
          enabler_if<std::is_scalar<T>::value> = enabler,
          enabler_if<!std::is_pointer<T>::value> = enabler>
 T
-ReverseEndian(T value)
+Reverse(T value)
 {
   auto begin = reinterpret_cast<char*>(&value);
   auto end = begin + sizeof(T);
@@ -28,4 +31,5 @@ ReverseEndian(T value)
   return value;
 }
 
+}
 #endif // INCLUDE_ENDIAN_REVERSE_HPP
