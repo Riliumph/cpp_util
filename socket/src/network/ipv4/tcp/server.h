@@ -43,7 +43,7 @@ private:
   void SafeClose();
 
 private:
-  int Identify(std::string);
+  int Identify(std::string = "");
   int CreateSocket();
   int AttachAddress();
   int Listen();

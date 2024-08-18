@@ -92,7 +92,7 @@ Server::Hint(struct addrinfo& hint_data)
 /// Windows: C:\Windows\system32\drivers\etc\services
 /// @return
 int
-Server::Identify(std::string service_name = "")
+Server::Identify(std::string service_name)
 {
   if (service_name.empty()) {
     service_name = std::to_string(port_);
