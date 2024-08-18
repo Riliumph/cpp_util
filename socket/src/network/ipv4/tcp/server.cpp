@@ -52,6 +52,8 @@ Server::Timeout(time_t sec, suseconds_t usec)
   timeout.tv_usec = usec;
 }
 
+/// @brief サーバーを立ち上げるための
+/// @return
 int
 Server::Establish()
 {
@@ -107,9 +109,9 @@ Server::Identify(std::string service_name)
 
   err = getnameinfo(inet0->ai_addr,
                     inet0->ai_addrlen,
-                    host_name,
+                    host_name, // output引数
                     sizeof(host_name),
-                    serv_name, // Port番号もしくはサービス名
+                    serv_name, // output引数
                     sizeof(serv_name),
                     NI_NUMERICHOST | NI_NUMERICSERV);
   if (err != 0) {
@@ -117,6 +119,7 @@ Server::Identify(std::string service_name)
     freeaddrinfo(inet0);
     return -1;
   }
+  std::cout << "port_no=" << serv_name << std::endl;
   return 0;
 }
 
