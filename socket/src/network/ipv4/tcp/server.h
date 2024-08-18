@@ -38,7 +38,7 @@ public:
 #endif // EPOLL
 
 private:
-  void Hint(struct addrinfo&);
+  void Hint(const struct addrinfo&);
   void CloseClient(int);
   void SafeClose();
 

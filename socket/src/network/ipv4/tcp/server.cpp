@@ -21,12 +21,12 @@ Server::Server()
 {
   FD_ZERO(&fds);
 }
-Server::Server(const u_short port, struct addrinfo hint)
+Server::Server(const u_short port, const struct addrinfo hint)
   : server_fd{ 0 }
   , ip{ "" }
   , port_{ port }
-  , inet0{ nullptr }
-  , hint{ nullptr }
+  , inet0{ new struct addrinfo }
+  , hint{ new struct addrinfo }
 {
   FD_ZERO(&fds);
   Hint(hint);
@@ -80,9 +80,12 @@ Server::Establish()
 /// @brief サーバーを構築するネットワーク情報のヒントを設定する
 /// @param hint ヒント
 void
-Server::Hint(struct addrinfo& hint_data)
-{ // deep copyを行う
-  DeepCopy(&hint_data, &hint);
+Server::Hint(const struct addrinfo& hint_data)
+{
+  std::cout << "copy hint" << std::endl;
+  hint->ai_family = hint_data.ai_family;
+  hint->ai_socktype = hint_data.ai_socktype;
+  hint->ai_flags = hint_data.ai_flags;
 }
 
 #endif // ACCESSOR

@@ -18,7 +18,9 @@ main()
   hint.ai_family = AF_INET;
   hint.ai_socktype = SOCK_STREAM;
   hint.ai_flags = AI_PASSIVE;
+  std::cout << "create server" << std::endl;
   nw::ipv4::tcp::Server srv(port_no, hint);
+  std::cout << "establish server" << std::endl;
   if (srv.Establish() < 0) {
     return -1;
   }
