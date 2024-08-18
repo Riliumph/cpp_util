@@ -18,6 +18,7 @@ Server::Server()
   , port_{ 0 }
   , inet0{ nullptr }
   , hint{ nullptr }
+  , timeout{ 0, 0 }
 {
   FD_ZERO(&fds);
 }
@@ -27,6 +28,7 @@ Server::Server(const u_short port, const struct addrinfo hint)
   , port_{ port }
   , inet0{ new struct addrinfo }
   , hint{ new struct addrinfo }
+  , timeout{ 0, 0 }
 {
   FD_ZERO(&fds);
   Hint(hint);
@@ -86,6 +88,15 @@ Server::Hint(const struct addrinfo& hint_data)
   hint->ai_family = hint_data.ai_family;
   hint->ai_socktype = hint_data.ai_socktype;
   hint->ai_flags = hint_data.ai_flags;
+}
+
+struct timeval*
+Server::Timeout()
+{
+  if (timeout.tv_sec == 0 && timeout.tv_usec == 0) {
+    return NULL;
+  }
+  return &timeout;
 }
 
 #endif // ACCESSOR
@@ -211,8 +222,7 @@ Server::LoopBySelect(std::function<bool(int)> fn)
   FD_SET(server_fd, &fds);
   while (1) {
     fd_set readable = fds;
-    std::printf("wait select ...\n");
-    auto updated_fd_num = select(FD_SETSIZE, &readable, 0, 0, &timeout);
+    auto updated_fd_num = select(FD_SETSIZE, &readable, 0, 0, Timeout());
     if (updated_fd_num < 0) {
       perror("select");
       exit(1);
