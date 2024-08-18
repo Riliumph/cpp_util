@@ -133,7 +133,7 @@ Server::Identify(std::string service_name)
     freeaddrinfo(inet0);
     return -1;
   }
-  std::cout << "port_no=" << serv_name << std::endl;
+  printf("identify: %s:%s\n", host_name, serv_name);
   return 0;
 }
 
@@ -180,11 +180,23 @@ Server::Listen()
 int
 Server::Accept()
 {
-  auto client_fd = accept(server_fd, 0, 0);
+  struct sockaddr_storage from;
+  auto len = (socklen_t)sizeof(from);
+  auto client_fd = accept(server_fd, (struct sockaddr*)&from, &len);
   if (client_fd < 0) {
     perror("accept");
     return client_fd;
   }
+  char from_host[NI_MAXHOST];
+  char from_port[NI_MAXSERV];
+  (void)getnameinfo((struct sockaddr*)&from,
+                    len,
+                    from_host,
+                    sizeof(from_host),
+                    from_port,
+                    sizeof(from_port),
+                    NI_NUMERICHOST | NI_NUMERICSERV);
+  printf("accept from: %s:%s\n", from_host, from_port);
   client_fds.emplace_back(client_fd);
   return client_fd;
 }
