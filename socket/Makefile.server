@@ -23,16 +23,16 @@ SRC_ROOT = src
 OBJ_ROOT = obj
 
 # bin target
-BIN      = $(shell basename $$(pwd))
+BIN      = server
 BIN_ROOT = bin
-BIN_SRCS = $(filter-out $(EXCLUDE) $(TEST_EXT), $(shell find $(SRC_ROOT) -name "*.cpp"))
+BIN_SRCS = $(filter-out $(EXCLUDE) $(TEST_EXT), $(shell find $(SRC_ROOT) -mindepth 1 -maxdepth 1 -name "*.cpp"))
 BIN_OBJS = $(addprefix $(OBJ_ROOT)/, $(patsubst $(SRC_ROOT)/%.cpp, %.o, $(BIN_SRCS)))
 
 # static library target
-# LIB      = lib$(BIN).a
-# LIB_ROOT = lib
-# LIB_SRCS = $(filter-out $(EXCLUDE) $(TEST_EXT), $(shell find $(SRC_ROOT) -mindepth 2 -name "*.cpp"))
-# LIB_OBJS = $(addprefix $(OBJ_ROOT)/, $(patsubst $(SRC_ROOT)/%.cpp, %.o, $(LIB_SRCS)))
+LIB      = lib$(BIN).a
+LIB_ROOT = lib
+LIB_SRCS = $(filter-out $(EXCLUDE) $(TEST_EXT), $(shell find $(SRC_ROOT) -mindepth 2 -name "*.cpp"))
+LIB_OBJS = $(addprefix $(OBJ_ROOT)/, $(patsubst $(SRC_ROOT)/%.cpp, %.o, $(LIB_SRCS)))
 
 # test setting
 TEST_LIBS = $(LIBS) -lpthread -lgtest -lgtest_main
@@ -71,7 +71,7 @@ install:
 $(BIN): $(LIB) $(BIN_OBJS)
 	@echo "build bin $^ -> $@"
 	@[ -d $(BIN_ROOT) ] || mkdir -p $(BIN_ROOT)
-	$(COMPILER) -o $(BIN_ROOT)/$@ $(BIN_OBJS) $(LDFLAGS) $(LIBS)
+	$(COMPILER) -o $(BIN_ROOT)/$@ $(BIN_OBJS) $(LDFLAGS) $(LIBS) -l$(BIN)
 
 # static library build rule
 $(LIB): $(LIB_OBJS)
