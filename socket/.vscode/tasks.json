@@ -3,11 +3,9 @@
 	"tasks": [
 		{
 			"type": "shell",
-			"label": "make",
-			"command": "make",
-			"args": [
-				"all"
-			],
+			"label": "make_server",
+			"command": "make -f Makefile.server all",
+			"args": [],
 			"options": {},
 			"group": "build",
 			"detail": "compiler: /usr/bin/cpp"
@@ -15,10 +13,8 @@
 		{
 			"type": "shell",
 			"label": "test",
-			"command": "make",
-			"args": [
-				"test"
-			],
+			"command": "make -f Makefile.server test && make -f Makefile.client test",
+			"args": [],
 			"options": {},
 			"group": "build",
 			"detail": "compiler: /usr/bin/cpp"

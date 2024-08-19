@@ -15,7 +15,7 @@
             "cwd": "${fileDirname}",
             "environment": [],
             "externalConsole": false,
-            "preLaunchTask": "make",
+            "preLaunchTask": "make_server",
             "miDebuggerPath": "/usr/bin/gdb"
         },
         {

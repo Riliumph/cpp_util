@@ -5,7 +5,7 @@
 // system
 #include <unistd.h>
 // original
-#include "tcp.h"
+#include "network.h"
 
 ssize_t
 getline(int, std::string&);
@@ -13,26 +13,22 @@ getline(int, std::string&);
 int
 main()
 {
+  u_short port_no = 50000;
   struct addrinfo hint;
   hint.ai_family = AF_INET;
   hint.ai_socktype = SOCK_STREAM;
   hint.ai_flags = AI_PASSIVE;
-  Server srv;
-  srv.Hint(hint);
-  srv.Port(50000);
-  srv.Identify("");
-  if (srv.Socket() < 0) {
-    return -1;
-  }
-  if (srv.Bind() < 0) {
-    return -1;
-  }
-  if (srv.Listen() < 0) {
+  std::cout << "create server" << std::endl;
+  nw::ipv4::tcp::Server srv(port_no, hint);
+  std::cout << "establish server" << std::endl;
+  if (srv.Establish() < 0) {
+    std::cerr << "failed to establish server" << std::endl;
     return -1;
   }
   srv.LoopBySelect([](int i) {
     std::string buffer;
     buffer.resize(128);
+    std::cout << "recv" << std::endl;
     auto recv_size = getline(i, buffer);
     if (recv_size < 0) {
       return false;

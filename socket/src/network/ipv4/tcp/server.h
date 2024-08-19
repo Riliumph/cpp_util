@@ -1,42 +1,38 @@
-#ifndef INCLUDE_TCP_SERVER_IPV4_H
-#define INCLUDE_TCP_SERVER_IPV4_H
+#ifndef INCLUDE_NETWORK_IPV4_TCP_SERVER_H
+#define INCLUDE_NETWORK_IPV4_TCP_SERVER_H
 // STL
+#include <array>
 #include <functional>
 #include <memory>
 #include <string>
-#include <vector>
 // Standard
 #include <netdb.h>
 // System
 #include <sys/select.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+// Original
+#include "network/interface/server.h"
 
+namespace nw::ipv4::tcp {
 /// @brief IPv4でTCP通信を行うサーバー
-class Server
+class Server : public nw::IF::Server
 {
   static const int QUEUE_SIZE = SOMAXCONN;
+  static constexpr int CONNECTION_MAX = 20;
+  static constexpr int DISABLE_FD = -1;
 
 public: // constructor
   Server();
+  Server(const u_short, const struct addrinfo);
   ~Server();
 
 public: // accessor
-  void Hint(struct addrinfo&);
-  struct addrinfo Hint();
-  std::string IP() const;
-  int Port() const;
-  void Port(u_short);
   void Timeout(struct timeval);
   void Timeout(time_t, suseconds_t);
-  struct timeval Timeout() const;
 
 public:
-  int Identify(std::string);
-  int Socket();
-  int Bind();
-  int Listen();
-  int Accept();
+  int Establish() override;
 
   bool LoopBySelect(std::function<bool(int)>);
 #ifdef EPOLL
@@ -44,14 +40,23 @@ public:
 #endif // EPOLL
 
 private:
-  int ReuseAddress();
-  void CloseClient(int);
+  void Hint(const struct addrinfo&);
+  struct timeval* Timeout();
   void SafeClose();
+
+private:
+  int Identify(std::string = "");
+  int CreateSocket();
+  int AttachAddress();
+  int Listen();
+  int Accept();
+  int CurrentConnection();
+  int ControlMaxConnection(const int);
 
 private: // File Descriptor
   fd_set fds;
   int server_fd; // サーバー接続を待ち受けているソケットFD
-  std::vector<int> client_fds;
+  std::array<int, CONNECTION_MAX> client_fds;
 
 protected: // IP config
   std::string ip;
@@ -64,4 +69,5 @@ protected: // Server Config
   char serv_name[NI_MAXSERV];
   struct timeval timeout;
 };
-#endif // INCLUDE_TCP_SERVER_H
+}
+#endif // INCLUDE_NETWORK_IPV4_TCP_SERVER_H

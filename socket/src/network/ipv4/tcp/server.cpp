@@ -1,4 +1,4 @@
-#include "ipv4.h"
+#include "server.h"
 // STL
 #include <iostream>
 #include <stdlib.h>
@@ -10,16 +10,29 @@
 #include <sys/types.h>
 #include <unistd.h>
 // original
-#include "tcp/util.h"
-
+#include "network/util.h"
+namespace nw::ipv4::tcp {
 Server::Server()
   : server_fd{ 0 }
   , ip{ "" }
   , port_{ 0 }
   , inet0{ nullptr }
   , hint{ nullptr }
+  , timeout{ 0, 0 }
 {
   FD_ZERO(&fds);
+}
+Server::Server(const u_short port, const struct addrinfo hint)
+  : server_fd{ 0 }
+  , ip{ "" }
+  , port_{ port }
+  , inet0{ new struct addrinfo }
+  , hint{ new struct addrinfo }
+  , timeout{ 0, 0 }
+{
+  FD_ZERO(&fds);
+  std::fill(client_fds.begin(), client_fds.end(), DISABLE_FD);
+  Hint(hint);
 }
 
 Server::~Server()
@@ -42,76 +55,49 @@ Server::Timeout(time_t sec, suseconds_t usec)
   timeout.tv_usec = usec;
 }
 
-struct timeval
-Server::Timeout() const
+/// @brief サーバーを立ち上げるための
+/// @return
+int
+Server::Establish()
 {
-  return timeout;
+  Identify();
+  auto ok = CreateSocket();
+  if (ok < 0) {
+    return ok;
+  }
+  ok = ReuseAddress(server_fd);
+  if (ok < 0) {
+    return ok;
+  }
+  ok = AttachAddress();
+  if (ok < 0) {
+    return ok;
+  }
+  ok = Listen();
+  if (ok < 0) {
+    return ok;
+  }
+  return ok;
 }
 
 /// @brief サーバーを構築するネットワーク情報のヒントを設定する
 /// @param hint ヒント
 void
-Server::Hint(struct addrinfo& hint_data)
-{ // deep copyを行う
-  DeepCopy(&hint_data, &hint);
+Server::Hint(const struct addrinfo& hint_data)
+{
+  std::cout << "copy hint" << std::endl;
+  hint->ai_family = hint_data.ai_family;
+  hint->ai_socktype = hint_data.ai_socktype;
+  hint->ai_flags = hint_data.ai_flags;
 }
 
-struct addrinfo
-Server::Hint()
+struct timeval*
+Server::Timeout()
 {
-  return *hint;
-}
-
-// void
-// Server::IP(std::string ip_address)
-// {
-//   ip = ip_address;
-// }
-
-/// @brief サーバーのIPアドレスを取得する
-/// @return IPアドレス
-std::string
-Server::IP() const
-{
-  if (inet0 == nullptr) {
-    return "";
+  if (timeout.tv_sec == 0 && timeout.tv_usec == 0) {
+    return NULL;
   }
-
-  std::string buf;
-  buf.resize(INET_ADDRSTRLEN);
-  auto ipv4 = reinterpret_cast<struct sockaddr_in*>(inet0->ai_addr);
-  auto ptr =
-    inet_ntop(inet0->ai_family, &ipv4->sin_addr, buf.data(), buf.size());
-  if (ptr == nullptr) {
-    perror("get ip");
-    return "";
-  }
-  // NULL文字が含まれていることがあるため削除
-  buf.erase(std::remove(buf.begin(), buf.end(), '\0'), buf.end());
-  buf.shrink_to_fit();
-  return buf;
-}
-
-void
-Server::Port(u_short port_no)
-{
-  port_ = port_no;
-}
-
-/// @brief サーバーのポート番号を取得する
-/// @return ポート番号
-int
-Server::Port() const
-{
-  if (inet0 == nullptr) {
-    return -1;
-  }
-  int port = 0;
-  for (auto info = inet0; info != nullptr; info = info->ai_next) {
-    auto ipv4 = (struct sockaddr_in*)info->ai_addr;
-    port = static_cast<int>(ntohs(ipv4->sin_port));
-  }
-  return port;
+  return &timeout;
 }
 
 #endif // ACCESSOR
@@ -138,9 +124,9 @@ Server::Identify(std::string service_name)
 
   err = getnameinfo(inet0->ai_addr,
                     inet0->ai_addrlen,
-                    host_name,
+                    host_name, // output引数
                     sizeof(host_name),
-                    serv_name, // Port番号もしくはサービス名
+                    serv_name, // output引数
                     sizeof(serv_name),
                     NI_NUMERICHOST | NI_NUMERICSERV);
   if (err != 0) {
@@ -148,11 +134,12 @@ Server::Identify(std::string service_name)
     freeaddrinfo(inet0);
     return -1;
   }
+  printf("identify: %s:%s\n", host_name, serv_name);
   return 0;
 }
 
 int
-Server::Socket()
+Server::CreateSocket()
 {
   // addrinfo型はリンクリストを形成するため、forで対応する
   for (auto info = inet0; info != nullptr; info = info->ai_next) {
@@ -168,18 +155,14 @@ Server::Socket()
 }
 
 int
-Server::Bind()
+Server::AttachAddress()
 {
-  auto err = ReuseAddress();
-  if (err < 0) {
-    return err;
-  }
-  err = bind(server_fd, inet0->ai_addr, inet0->ai_addrlen);
-  if (err < 0) {
+  auto ok = bind(server_fd, inet0->ai_addr, inet0->ai_addrlen);
+  if (ok < 0) {
     perror("bind");
-    return err;
+    return ok;
   }
-  return err;
+  return ok;
 }
 
 int
@@ -198,36 +181,45 @@ Server::Listen()
 int
 Server::Accept()
 {
-  auto client_fd = accept(server_fd, 0, 0);
+  struct sockaddr_storage from;
+  auto len = (socklen_t)sizeof(from);
+  auto client_fd = accept(server_fd, (struct sockaddr*)&from, &len);
   if (client_fd < 0) {
     perror("accept");
     return client_fd;
   }
-  client_fds.emplace_back(client_fd);
+  char from_host[NI_MAXHOST];
+  char from_port[NI_MAXSERV];
+  (void)getnameinfo((struct sockaddr*)&from,
+                    len,
+                    from_host,
+                    sizeof(from_host),
+                    from_port,
+                    sizeof(from_port),
+                    NI_NUMERICHOST | NI_NUMERICSERV);
+  printf("accept from: %s:%s\n", from_host, from_port);
   return client_fd;
 }
 
-/// @brief TIME_WAIT状態のポートを再利用する設定を有効化する
-/// @return 成功可否
-/// bind前に実行すること
 int
-Server::ReuseAddress()
+Server::CurrentConnection()
 {
-  int on = 1;
-  auto result =
-    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
-  if (result < 0) {
-    perror("setsockopt(,,SO_REUSEADDR)");
-    return result;
-  }
-  return result;
+  auto count = std::count_if(
+    client_fds.begin(), client_fds.end(), [](int x) { return x != -1; });
+  return count;
 }
 
-void
-Server::CloseClient(int fd)
+int
+Server::ControlMaxConnection(const int client_fd)
 {
-  client_fds.erase(std::remove(client_fds.begin(), client_fds.end(), fd),
-                   client_fds.end());
+  auto it = std::find(client_fds.begin(), client_fds.end(), DISABLE_FD);
+  if (it == client_fds.end()) {
+    return -1;
+  }
+  *it = client_fd;
+  printf("now clients: %d/%ld\n", CurrentConnection(), client_fds.size());
+  auto index = std::distance(client_fds.begin(), it);
+  return index;
 }
 
 void
@@ -242,9 +234,6 @@ Server::SafeClose()
   if (hint != nullptr) {
     freeaddrinfo(hint);
   }
-  for (const auto& client_fd : client_fds) {
-    CloseClient(client_fd);
-  }
 }
 
 /// @brief Select待ちループ
@@ -253,36 +242,45 @@ Server::SafeClose()
 bool
 Server::LoopBySelect(std::function<bool(int)> fn)
 {
-  FD_ZERO(&fds);
   FD_SET(server_fd, &fds);
   while (1) {
     fd_set readable = fds;
-    std::printf("wait select ...\n");
-    auto updated_fd_num = select(FD_SETSIZE, &readable, 0, 0, &timeout);
-    if (updated_fd_num <= 0) {
+    auto updated_fd_num = select(FD_SETSIZE, &readable, 0, 0, Timeout());
+    if (updated_fd_num < 0) {
       perror("select");
       exit(1);
+    } else if (updated_fd_num == 0) {
+      perror("select timeout");
+      continue;
     }
     // Accept
     if (FD_ISSET(server_fd, &readable)) {
       FD_CLR(server_fd, &readable);
-      std::printf(
-        "[PID:%d][FD:%d] accepting connections ...\n", getpid(), server_fd);
+      printf("accepting new comer ...\n");
       auto client_fd = Accept();
       if (client_fd < 0) {
-        return false;
+        continue;
       }
-      FD_SET(client_fd, &fds);
+      // 最大接続数制限のために独自管理が必要
+      auto idx = ControlMaxConnection(client_fd);
+      if (idx < 0) {
+        printf("reject new comer for limit connection");
+        close(client_fd);
+      } else {
+        // 全体集合に追加。READ集合ではないことに注意。
+        FD_SET(client_fd, &fds);
+      }
     }
-    // TODO:
-    // FD_SETSIZEは上限値であり、接続されたFDの最大値ではないため無駄なループが回っている
+    // 実際の処理
     for (const auto& client_fd : client_fds) {
       if (FD_ISSET(client_fd, &readable)) {
-        std::printf("[FD:%d] accepteding connections ...\n", client_fd);
+        std::printf("[FD:%d] is ready ...\n", client_fd);
         auto success = fn(client_fd);
         if (!success) {
           close(client_fd);
           FD_CLR(client_fd, &fds);
+          std::replace(
+            client_fds.begin(), client_fds.end(), client_fd, DISABLE_FD);
         }
       }
     }
@@ -338,3 +336,4 @@ Server::LoopByEPoll(std::function<bool(int)> fn)
   }
 }
 #endif // EPOLL
+}
