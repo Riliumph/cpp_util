@@ -22,11 +22,13 @@ main()
   nw::ipv4::tcp::Server srv(port_no, hint);
   std::cout << "establish server" << std::endl;
   if (srv.Establish() < 0) {
+    std::cerr << "failed to establish server" << std::endl;
     return -1;
   }
   srv.LoopBySelect([](int i) {
     std::string buffer;
     buffer.resize(128);
+    std::cout << "recv" << std::endl;
     auto recv_size = getline(i, buffer);
     if (recv_size < 0) {
       return false;

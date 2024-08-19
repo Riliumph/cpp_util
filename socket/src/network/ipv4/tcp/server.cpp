@@ -31,6 +31,7 @@ Server::Server(const u_short port, const struct addrinfo hint)
   , timeout{ 0, 0 }
 {
   FD_ZERO(&fds);
+  std::fill(client_fds.begin(), client_fds.end(), DISABLE_FD);
   Hint(hint);
 }
 
@@ -197,15 +198,28 @@ Server::Accept()
                     sizeof(from_port),
                     NI_NUMERICHOST | NI_NUMERICSERV);
   printf("accept from: %s:%s\n", from_host, from_port);
-  client_fds.emplace_back(client_fd);
   return client_fd;
 }
 
-void
-Server::CloseClient(int fd)
+int
+Server::CurrentConnection()
 {
-  client_fds.erase(std::remove(client_fds.begin(), client_fds.end(), fd),
-                   client_fds.end());
+  auto count = std::count_if(
+    client_fds.begin(), client_fds.end(), [](int x) { return x != -1; });
+  return count;
+}
+
+int
+Server::ControlMaxConnection(const int client_fd)
+{
+  auto it = std::find(client_fds.begin(), client_fds.end(), DISABLE_FD);
+  if (it == client_fds.end()) {
+    return -1;
+  }
+  *it = client_fd;
+  printf("now clients: %d/%ld\n", CurrentConnection(), client_fds.size());
+  auto index = std::distance(client_fds.begin(), it);
+  return index;
 }
 
 void
@@ -219,9 +233,6 @@ Server::SafeClose()
   }
   if (hint != nullptr) {
     freeaddrinfo(hint);
-  }
-  for (const auto& client_fd : client_fds) {
-    CloseClient(client_fd);
   }
 }
 
@@ -245,23 +256,31 @@ Server::LoopBySelect(std::function<bool(int)> fn)
     // Accept
     if (FD_ISSET(server_fd, &readable)) {
       FD_CLR(server_fd, &readable);
-      std::printf(
-        "[PID:%d][FD:%d] accepting connections ...\n", getpid(), server_fd);
+      printf("accepting new comer ...\n");
       auto client_fd = Accept();
       if (client_fd < 0) {
-        return false;
+        continue;
       }
-      FD_SET(client_fd, &fds);
+      // 最大接続数制限のために独自管理が必要
+      auto idx = ControlMaxConnection(client_fd);
+      if (idx < 0) {
+        printf("reject new comer for limit connection");
+        close(client_fd);
+      } else {
+        // 全体集合に追加。READ集合ではないことに注意。
+        FD_SET(client_fd, &fds);
+      }
     }
-    // TODO:
-    // FD_SETSIZEは上限値であり、接続されたFDの最大値ではないため無駄なループが回っている
+    // 実際の処理
     for (const auto& client_fd : client_fds) {
       if (FD_ISSET(client_fd, &readable)) {
-        std::printf("[FD:%d] accepteding connections ...\n", client_fd);
+        std::printf("[FD:%d] is ready ...\n", client_fd);
         auto success = fn(client_fd);
         if (!success) {
           close(client_fd);
           FD_CLR(client_fd, &fds);
+          std::replace(
+            client_fds.begin(), client_fds.end(), client_fd, DISABLE_FD);
         }
       }
     }

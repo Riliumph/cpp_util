@@ -1,10 +1,10 @@
 #ifndef INCLUDE_NETWORK_IPV4_TCP_SERVER_H
 #define INCLUDE_NETWORK_IPV4_TCP_SERVER_H
 // STL
+#include <array>
 #include <functional>
 #include <memory>
 #include <string>
-#include <vector>
 // Standard
 #include <netdb.h>
 // System
@@ -19,6 +19,8 @@ namespace nw::ipv4::tcp {
 class Server : public nw::IF::Server
 {
   static const int QUEUE_SIZE = SOMAXCONN;
+  static constexpr int CONNECTION_MAX = 20;
+  static constexpr int DISABLE_FD = -1;
 
 public: // constructor
   Server();
@@ -40,7 +42,6 @@ public:
 private:
   void Hint(const struct addrinfo&);
   struct timeval* Timeout();
-  void CloseClient(int);
   void SafeClose();
 
 private:
@@ -49,11 +50,13 @@ private:
   int AttachAddress();
   int Listen();
   int Accept();
+  int CurrentConnection();
+  int ControlMaxConnection(const int);
 
 private: // File Descriptor
   fd_set fds;
   int server_fd; // サーバー接続を待ち受けているソケットFD
-  std::vector<int> client_fds;
+  std::array<int, CONNECTION_MAX> client_fds;
 
 protected: // IP config
   std::string ip;
