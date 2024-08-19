@@ -1,74 +1,49 @@
-#include "epoll_std.h"
-#include <cerrno>
-#include <cstring>
+// STL
 #include <iostream>
-#include <sys/epoll.h>
+// Linux
 #include <unistd.h>
-
-// 定数定義
-const int MAX_EVENTS = 10;   // 同時に処理する最大のイベント数
-const int TIMEOUT_US = 1000; // epoll_waitのタイムアウト時間（μ秒）
+// original
+#include "event.h"
 
 int
 main()
 {
-  // epollのインスタンスを作成
-  int epoll_fd = epoll_create1(0);
-  if (epoll_fd == -1) {
-    perror("epoll_create1");
-    return 1;
+  auto e_handler = EpollHandler();
+  if (!e_handler.CanReady()) {
+    std::cerr << "failed to create epoll handler" << std::endl;
+    return -1;
   }
-
-  // epollイベント構造体の作成
-  struct epoll_event event;
-  event.events = EPOLLIN;       // 読み込み可能なイベントを監視
-  event.data.fd = STDIN_FILENO; // 標準入力を監視対象に設定
-
-  // epoll_ctlで監視対象を登録
-  if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, event.data.fd, &event) == -1) {
-    perror("epoll_ctl");
-    close(epoll_fd);
-    return 1;
+  struct epoll_event e1;
+  e1.events = EPOLLIN;       // 読み込み可能なイベントを監視
+  e1.data.fd = STDIN_FILENO; // 標準入力を監視対象に設定
+  auto ok = e_handler.RegisterEvent(e1);
+  if (ok != 0) {
+    std::cerr << "failed to register event" << std::endl;
+    return -1;
   }
+  std::cout << "Loop Event" << std::endl;
+  e_handler.LoopEvent([](int fd) {
+    std::cout << "fd: " << fd << std::endl;
+    // 標準入力からデータを読み込む
+    char buffer[1024];
+    ssize_t bytes_read = read(STDIN_FILENO, buffer, sizeof(buffer));
 
-  // epoll_waitでイベントを待ち受ける
-  while (true) {
-    struct epoll_event events[MAX_EVENTS];
-    int num_events = epoll_wait(epoll_fd, events, MAX_EVENTS, TIMEOUT_US);
-
-    if (num_events == -1) {
-      perror("epoll_wait");
-      break;
+    if (bytes_read == -1) {
+      perror("read");
+      return false;
+    } else if (bytes_read == 0) {
+      std::cout << "EOF received. Exiting..." << std::endl;
+      // close(epoll_fd);
+      return false;
     }
 
-    for (int i = 0; i < num_events; ++i) {
-      if (events[i].data.fd == STDIN_FILENO && events[i].events & EPOLLIN) {
-        // 標準入力からデータを読み込む
-        char buffer[1024];
-        ssize_t bytes_read = read(STDIN_FILENO, buffer, sizeof(buffer));
-
-        if (bytes_read == -1) {
-          perror("read");
-          break;
-        } else if (bytes_read == 0) {
-          std::cout << "EOF received. Exiting..." << std::endl;
-          close(epoll_fd);
-          return 0;
-        }
-
-        // 読み込んだデータを標準出力に書き出す
-        ssize_t bytes_written = write(STDOUT_FILENO, buffer, bytes_read);
-        if (bytes_written == -1) {
-          perror("write");
-          break;
-        }
-      } else {
-        // STDIN以外のイベントはここに記述する。
-        // mapに<fd,std::function>の関係性を構築すれば分岐は増えないのでは？
-      }
+    // 読み込んだデータを標準出力に書き出す
+    ssize_t bytes_written = write(STDOUT_FILENO, buffer, bytes_read);
+    if (bytes_written == -1) {
+      perror("write");
+      return false;
     }
-  }
-
-  close(epoll_fd);
+    return true;
+  });
   return 0;
 }

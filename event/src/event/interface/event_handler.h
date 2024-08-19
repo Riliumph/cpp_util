@@ -9,7 +9,7 @@ class EventHandler
 {
 public:
   virtual int WaitEvent() = 0;
-  virtual void LoopEvent(std::function<void(int)>) = 0;
+  virtual void LoopEvent(std::function<bool(int)>) = 0;
   virtual void LoopEvent() = 0;
   virtual void Timeout(std::chrono::milliseconds to) = 0;
 };

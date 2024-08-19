@@ -2,7 +2,6 @@
 #define INCLUDE_EVENT_EPOLL_EPOLL_HANDLER_H
 // STL
 #include <chrono>
-#include <functional>
 // system
 #include <sys/epoll.h>
 // original
@@ -12,26 +11,30 @@
 class EpollHandler : public EventHandler
 {
 public:
+  static constexpr int EVENT_MAX = 10;
+
   EpollHandler();
-  EpollHandler(int max_event);
+  EpollHandler(size_t);
   ~EpollHandler();
 
   bool CanReady();
-  int RegisterEvent(struct epoll_event e);
-  int ModifyEvent(struct epoll_event e);
-  int DeleteEvent(struct epoll_event e);
+  int RegisterEvent(struct epoll_event);
+  int ModifyEvent(struct epoll_event);
+  int DeleteEvent(struct epoll_event);
 
 public: // EventHandler
   int WaitEvent() override;
+  void LoopEvent(std::function<bool(int)>) override;
   void LoopEvent() override;
-  void Timeout(std::chrono::milliseconds to) override;
+  void Timeout(std::chrono::milliseconds) override;
 
 protected:
   void CreateEpoll();
 
 protected:
   int epoll_fd;
-  int max_event_num;
+  size_t event_max;
+  std::vector<struct epoll_event> events;
   std::chrono::milliseconds timeout;
 };
 #endif // INCLUDE_EVENT_EPOLL_EPOLL_HANDLER_H
