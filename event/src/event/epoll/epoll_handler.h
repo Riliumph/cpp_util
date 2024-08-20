@@ -17,12 +17,11 @@ public:
   EpollHandler(size_t);
   ~EpollHandler();
 
-  bool CanReady();
-  int RegisterEvent(struct epoll_event);
-  int ModifyEvent(struct epoll_event);
-  int DeleteEvent(struct epoll_event);
-
 public: // EventHandler
+  bool CanReady();
+  int RegisterEvent(int fd, int event);
+  int ModifyEvent(int fd, int event);
+  int DeleteEvent(int fd, int event);
   int WaitEvent() override;
   void LoopEvent(std::function<bool(int)>) override;
   void LoopEvent() override;
