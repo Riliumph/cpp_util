@@ -89,9 +89,6 @@ SelectHandler::Timeout(std::chrono::milliseconds timeout)
 }
 
 void
-SelectHandler::LoopEvent() {};
-
-void
 SelectHandler::LoopEvent(std::function<bool(int)> fn)
 {
   while (true) {

@@ -20,20 +20,20 @@ public:
   ~SelectHandler();
 
 public: // EventHandler
-  bool CanReady();
-  int RegisterEvent(int fd, int event);
-  int ModifyEvent(int fd, int event);
-  int DeleteEvent(int fd, int event);
-  int WaitEvent() override;
+  bool CanReady() override;
+  int RegisterEvent(int fd, int event) override;
+  int ModifyEvent(int fd, int event) override;
+  int DeleteEvent(int fd, int event) override;
   void LoopEvent(std::function<bool(int)>) override;
-  void LoopEvent() override;
   void Timeout(std::chrono::milliseconds) override;
 
-protected:
+private:
+  int WaitEvent() override;
+
   void CreateSelect();
   int GetMaxFd();
 
-protected:
+private:
   int select_fd;
   size_t event_max;
   int max_fd;

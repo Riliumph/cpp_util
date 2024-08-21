@@ -6,6 +6,7 @@
 #include <sys/epoll.h>
 // original
 #include "event/interface.h"
+
 namespace event {
 /// @brief Epollを使う上での抽象基底クラス（インターフェイスではない）
 class EpollHandler : public event::IF::EventHandler
@@ -18,19 +19,19 @@ public:
   ~EpollHandler();
 
 public: // EventHandler
-  bool CanReady();
-  int RegisterEvent(int fd, int event);
-  int ModifyEvent(int fd, int event);
-  int DeleteEvent(int fd, int event);
-  int WaitEvent() override;
+  bool CanReady() override;
+  int RegisterEvent(int fd, int event) override;
+  int ModifyEvent(int fd, int event) override;
+  int DeleteEvent(int fd, int event) override;
   void LoopEvent(std::function<bool(int)>) override;
-  void LoopEvent() override;
   void Timeout(std::chrono::milliseconds) override;
 
-protected:
+private:
+  int WaitEvent() override;
+
   void CreateEpoll();
 
-protected:
+private:
   int epoll_fd;
   size_t event_max;
   std::vector<struct epoll_event> events;

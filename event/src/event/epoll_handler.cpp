@@ -96,9 +96,6 @@ EpollHandler::Timeout(std::chrono::milliseconds to)
 }
 
 void
-EpollHandler::LoopEvent() {};
-
-void
 EpollHandler::LoopEvent(std::function<bool(int)> fn)
 {
   while (true) {
