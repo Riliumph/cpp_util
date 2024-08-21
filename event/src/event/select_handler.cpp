@@ -8,12 +8,15 @@
 #include <unistd.h>
 
 namespace event {
+/// @brief デフォルトコンストラクタ
 SelectHandler::SelectHandler()
   : select_fd(0)
   , event_max(EVENT_MAX)
 {
 }
 
+/// @brief コンストラクタ
+/// @param max_event_num 監視イベント最大数
 SelectHandler::SelectHandler(size_t max_event_num)
   : select_fd(0)
   , event_max(max_event_num)
@@ -21,6 +24,7 @@ SelectHandler::SelectHandler(size_t max_event_num)
 {
 }
 
+/// @brief デストラクタ
 SelectHandler::~SelectHandler()
 {
   if (0 < select_fd) {
@@ -28,12 +32,18 @@ SelectHandler::~SelectHandler()
   }
 }
 
+/// @brief 実行可能を判定する関数
+/// @return 成否
 bool
 SelectHandler::CanReady()
 {
   return !(select_fd == -1);
 }
 
+/// @brief 監視するイベントを登録する関数
+/// @param fd 新たに監視するFD
+/// @param event 監視したいイベント
+/// @return 成否
 int
 SelectHandler::RegisterEvent(int fd, int event)
 {
@@ -55,6 +65,10 @@ SelectHandler::RegisterEvent(int fd, int event)
   return max_fd;
 }
 
+/// @brief 監視しているイベントを変更する関数
+/// @param fd 変更したいFD
+/// @param event 変更したいイベント
+/// @return 成否
 int
 SelectHandler::ModifyEvent(int fd, int event)
 {
@@ -63,6 +77,10 @@ SelectHandler::ModifyEvent(int fd, int event)
   return 0;
 }
 
+/// @brief 監視しているイベントを削除する関数
+/// @param fd 削除したいFD
+/// @param event 削除したいイベント
+/// @return 成否
 int
 SelectHandler::DeleteEvent(int fd, int event)
 {
@@ -84,6 +102,8 @@ SelectHandler::DeleteEvent(int fd, int event)
   return max_fd;
 }
 
+/// @brief イベントを待機する処理
+/// @return 準備ができているFD数
 int
 SelectHandler::WaitEvent()
 {
@@ -92,6 +112,8 @@ SelectHandler::WaitEvent()
   return updated_fd_num;
 }
 
+/// @brief イベント待機のタイムアウトを設定する関数
+/// @param to タイムアウト
 void
 SelectHandler::Timeout(std::chrono::milliseconds timeout)
 {
@@ -103,6 +125,8 @@ SelectHandler::Timeout(std::chrono::milliseconds timeout)
   this->timeout.tv_usec = us.count();
 }
 
+/// @brief イベント監視ループ関数
+/// @param fn イベント検出時に実行するコールバック
 void
 SelectHandler::LoopEvent(std::function<bool(int)> fn)
 {
@@ -124,12 +148,15 @@ SelectHandler::LoopEvent(std::function<bool(int)> fn)
   }
 }
 
+/// @brief Epollインスタンスを作成する関数
 void
 SelectHandler::CreateSelect()
 {
   // SELECTにEPOLLのようなインスタンス作成は存在しない
 }
 
+/// @brief 現在登録されているFD数を計算する関数
+/// @return 現在登録されているFD数
 int
 SelectHandler::GetMaxFd()
 {

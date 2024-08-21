@@ -6,6 +6,7 @@
 #include <unistd.h>
 
 namespace event {
+/// @brief デフォルトコンストラクタ
 EpollHandler::EpollHandler()
   : epoll_fd(0)
   , event_max(EVENT_MAX)
@@ -14,6 +15,8 @@ EpollHandler::EpollHandler()
   CreateEpoll();
 }
 
+/// @brief コンストラクタ
+/// @param max_event_num 監視イベント最大数
 EpollHandler::EpollHandler(size_t max_event_num)
   : epoll_fd(0)
   , event_max(max_event_num)
@@ -23,6 +26,7 @@ EpollHandler::EpollHandler(size_t max_event_num)
   CreateEpoll();
 }
 
+/// @brief デストラクタ
 EpollHandler::~EpollHandler()
 {
   if (0 < epoll_fd) {
@@ -30,12 +34,18 @@ EpollHandler::~EpollHandler()
   }
 }
 
+/// @brief 実行可能を判定する関数
+/// @return 成否
 bool
 EpollHandler::CanReady()
 {
   return !(epoll_fd == -1);
 }
 
+/// @brief 監視するイベントを登録する関数
+/// @param fd 新たに監視するFD
+/// @param event 監視したいイベント
+/// @return 成否
 int
 EpollHandler::RegisterEvent(int fd, int event)
 {
@@ -51,6 +61,10 @@ EpollHandler::RegisterEvent(int fd, int event)
   return ok;
 }
 
+/// @brief 監視しているイベントを変更する関数
+/// @param fd 変更したいFD
+/// @param event 変更したいイベント
+/// @return 成否
 int
 EpollHandler::ModifyEvent(int fd, int event)
 {
@@ -66,6 +80,10 @@ EpollHandler::ModifyEvent(int fd, int event)
   return ok;
 }
 
+/// @brief 監視しているイベントを削除する関数
+/// @param fd 削除したいFD
+/// @param event 削除したいイベント
+/// @return 成否
 int
 EpollHandler::DeleteEvent(int fd, int event)
 {
@@ -81,6 +99,8 @@ EpollHandler::DeleteEvent(int fd, int event)
   return ok;
 }
 
+/// @brief イベントを待機する処理
+/// @return 準備ができているFD数
 int
 EpollHandler::WaitEvent()
 {
@@ -89,12 +109,16 @@ EpollHandler::WaitEvent()
   return updated_event_num;
 }
 
+/// @brief イベント待機のタイムアウトを設定する関数
+/// @param to タイムアウト
 void
 EpollHandler::Timeout(std::chrono::milliseconds to)
 {
   timeout = to;
 }
 
+/// @brief イベント監視ループ関数
+/// @param fn イベント検出時に実行するコールバック
 void
 EpollHandler::LoopEvent(std::function<bool(int)> fn)
 {
@@ -117,6 +141,7 @@ EpollHandler::LoopEvent(std::function<bool(int)> fn)
   }
 }
 
+/// @brief Epollインスタンスを作成する関数
 void
 EpollHandler::CreateEpoll()
 {
