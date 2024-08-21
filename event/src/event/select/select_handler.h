@@ -1,21 +1,22 @@
-#ifndef INCLUDE_EVENT_EPOLL_EPOLL_HANDLER_H
-#define INCLUDE_EVENT_EPOLL_EPOLL_HANDLER_H
+#ifndef INCLUDE_EVENT_SELECT_SELECT_HANDLER_H
+#define INCLUDE_EVENT_SELECT_SELECT_HANDLER_H
 // STL
 #include <chrono>
+#include <vector>
 // system
-#include <sys/epoll.h>
+#include <sys/select.h>
 // original
 #include "event/interface.h"
 
 /// @brief Epollを使う上での抽象基底クラス（インターフェイスではない）
-class EpollHandler : public EventHandler
+class SelectHandler : public EventHandler
 {
 public:
   static constexpr int EVENT_MAX = 10;
 
-  EpollHandler();
-  EpollHandler(size_t);
-  ~EpollHandler();
+  SelectHandler();
+  SelectHandler(size_t);
+  ~SelectHandler();
 
 public: // EventHandler
   bool CanReady();
@@ -28,12 +29,16 @@ public: // EventHandler
   void Timeout(std::chrono::milliseconds) override;
 
 protected:
-  void CreateEpoll();
+  void CreateSelect();
+  int GetMaxFd();
 
 protected:
-  int epoll_fd;
+  int select_fd;
   size_t event_max;
-  std::vector<struct epoll_event> events;
-  std::chrono::milliseconds timeout;
+  int max_fd;
+  fd_set read_fds;
+  fd_set write_fds;
+  fd_set except_fds;
+  struct timeval timeout;
 };
-#endif // INCLUDE_EVENT_EPOLL_EPOLL_HANDLER_H
+#endif // INCLUDE_EVENT_SELECT_SELECT_HANDLER_H

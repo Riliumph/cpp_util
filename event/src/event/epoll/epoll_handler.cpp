@@ -36,8 +36,11 @@ EpollHandler::CanReady()
 }
 
 int
-EpollHandler::RegisterEvent(struct epoll_event e)
+EpollHandler::RegisterEvent(int fd, int event)
 {
+  struct epoll_event e;
+  e.data.fd = fd;
+  e.events = event;
   auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_ADD, e.data.fd, &e);
   if (ok == -1) {
     perror("epoll register event");
@@ -48,8 +51,11 @@ EpollHandler::RegisterEvent(struct epoll_event e)
 }
 
 int
-EpollHandler::ModifyEvent(struct epoll_event e)
+EpollHandler::ModifyEvent(int fd, int event)
 {
+  struct epoll_event e;
+  e.data.fd = fd;
+  e.events = event;
   auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_MOD, e.data.fd, &e);
   if (ok == -1) {
     perror("epoll modify event");
@@ -60,8 +66,11 @@ EpollHandler::ModifyEvent(struct epoll_event e)
 }
 
 int
-EpollHandler::DeleteEvent(struct epoll_event e)
+EpollHandler::DeleteEvent(int fd, int event)
 {
+  struct epoll_event e;
+  e.data.fd = fd;
+  e.events = event;
   auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_DEL, e.data.fd, &e);
   if (ok == -1) {
     perror("epoll delete event");

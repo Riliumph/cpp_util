@@ -16,7 +16,7 @@ main()
   struct epoll_event e1;
   e1.events = EPOLLIN;       // 読み込み可能なイベントを監視
   e1.data.fd = STDIN_FILENO; // 標準入力を監視対象に設定
-  auto ok = e_handler.RegisterEvent(e1);
+  auto ok = e_handler.RegisterEvent(e1.data.fd, e1.events);
   if (ok != 0) {
     std::cerr << "failed to register event" << std::endl;
     return -1;
