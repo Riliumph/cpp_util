@@ -130,13 +130,13 @@ void
 SelectHandler::LoopEvent(std::function<bool(int)> fn)
 {
   while (true) {
-    auto updated_event_num = WaitEvent();
-    if (updated_event_num == -1) {
+    auto updated_fd_num = WaitEvent();
+    if (updated_fd_num == -1) {
       perror("select_wait");
       return;
     }
 
-    for (int i = 0; i < updated_event_num; ++i) {
+    for (int i = 0; i < updated_fd_num; ++i) {
       // 反応したFDがSTDIN_FILENOの場合
       if (FD_ISSET(STDIN_FILENO, &read_fds)) {
         if (!fn(STDIN_FILENO)) {

@@ -105,16 +105,16 @@ int
 EpollHandler::WaitEvent()
 {
   auto to = timeout.count();
-  auto updated_event_num = epoll_wait(epoll_fd, events.data(), event_max, to);
-  return updated_event_num;
+  auto updated_fd_num = epoll_wait(epoll_fd, events.data(), event_max, to);
+  return updated_fd_num;
 }
 
 /// @brief イベント待機のタイムアウトを設定する関数
 /// @param to タイムアウト
 void
-EpollHandler::Timeout(std::chrono::milliseconds to)
+EpollHandler::Timeout(std::chrono::milliseconds timeout)
 {
-  timeout = to;
+  this->timeout = timeout;
 }
 
 /// @brief イベント監視ループ関数
@@ -124,13 +124,13 @@ EpollHandler::LoopEvent(std::function<bool(int)> fn)
 {
   while (true) {
     events = std::vector<struct epoll_event>(event_max);
-    auto updated_event_num = WaitEvent();
-    if (updated_event_num == -1) {
+    auto updated_fd_num = WaitEvent();
+    if (updated_fd_num == -1) {
       perror("epoll_wait");
       return;
     }
 
-    for (int i = 0; i < updated_event_num; ++i) {
+    for (int i = 0; i < updated_fd_num; ++i) {
       if (events[i].data.fd == STDIN_FILENO && events[i].events & EPOLLIN) {
         // 反応したFDがSTDIN_FILENOの場合
         if (!fn(events[i].data.fd)) {
