@@ -20,7 +20,6 @@ SelectHandler::SelectHandler()
 SelectHandler::SelectHandler(size_t max_event_num)
   : select_fd(0)
   , event_max(max_event_num)
-
 {
 }
 
@@ -37,7 +36,7 @@ SelectHandler::~SelectHandler()
 bool
 SelectHandler::CanReady()
 {
-  return !(select_fd == -1);
+  return select_fd != -1;
 }
 
 /// @brief 監視するイベントを登録する関数
@@ -62,7 +61,7 @@ SelectHandler::RegisterEvent(int fd, int event)
       return -1;
   }
   max_fd = GetMaxFd();
-  return max_fd;
+  return 0;
 }
 
 /// @brief 監視しているイベントを変更する関数
@@ -99,7 +98,7 @@ SelectHandler::DeleteEvent(int fd, int event)
       return -1;
   }
   max_fd = GetMaxFd();
-  return max_fd;
+  return 0;
 }
 
 /// @brief イベントを待機する処理

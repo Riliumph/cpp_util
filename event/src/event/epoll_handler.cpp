@@ -39,7 +39,7 @@ EpollHandler::~EpollHandler()
 bool
 EpollHandler::CanReady()
 {
-  return !(epoll_fd == -1);
+  return epoll_fd != -1;
 }
 
 /// @brief 監視するイベントを登録する関数
