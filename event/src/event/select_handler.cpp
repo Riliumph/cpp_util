@@ -52,26 +52,41 @@ SelectHandler::RegisterEvent(int fd, int event)
       return -1;
   }
   max_fd = GetMaxFd();
+  return max_fd;
 }
 
 int
 SelectHandler::ModifyEvent(int fd, int event)
 {
+  (void)fd;
+  (void)event;
+  return 0;
 }
 
 int
 SelectHandler::DeleteEvent(int fd, int event)
 {
-  FD_CLR(fd, &read_fds);
-  FD_CLR(fd, &write_fds);
-  FD_CLR(fd, &except_fds);
+  switch (event) {
+    case EPOLLIN:
+      FD_CLR(fd, &read_fds);
+      break;
+    case EPOLLOUT:
+      FD_CLR(fd, &write_fds);
+      break;
+    case EPOLLERR:
+      FD_CLR(fd, &except_fds);
+      break;
+    default:
+      printf("unknown event: %d\n", event);
+      return -1;
+  }
   max_fd = GetMaxFd();
+  return max_fd;
 }
 
 int
 SelectHandler::WaitEvent()
 {
-
   auto updated_fd_num =
     select(max_fd + 1, &read_fds, &write_fds, &except_fds, &timeout);
   return updated_fd_num;
