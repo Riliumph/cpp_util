@@ -5,6 +5,7 @@
 // system
 #include <unistd.h>
 
+namespace event {
 EpollHandler::EpollHandler()
   : epoll_fd(0)
   , event_max(EVENT_MAX)
@@ -126,4 +127,5 @@ EpollHandler::CreateEpoll()
   if (epoll_fd == -1) {
     perror("epoll_create1");
   }
+}
 }

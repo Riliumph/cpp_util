@@ -8,7 +8,7 @@
 int
 main()
 {
-  auto e_handler = EpollHandler();
+  auto e_handler = event::EpollHandler();
   if (!e_handler.CanReady()) {
     std::cerr << "failed to create epoll handler" << std::endl;
     return -1;

@@ -3,7 +3,7 @@
 // STL
 #include <chrono>
 #include <functional>
-
+namespace event::IF {
 /// @brief イベントハンドラーとしてのIFクラス
 class EventHandler
 {
@@ -18,4 +18,5 @@ public:
   virtual void LoopEvent() = 0;
   virtual void Timeout(std::chrono::milliseconds to) = 0;
 };
+}
 #endif // INCLUDE_EVENT_INTERFACE_EVENT_HANDLER_H

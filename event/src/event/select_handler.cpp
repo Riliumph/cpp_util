@@ -7,6 +7,7 @@
 #include <sys/epoll.h>
 #include <unistd.h>
 
+namespace event {
 SelectHandler::SelectHandler()
   : select_fd(0)
   , event_max(EVENT_MAX)
@@ -128,4 +129,5 @@ SelectHandler::GetMaxFd()
     }
   }
   return max;
+}
 }
