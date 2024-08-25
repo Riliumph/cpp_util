@@ -18,14 +18,15 @@ LIBS   += -lendian
 # include setting
 INCLUDE = -I/usr/local/include/
 INCLUDE+= -I$(SRC_ROOT)/
-EXCLUDE = .git% %tcp_client.cpp
+INCLUDE+= -I../endian/src
+EXCLUDE = .git% %tcp_server.cpp
 
 # build settings
 SRC_ROOT = src
 OBJ_ROOT = obj
 
 # bin target
-BIN      = server
+BIN      = client
 BIN_ROOT = bin
 BIN_SRCS = $(filter-out $(EXCLUDE) $(TEST_EXT), $(shell find $(SRC_ROOT) -mindepth 1 -maxdepth 1 -name "*.cpp"))
 BIN_OBJS = $(addprefix $(OBJ_ROOT)/, $(patsubst $(SRC_ROOT)/%.cpp, %.o, $(BIN_SRCS)))
