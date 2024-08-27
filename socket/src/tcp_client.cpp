@@ -17,10 +17,10 @@ main()
   int sock = 0;
   struct sockaddr_in serv_addr;
 
-  int32_t data1 = -10; // 4バイト
-  int32_t data2 = 125; // 4バイト
-  int16_t data3 = 1;   // 2バイト
-  int16_t data4 = -8;  // 2バイト
+  int32_t data1 = 65511; //(0xffe7) 4バイト
+  int32_t data2 = 125;   // 4バイト
+  int16_t data3 = 1;     // 2バイト
+  int16_t data4 = -8;    // 2バイト
 
   // データをバッファにコピー
   std::array<uint8_t, 12> buffer = { 0 };
