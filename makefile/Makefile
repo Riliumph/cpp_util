@@ -1,6 +1,6 @@
 # compiler setting
+CXX      = g++
 CXXVER   = c++17
-COMPILER = g++
 CXXFLAGS = -MMD
 CXXFLAGS+= -Wall -Wextra -Winit-self
 CXXFLAGS+= -std=$(CXXVER)
@@ -13,7 +13,7 @@ RELEASE_CXXFLAGS = -O2
 # library setting
 LDFLAGS = -L/usr/local/lib
 LDFLAGS+= -L./lib
-LIBS    = -lstdc++
+LDLIBS    = -lstdc++
 # include setting
 INCLUDE = -I$(SRC_ROOT)/
 EXCLUDE = .git%
@@ -41,7 +41,7 @@ LIB_HEADS= $(filter-out $(EXCLUDE) $(TEST_EXT), $(shell find $(SRC_ROOT) -mindep
 INS_LIB_HEADS= $(patsubst $(SRC_ROOT)/%, $(HEAD_INS_PATH)/%, $(LIB_HEADS))
 
 # test setting
-TEST_LIBS = $(LIBS) -lpthread -lgtest -lgtest_main
+TEST_LDLIBS = $(LDLIBS) -lpthread -lgtest -lgtest_main
 TEST_EXT  = %_test.cpp
 TEST_SRCS = $(filter-out $(EXCLUDE) %main.cpp, $(shell find $(SRC_ROOT) -name "*.cpp"))
 TEST_OBJS = $(addprefix $(OBJ_ROOT)/, $(patsubst $(SRC_ROOT)/%.cpp, %.o, $(TEST_SRCS)))
@@ -53,6 +53,8 @@ DEPS = $(OBJS:.o=.d)
 
 .PHONY: clean all debug release test analyze
 
+# USER COMMANDS
+
 all: debug
 
 echo:
@@ -63,7 +65,7 @@ test: CXXFLAGS+= $(DEBUG_CXXFLAGS)
 test: $(TEST_OBJS)
 	@echo "--- TEST MODE ---"
 	@[ -d $(BIN_ROOT) ] || mkdir -p $(BIN_ROOT)
-	$(COMPILER) -o $(BIN_ROOT)/$@ $^ $(LDFLAGS) $(TEST_LIBS)
+	$(CXX) -o $(BIN_ROOT)/$@ $^ $(LDFLAGS) $(TEST_LDLIBS)
 #	$(BIN_ROOT)/$@ 自動実行するとVSCodeのテストデバッガが動かない
 
 debug: CXXFLAGS+= $(DEBUG_CXXFLAGS)
@@ -74,8 +76,17 @@ release: CXXFLAGS+= $(RELEASE_CXXFLAGS)
 release: $(BIN)
 	@echo "--- RELEASE MODE ---"
 
+install: install_heads install_lib
+	@echo "--- INSTALL COMPLETED ---"
 
-install: install_heads install_libs
+analyze:
+	cppcheck --std=$(CXXVER) --enable=all $(SRC_ROOT)
+
+fix_lib:
+	@ldconfig
+
+clean:
+	@rm -rf $(OBJ_ROOT) $(BIN_ROOT) $(LIB_ROOT)
 
 # BUID RULES
 
@@ -83,7 +94,7 @@ install: install_heads install_libs
 $(BIN): $(LIB) $(BIN_OBJS)
 	@echo "build bin $^ -> $@"
 	@[ -d $(BIN_ROOT) ] || mkdir -p $(BIN_ROOT)
-	$(COMPILER) -o $(BIN_ROOT)/$@ $(BIN_OBJS) $(LDFLAGS) $(LIBS) -l$(BIN)
+	$(CXX) -o $(BIN_ROOT)/$@ $(BIN_OBJS) $(LDFLAGS) $(LDLIBS) -l$(BIN)
 
 # static library build rule
 $(LIB): $(LIB_OBJS)
@@ -95,7 +106,7 @@ $(LIB): $(LIB_OBJS)
 $(OBJ_ROOT)/%.o: $(SRC_ROOT)/%.cpp
 	@echo "build obj $< -> $@"
 	@[ -d $@ ] || mkdir -p $(dir $@)
-	$(COMPILER) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
+	$(CXX) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
 
 # INSTALL RULES
 
@@ -107,21 +118,12 @@ $(HEAD_INS_PATH)/%: $(SRC_ROOT)/%
 	@[ -d $@ ] || mkdir -p $(dir $@)
 	@cp -v $< $@
 
-install_libs: $(LIBS)
-	@echo "install libs"
+install_lib: $(LIB)
+	@echo "install lib"
 
 # lib copy rule
-$(LIBS_INS_PATH)/%: $(LIB_ROOT)/%
+$(LIB_INS_PATH)/%: $(LIB_ROOT)/%
 	@[ -d $@ ] || mkdir -p $(dir $@)
 	@cp -v $< $@
-
-analyze:
-	cppcheck --std=$(CXXVER) --enable=all $(SRC_ROOT)
-
-fix_lib:
-	@ldconfig
-
-clean:
-	@rm -rf $(OBJ_ROOT) $(BIN_ROOT) $(LIB_ROOT)
 
 -include $(DEPS)

@@ -13,22 +13,21 @@
 
 ## コンパイラオプション
 
-### COMPILER - コンパイラ -
+### CC/CXX - コンパイラ -
 
-初期値：**`g++ -v`**
+コンパイラを指定する予約語変数。
 
-- C言語の時は、gcc/clang
-- C++の時はg++/clang++
+- C言語コンパイラを管理する変数`CC`のデフォルト値は`cc`
+- C++言語コンパイラを管理する変数`CXX`のデフォルト値は`g++`
 
-C++なのにclangだとiostream系のC++クラスライブラリが見つかりませんエラーとなる。  
+C++なのに`CXX = clang`と設定してしまうと`iostream`系のC++クラスライブラリが見つかりませんエラーとなる。  
+正しく、`clang++`と設定しよう。  
 発生して原因が分かったとき、あなたはやる気をロストしていることでしょう  
 
-### FLAGS - コンパイルオプション -
+### CFLAGS/CXXFLAGS - コンパイルオプション -
 
-初期値：**`-g -MMD -MP -Wall -std=c++17`**
-
-- C言語のフラグは`CFLAGS`
-- C++言語のフラグは`CXXFLAGS`
+- C言語のフラグ変数は`CFLAGS`
+- C++言語のフラグ変数は`CXXFLAGS`
 
 #### `-g`
 
@@ -59,13 +58,12 @@ C++17を解釈可能にする
 
 ### LDFLAG - リンクオプション -
 
-初期値：**`-L/usr/local/lib`**
-
-リンカ（コンパイラ）に設定する**コンパイル時のライプラリ検索パス**。  
-`LIBDIRS`とかではなく`LDFLAG`なのは`Makefile`にそもそも定義されている変数名を再利用したいため。
+リンカ`ld`を呼び出す際にコンパイラに設定する予約語変数。  
 
 > `LD`とは`ld`コマンドのことでありGNUリンカを指す。  
 > `ldd`や`ldconfig`などのコマンドもそれ。
+
+**コンパイル時のライプラリ検索パス**を設定する。  
 
 注意するべきは、コンパイル時の検索パスであり、実行時はまた別ということである。  
 リンク方法によっては、コンパイルが通っても実行できないこともある。
@@ -77,7 +75,7 @@ C++17を解釈可能にする
 動的リンクは、次の順番で共有ライブラリを検索する。
 
 1. 環境変数`LD_LIBRARY_PATH`に設定されている場所
-1. `/etc/ld.so.conf`または、`/etc/ld.so.cond.d/`配下のconfファイルに書いてある場所  
+1. `/etc/ld.so.conf`または、`/etc/ld.so.conf.d/`配下のconfファイルに書いてある場所  
    リンク時には、上記ファイルから生成された`/etc/ld.so.cache`が参照されるため、以下のコマンドで生成・更新すること。  
    `sudo ldconfig`
 1. `/usr/lib`, `/lib`, `/lib64`
@@ -90,7 +88,7 @@ C++17を解釈可能にする
 
 1がダメな理由は[ここ](http://xahlee.info/UnixResource_dir/_/ldpath.html)
 
-### LIBS - ライブラリ -
+### LDLIBS - ライブラリ -
 
 初期値：**`-lstdc++`**
 
@@ -111,7 +109,7 @@ C++17を解釈可能にする
 
 ### INCLUDE - インクルードパス -
 
-初期値：**`-I$(SRCROOT)`**
+初期値：**`-I$(SRC_ROOT)`**
 
 ソースファイル中の`#include`の検索パスを加えるオプション。  
 複数のパスを指定する場合は、`-Ixxx -Iyyy`などのように空白を空けて-Iオプションから記述する。  
@@ -144,7 +142,7 @@ End of search list.
 
 ## 実行ファイル管理変数
 
-### BINROOT - 実行ファイル格納ディレクトリ -
+### BIN_ROOT - 実行ファイル格納ディレクトリ -
 
 初期値：**`bin`**
 
@@ -161,7 +159,7 @@ clean:
 `bin`のディレクトリを挟んでおくと、さすがに`bin`下にソースコードとか置く人はいないだろうから回避し易い。  
 まぁ、そんなガバ回避策よりも`.PHONY`でなんとかしろとは思う。
 
-### TARGET - 実行ファイル -
+### BIN - 実行ファイル -
 
 初期値：**`$(shell basename $$(pwd))`**
 
@@ -203,86 +201,68 @@ bashのような内側からの数学的展開であれば、以下の順番で�
 
 ## ソースコード管理変数
 
-### SRCROOT
-
-初期値：**`src` or `.`**
+### SRC_ROOT
 
 ソースコードを配置しているルートディレクトリ。  
 `.`でもいいが、`obj`や`.git`などのソースと無関係のディレクトリも置かれるし、分けた方が便利。  
 ただし、分けるとMakefileが存在する階層とズレるので処理で頑張らないといけないことも。
 
-### SRCS - ソースコード -
-
-初期値：**`$(filter-out $(EXCLUDE), $(shell find $(SRCROOT) -name *.cpp))`**
+### BIN_SRCS - ソースコード -
 
 コンパイル対象を指定する要素。  
-`SRCROOT`以下から拡張子cppすべてをコンパイル対象とする。  
 
-### SRCDIRS - ソースコードディレクトリ -
+よく使われる値
 
-初期値：**`$(dir $(SRCS))`**
-
-ソースコードが含まれているディレクトリすべてを管理する。  
-区切り文字は半角スペース。
-
-#### `$(dir 文字列群)`
-
-- 文字列: `/path/xxx`
-
-文字列からディレクトリを取得する（リスト対応）。  
-一番後ろの`/xxx`を削除しているだけでディレクトリの認識はしていない。  
+- 全ファイルを検索する  
+  **`$(filter-out $(EXCLUDE), $(shell find $(SRC_ROOT) -name *.cpp))`**
+- 一階層だけ検索する  
+  **`$(filter-out $(EXCLUDE) $(TEST_EXT), $(shell find $(SRC_ROOT) -mindepth 1 -maxdepth 1 -name "*.cpp"))`**
 
 ---
 
 ## 中間ファイル系
 
-### OBJROOT
+### OBJ_ROOT
 
 初期値：**`obj`**
 
 中間ファイルを配置しているルートディレクトリ。  
 このディレクトリの中にソースコードツリーと全く同じツリーを構築する想定。
 
-### OBJDIRS - 中間ファイルディレクトリ -
+### BIN_OBJS/LIB_OBJS - オブジェクトファイル -
 
-初期値：**`$(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%, %, $(SRCDIRS)))`**
-
-中間ファイルを配置するディレクトリを格納する。  
-このフォルダにオブジェクトファイルだったり中間ファイルが生成される。  
-`OBJROOT`の下にソースコードのディレクトリツリーをそのまま構築する。  
-
-`${OBJROOT}/${SRCDIRS}`と書きたいところだが、`SRCDIRS`は**スペース区切りのリスト**であるため巧く動作しない。  
-`SRCDIRS`が`foo bar`だった場合、`${OBJROOT}/${SRCDIRS}`では`${OBJROOT}/foo bar`として解釈される。  
-`addprefix`関数は内部でfor文を回すため、正しくすべての`SRCDIRS`に`OBJROOT`を付与することができる。
-
-#### `$(patsubst 置換前, 置換後, 対象群)`
-
-- 置換前: `$(SRCROOT)/%`
-- 置換後: `%`
-- 対象群: `$(SRCDIRS)`
-
-`$(SRCROOT)`が`src/`などの場合、中間ファイルツリーは`obj/src/xxx`となってしまう。  
-そこで`$(SRCROOT)`を削除する処理を担う。  
-`%`はMakefileに置けるワイルドカード。正規表現で言うところの`.*`である。  
-`$(SRCDIRS)`の先頭には`$(SRCROOT)/`が付与されている前提で、それらを削除している。
-
-#### `$(addprefix 文字列, 対象群)`
-
-- 文字列: `$(OBJROOT)`
-- 対象群: `patsubst`の結果
-
-中間ファイルは中間ファイル用ディレクトリに配置するため、`$(OBJROOT)`を追加している。
-
-### OBJS - オブジェクトファイル -
-
-初期値：**`$(addprefix $(OBJROOT)/, $(patsubst %.cpp, %.o, $(SRCS)))`**
+初期値：**`$(addprefix $(OBJ_ROOT)/, $(patsubst $(SRC_ROOT)/%.cpp, %.o, $(BIN_SRCS)))`**
 
 `%.cpp, %.o`により、オブジェクトファイルのルールはSRCS内の.cpp拡張子を.oにする。  
 `addprefix`も`patsubst`も解説しているためスキップ。  
 
+#### `$(patsubst 置換前, 置換後, 対象群)`
+
+- 置換前: `$(SRC_ROOT)/%.cpp`
+- 置換後: `%.o`
+- 対象群: `$(BIN_SRCS)`
+
+`$(SRC_ROOT)`が`src/`などの場合、中間ファイルツリーは`obj/src/xxx`となってしまう。  
+そこで`$(SRC_ROOT)`を削除する処理を担う。  
+
+`%`はMakefileに置けるワイルドカード。正規表現で言うところの`.*`である。  
+`$(BIN_SRCS)`の先頭には`$(SRC_ROOT)/`が付与されている前提で、それらを削除している。
+
+#### `$(addprefix 文字列, 対象群)`
+
+- 文字列: `$(OBJ_ROOT)`
+- 対象群: `patsubst`の結果
+
+中間ファイルは中間ファイル用ディレクトリに配置したいので、`$(OBJ_ROOT)`を追加している。  
+`addprefix`関数は内部でfor文を回すため、正しくすべての`BIN_SRCS`から`SRC_ROOT`を外した値に`OBJ_ROOT`を付与することができる
+
 ---
 
 ## 依存関係オプション
+
+### OBJS - 全オブジェクトファイル -
+
+`DEPS`で依存関係ファイルを作るために、バイナリ用テスト用問わずにオブジェクトファイルを配列化して管理している。
 
 ### DEPS - 依存関係ファイル -
 
@@ -335,21 +315,8 @@ make: 'clean' is up to date.
 ```makefile
 .PHONY: clean
 clean:
-  @rm -rf $(OBJROOT) $(BINROOT)
+  @rm -rf $(OBJ_ROOT) $(BIN_ROOT)
 ```
-
-### `$(OBJROOT)/%.o: $(SRCROOT)/%.cpp`
-
-`$(OBJROOT)/%.o`を生成するために`$(SRCROOT)/%.cpp`をビルドするコマンド。  
-ファイルが無限に増えると一つ一つ書いてられないので、ワイルドカードを使って自動化している。
-
-コマンドが呼ばれる流れを追うと分かり易い。  
-
-1. `all`
-1. `$(OBJ)`
-   1. obj/main.oが取り出され、該当する↓のコマンドが呼ばれる
-1. `$(OBJROOT)/%.o: $(SRCROOT)/%.cpp`
-   1. obj/main.o: src/main.cppに置換されてコマンドが実行される。
 
 ### allコマンド
 
@@ -364,6 +331,21 @@ allコマンドは依存関係ファイルのビルドが自動で走ること�
 オブジェクトファイル用ディレクトリなどを用意しておくことで楽に記述出来る。  
 よくプログラムでは「アルゴリズムではなくデータ構造で解決する」などと言ったりするが、今回は「アルゴリズムではなくディレクトリ構造で解決する」と言った風か。  
 どちらにせよ、処理を頑張るのではなく、処理を楽にするためにデータ保存方法を工夫している。
+
+## パターンルール
+
+### `$(OBJ_ROOT)/%.o: $(SRC_ROOT)/%.cpp`
+
+`$(OBJ_ROOT)/%.o`を生成するために`$(SRC_ROOT)/%.cpp`をビルドするコマンド。  
+ファイルが無限に増えると一つ一つ書いてられないので、ワイルドカードを使って自動化している。
+
+コマンドが呼ばれる流れを追うと分かり易い。  
+
+1. `all`
+1. `$(OBJ)`
+   1. obj/main.oが取り出され、該当する↓のコマンドが呼ばれる
+1. `$(OBJ_ROOT)/%.o: $(SRC_ROOT)/%.cpp`
+   1. obj/main.o: src/main.cppに置換されてコマンドが実行される。
 
 ## makefileの組み込み機能
 
@@ -414,3 +396,4 @@ allコマンドは依存関係ファイルのビルドが自動で走ること�
 - [Linux共有ライブラリ「.so」の作り方](https://www.tenkaiken.com/short-articles/linux%E5%85%B1%E6%9C%89%E3%83%A9%E3%82%A4%E3%83%96%E3%83%A9%E3%83%AA-so-%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9/)
 - [gccを用いたCの共有ライブラリの作り方](https://sleepy-yoshi.hatenablog.com/entry/20090510/p1)
 - [Why LD_LIBRARY_PATH is bad](http://xahlee.info/UnixResource_dir/_/ldpath.html)
+- [10.3 Variables Used by Implicit Rules](https://www.gnu.org/software/make/manual/make.html#Implicit-Variables)
