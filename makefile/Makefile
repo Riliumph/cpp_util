@@ -22,6 +22,10 @@ EXCLUDE = .git%
 SRC_ROOT = src
 OBJ_ROOT = obj
 
+# install setting
+HEAD_INS_PATH = /usr/local/include
+LIB_INS_PATH  = /usr/local/lib
+
 # bin target
 BIN      = $(shell basename $$(pwd))
 BIN_ROOT = bin
@@ -33,6 +37,8 @@ LIB      = lib$(BIN).a
 LIB_ROOT = lib
 LIB_SRCS = $(filter-out $(EXCLUDE) $(TEST_EXT), $(shell find $(SRC_ROOT) -mindepth 2 -name "*.cpp"))
 LIB_OBJS = $(addprefix $(OBJ_ROOT)/, $(patsubst $(SRC_ROOT)/%.cpp, %.o, $(LIB_SRCS)))
+LIB_HEADS= $(filter-out $(EXCLUDE) $(TEST_EXT), $(shell find $(SRC_ROOT) -mindepth 1 -name "*.h*"))
+INS_LIB_HEADS= $(patsubst $(SRC_ROOT)/%, $(HEAD_INS_PATH)/%, $(LIB_HEADS))
 
 # test setting
 TEST_LIBS = $(LIBS) -lpthread -lgtest -lgtest_main
@@ -49,6 +55,10 @@ DEPS = $(OBJS:.o=.d)
 
 all: debug
 
+echo:
+	@echo $(LIB_HEADS)
+	@echo $(INS_LIB_HEADS)
+
 test: CXXFLAGS+= $(DEBUG_CXXFLAGS)
 test: $(TEST_OBJS)
 	@echo "--- TEST MODE ---"
@@ -64,8 +74,10 @@ release: CXXFLAGS+= $(RELEASE_CXXFLAGS)
 release: $(BIN)
 	@echo "--- RELEASE MODE ---"
 
-install:
-	@cp -vf lib/$(LIB) /usr/local/lib/$(LIB)
+
+install: install_heads install_libs
+
+# BUID RULES
 
 # binary build rule
 $(BIN): $(LIB) $(BIN_OBJS)
@@ -84,6 +96,24 @@ $(OBJ_ROOT)/%.o: $(SRC_ROOT)/%.cpp
 	@echo "build obj $< -> $@"
 	@[ -d $@ ] || mkdir -p $(dir $@)
 	$(COMPILER) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
+
+# INSTALL RULES
+
+install_heads: $(INS_LIB_HEADS)
+	@echo "install headers"
+
+# header copy rule
+$(HEAD_INS_PATH)/%: $(SRC_ROOT)/%
+	@[ -d $@ ] || mkdir -p $(dir $@)
+	@cp -v $< $@
+
+install_libs: $(LIBS)
+	@echo "install libs"
+
+# lib copy rule
+$(LIBS_INS_PATH)/%: $(LIB_ROOT)/%
+	@[ -d $@ ] || mkdir -p $(dir $@)
+	@cp -v $< $@
 
 analyze:
 	cppcheck --std=$(CXXVER) --enable=all $(SRC_ROOT)
