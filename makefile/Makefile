@@ -39,6 +39,7 @@ LIB_SRCS = $(filter-out $(EXCLUDE) $(TEST_EXT), $(shell find $(SRC_ROOT) -mindep
 LIB_OBJS = $(addprefix $(OBJ_ROOT)/, $(patsubst $(SRC_ROOT)/%.cpp, %.o, $(LIB_SRCS)))
 LIB_HEADS= $(filter-out $(EXCLUDE) $(TEST_EXT), $(shell find $(SRC_ROOT) -mindepth 1 -name "*.h*"))
 INS_LIB_HEADS= $(patsubst $(SRC_ROOT)/%, $(HEAD_INS_PATH)/%, $(LIB_HEADS))
+INS_LIB  = $(LIB_INS_PATH)/$(LIB)
 
 # test setting
 TEST_LDLIBS = $(LDLIBS) -lpthread -lgtest -lgtest_main
@@ -118,8 +119,8 @@ $(HEAD_INS_PATH)/%: $(SRC_ROOT)/%
 	@[ -d $@ ] || mkdir -p $(dir $@)
 	@cp -v $< $@
 
-install_lib: $(LIB)
 	@echo "install lib"
+install_lib: $(INS_LIB)
 
 # lib copy rule
 $(LIB_INS_PATH)/%: $(LIB_ROOT)/%
