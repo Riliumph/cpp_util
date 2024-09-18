@@ -52,7 +52,7 @@ OBJS = $(BIN_OBJS)
 OBJS+= $(LIB_OBJS)
 DEPS = $(OBJS:.o=.d)
 
-.PHONY: clean all debug release test analyze
+.PHONY: clean all debug release test analyze install
 
 # USER COMMANDS
 
@@ -112,19 +112,19 @@ $(OBJ_ROOT)/%.o: $(SRC_ROOT)/%.cpp
 # INSTALL RULES
 
 install_heads: $(INS_LIB_HEADS)
-	@echo "install headers"
+	@echo "--- HEADERS INSTALL COMPLETED ---"
 
 # header copy rule
 $(HEAD_INS_PATH)/%: $(SRC_ROOT)/%
 	@[ -d $@ ] || mkdir -p $(dir $@)
-	@cp -v $< $@
+	@install -v -m 644 $< $@
 
-	@echo "install lib"
 install_lib: $(INS_LIB)
+	@echo "--- LIBS INSTALL COMPLETED ---"
 
 # lib copy rule
 $(LIB_INS_PATH)/%: $(LIB_ROOT)/%
 	@[ -d $@ ] || mkdir -p $(dir $@)
-	@cp -v $< $@
+	@install -v -m 644 $< $@
 
 -include $(DEPS)
