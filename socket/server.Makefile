@@ -15,6 +15,7 @@ LDFLAGS = -L/usr/local/lib
 LDFLAGS+= -L./lib
 LIBS    = -lstdc++
 LIBS   += -lendian
+LIBS   += -levent_handler
 # include setting
 INCLUDE = -I/usr/local/include/
 INCLUDE+= -I$(SRC_ROOT)/
