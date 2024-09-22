@@ -48,7 +48,7 @@ main()
   }
 
   std::cout << "start server" << std::endl;
-  srv.Start([](int i) {
+  srv.Start([](int fd) {
     std::array<uint8_t, 12> buffer;
     std::cout << "recv" << std::endl;
     auto recv_size = read(fd, buffer.data(), buffer.size());
