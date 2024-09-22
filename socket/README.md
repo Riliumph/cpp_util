@@ -1,5 +1,19 @@
 # Socketのサンプルプログラム
 
+## ビルド方法
+
+### サーバー
+
+```console
+$ make -f server.Makefile all
+```
+
+### クライアント
+
+```console
+$ make -f client.Makefile all
+```
+
 ## 使い方
 
 terminalで以下のコマンドを投入する。
