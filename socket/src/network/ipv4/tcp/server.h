@@ -11,6 +11,8 @@
 #include <sys/select.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+// Original Lib
+#include <event.h>
 // Original
 #include "network/interface/server.h"
 
@@ -23,8 +25,9 @@ class Server : public nw::IF::Server
   static constexpr int DISABLE_FD = -1;
 
 public: // constructor
-  Server();
-  Server(const u_short, const struct addrinfo);
+  Server(std::shared_ptr<event::IF::EventHandler>,
+         const u_short,
+         const struct addrinfo);
   ~Server();
 
 public: // accessor
@@ -33,11 +36,7 @@ public: // accessor
 
 public:
   int Establish() override;
-
-  bool LoopBySelect(std::function<bool(int)>);
-#ifdef EPOLL
-  bool LoopByEPoll(std::function<bool(int)>);
-#endif // EPOLL
+  bool Start(std::function<bool(int)>) override;
 
 private:
   void Hint(const struct addrinfo&);
@@ -57,6 +56,7 @@ private: // File Descriptor
   fd_set fds;
   int server_fd; // サーバー接続を待ち受けているソケットFD
   std::array<int, CONNECTION_MAX> client_fds;
+  std::shared_ptr<event::IF::EventHandler> event_handler;
 
 protected: // IP config
   std::string ip;

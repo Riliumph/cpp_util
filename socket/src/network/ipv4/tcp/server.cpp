@@ -12,18 +12,11 @@
 // original
 #include "network/util.h"
 namespace nw::ipv4::tcp {
-Server::Server()
+Server::Server(std::shared_ptr<event::IF::EventHandler> e_handler,
+               const u_short port,
+               const struct addrinfo hint)
   : server_fd{ 0 }
-  , ip{ "" }
-  , port_{ 0 }
-  , inet0{ nullptr }
-  , hint{ nullptr }
-  , timeout{ 0, 0 }
-{
-  FD_ZERO(&fds);
-}
-Server::Server(const u_short port, const struct addrinfo hint)
-  : server_fd{ 0 }
+  , event_handler{ e_handler }
   , ip{ "" }
   , port_{ port }
   , inet0{ new struct addrinfo }
@@ -78,6 +71,30 @@ Server::Establish()
     return ok;
   }
   return ok;
+}
+
+/// @brief Select待ちループ
+/// @param fn 反応時に処理する関数オブジェクト
+/// @return 成否
+bool
+Server::Start(std::function<bool(int)> fn)
+{
+  if (!event_handler) {
+    std::cerr << "event_handler not set" << std::endl;
+    return false;
+  }
+  if (!event_handler->CanReady()) {
+    std::cerr << "event_handler not ready" << std::endl;
+    return false;
+  }
+  auto ok = event_handler->RegisterEvent(server_fd, EPOLLIN);
+  if (ok != 0) {
+    std::cerr << "failed to set event" << std::endl;
+    return false;
+  }
+  std::cout << "start event_handler" << std::endl;
+  event_handler->LoopEvent(fn);
+  return true;
 }
 
 /// @brief サーバーを構築するネットワーク情報のヒントを設定する
@@ -235,105 +252,4 @@ Server::SafeClose()
     freeaddrinfo(hint);
   }
 }
-
-/// @brief Select待ちループ
-/// @param fn 反応時に処理する関数オブジェクト
-/// @return 成否
-bool
-Server::LoopBySelect(std::function<bool(int)> fn)
-{
-  FD_SET(server_fd, &fds);
-  while (1) {
-    fd_set readable = fds;
-    auto updated_fd_num = select(FD_SETSIZE, &readable, 0, 0, Timeout());
-    if (updated_fd_num < 0) {
-      perror("select");
-      exit(1);
-    } else if (updated_fd_num == 0) {
-      perror("select timeout");
-      continue;
-    }
-    // Accept
-    if (FD_ISSET(server_fd, &readable)) {
-      FD_CLR(server_fd, &readable);
-      printf("accepting new comer ...\n");
-      auto client_fd = Accept();
-      if (client_fd < 0) {
-        continue;
-      }
-      // 最大接続数制限のために独自管理が必要
-      auto idx = ControlMaxConnection(client_fd);
-      if (idx < 0) {
-        printf("reject new comer for limit connection");
-        close(client_fd);
-      } else {
-        // 全体集合に追加。READ集合ではないことに注意。
-        FD_SET(client_fd, &fds);
-      }
-    }
-    // 実際の処理
-    for (const auto& client_fd : client_fds) {
-      if (FD_ISSET(client_fd, &readable)) {
-        std::printf("[FD:%d] is ready ...\n", client_fd);
-        auto success = fn(client_fd);
-        if (!success) {
-          close(client_fd);
-          FD_CLR(client_fd, &fds);
-          std::replace(
-            client_fds.begin(), client_fds.end(), client_fd, DISABLE_FD);
-        }
-      }
-    }
-  }
-}
-
-#ifdef EPOLL
-const int EVENT_SIZE = 1024;
-
-bool
-Server::LoopByEPoll(std::function<bool(int)> fn)
-{
-  struct epoll_event evs[EVENT_SIZE];
-  auto ep_fd = epoll_create(1);
-  epoll_ctl(ep_fd, listen_sock, EPOLLIN | EPOLLOUT | EPOLLET);
-  while (1) {
-    struct epoll_event ev;
-    std::printf("wait epoll ...\n");
-    auto updated_fd_num = epoll_wait(ep_fd, evs, sizeof(evs), -1);
-    if (updated_fd_num <= 0) {
-      perror("epoll");
-      exit(1);
-    }
-    // Accept
-    auto exist =
-      std::any_of(std::begin(evs), std::end(evs), [this](const auto& e) {
-        return e.data.fd == server->FD();
-      });
-    if (exist) {
-      std::printf(
-        "[PID:%d][FD:%d] accepting connections ...\n", getpid(), server->FD());
-      auto client_fd = Accept();
-      if (client_fd < 0) {
-        perror("accept");
-        exit(1);
-      }
-      setnonblocking(client_fd);
-      ev.events = EPOLLIN | EPOLLET;
-      ev.data.fd = client_fd;
-      if (epoll_ctl(ep_fd, EPOLL_CTL_ADD, client_fd, &ev) < 0) {
-        fprintf(stderr, "epoll set insertion error: fd=%d\n", client_fd);
-        return false;
-      }
-    }
-    // TODO:
-    // FD_SETSIZEは上限値であり、接続されたFDの最大値ではないため無駄なループが回っている
-    for (auto i = 0; i < updated_fd_num; ++i) {
-      if (evs[i].data.fd == server->FD()) {
-
-        fn(evs[i].data.fd);
-      }
-    }
-  }
-}
-#endif // EPOLL
-}
+} // namespace nw::ipv4::tcp

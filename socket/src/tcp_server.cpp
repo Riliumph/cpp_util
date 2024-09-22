@@ -38,14 +38,17 @@ main()
   hint.ai_family = AF_INET;
   hint.ai_socktype = SOCK_STREAM;
   hint.ai_flags = AI_PASSIVE;
+  auto eh = std::make_shared<event::EpollHandler>();
   std::cout << "create server" << std::endl;
-  nw::ipv4::tcp::Server srv(port_no, hint);
+  nw::ipv4::tcp::Server srv(eh, port_no, hint);
   std::cout << "establish server" << std::endl;
   if (srv.Establish() < 0) {
     std::cerr << "failed to establish server" << std::endl;
     return -1;
   }
-  srv.LoopBySelect([](int fd) {
+
+  std::cout << "start server" << std::endl;
+  srv.Start([](int i) {
     std::array<uint8_t, 12> buffer;
     std::cout << "recv" << std::endl;
     auto recv_size = read(fd, buffer.data(), buffer.size());
