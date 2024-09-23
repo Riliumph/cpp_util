@@ -9,27 +9,6 @@
 // original
 #include "network.h"
 
-typedef union
-{
-  uint32_t byte4;
-  uint16_t byte2[2];
-  uint8_t byte1[4];
-} bytes;
-
-std::ostream&
-operator<<(std::ostream& os, bytes lv)
-{
-  std::printf("DEC: %d\n", lv.byte4);
-  std::printf("byte(4): 0x%08X\n", lv.byte4);
-  std::printf("byte(2): 0x%08X, 0x%08X\n", lv.byte2[0], lv.byte2[1]);
-  std::printf("byte(1): 0x%08X, 0x%08X, 0x%08X, 0x%08X\n",
-              lv.byte1[0],
-              lv.byte1[1],
-              lv.byte1[2],
-              lv.byte1[3]);
-  return os;
-}
-
 int
 main()
 {
@@ -73,7 +52,7 @@ main()
     start_point += sizeof(raw3);
     std::memcpy(&raw4, buffer.data() + start_point, sizeof(raw4));
 
-    bytes raw1_b;
+    endian::bytes raw1_b;
     raw1_b.byte4 = raw1;
 
     auto data1 = endian::Reverse(raw1);
@@ -81,7 +60,7 @@ main()
     auto data3 = endian::Reverse(raw3);
     auto data4 = endian::Reverse(raw4);
 
-    bytes raw1_b_;
+    endian::bytes raw1_b_;
     raw1_b_.byte4 = data1;
 
     std::printf("1:%+10d(0x%08x)\n->%+10d(0x%08x)\n", raw1, raw1, data1, data1);
