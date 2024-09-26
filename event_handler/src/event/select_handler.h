@@ -1,7 +1,7 @@
 #ifndef INCLUDE_EVENT_SELECT_HANDLER_H
 #define INCLUDE_EVENT_SELECT_HANDLER_H
 // STL
-#include <chrono>
+#include <map>
 #include <vector>
 // system
 #include <sys/select.h>
@@ -21,10 +21,10 @@ public:
 
 public: // EventHandler
   bool CanReady() override;
-  int RegisterEvent(int fd, int event) override;
-  int ModifyEvent(int fd, int event) override;
-  int DeleteEvent(int fd, int event) override;
-  void LoopEvent(std::function<bool(int)>) override;
+  int RegisterEvent(int, int, event_func) override;
+  int ModifyEvent(int, int, std::optional<event_func> = std::nullopt) override;
+  int DeleteEvent(int, int) override;
+  void LoopEvent() override;
   void Timeout(std::chrono::milliseconds) override;
 
 private:
@@ -41,6 +41,7 @@ private:
   fd_set write_fds;
   fd_set except_fds;
   struct timeval timeout;
+  std::map<int, event_func> reaction;
 };
 }
 #endif // INCLUDE_EVENT_SELECT_HANDLER_H

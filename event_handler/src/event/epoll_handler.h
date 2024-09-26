@@ -1,7 +1,7 @@
 #ifndef INCLUDE_EVENT_EPOLL_EPOLL_HANDLER_H
 #define INCLUDE_EVENT_EPOLL_EPOLL_HANDLER_H
 // STL
-#include <chrono>
+#include <map>
 // system
 #include <sys/epoll.h>
 // original
@@ -20,10 +20,10 @@ public:
 
 public: // EventHandler
   bool CanReady() override;
-  int RegisterEvent(int fd, int event) override;
-  int ModifyEvent(int fd, int event) override;
-  int DeleteEvent(int fd, int event) override;
-  void LoopEvent(std::function<bool(int)>) override;
+  int RegisterEvent(int, int, event_func) override;
+  int ModifyEvent(int, int, std::optional<event_func> = std::nullopt) override;
+  int DeleteEvent(int, int) override;
+  void LoopEvent() override;
   void Timeout(std::chrono::milliseconds) override;
 
 private:
@@ -36,6 +36,8 @@ private:
   size_t event_max;
   std::vector<struct epoll_event> events;
   std::chrono::milliseconds timeout;
+  // TODO: fdのみをキーとする。今後イベントの種類にも対応
+  std::map<int, event_func> reaction;
 };
 }
 #endif // INCLUDE_EVENT_EPOLL_EPOLL_HANDLER_H

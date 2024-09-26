@@ -44,7 +44,7 @@ SelectHandler::CanReady()
 /// @param event 監視したいイベント
 /// @return 成否
 int
-SelectHandler::RegisterEvent(int fd, int event)
+SelectHandler::RegisterEvent(int fd, int event, event_func fn)
 {
   switch (event) {
     case EPOLLIN:
@@ -61,6 +61,7 @@ SelectHandler::RegisterEvent(int fd, int event)
       return -1;
   }
   max_fd = GetMaxFd();
+  reaction[fd] = fn;
   return 0;
 }
 
@@ -69,10 +70,11 @@ SelectHandler::RegisterEvent(int fd, int event)
 /// @param event 変更したいイベント
 /// @return 成否
 int
-SelectHandler::ModifyEvent(int fd, int event)
+SelectHandler::ModifyEvent(int fd, int event, std::optional<event_func> fn)
 {
   (void)fd;
   (void)event;
+  (void)fn;
   return 0;
 }
 
@@ -127,7 +129,7 @@ SelectHandler::Timeout(std::chrono::milliseconds timeout)
 /// @brief イベント監視ループ関数
 /// @param fn イベント検出時に実行するコールバック
 void
-SelectHandler::LoopEvent(std::function<bool(int)> fn)
+SelectHandler::LoopEvent()
 {
   while (true) {
     auto updated_fd_num = WaitEvent();
@@ -137,11 +139,13 @@ SelectHandler::LoopEvent(std::function<bool(int)> fn)
     }
 
     for (int i = 0; i < updated_fd_num; ++i) {
-      // 反応したFDがSTDIN_FILENOの場合
-      if (FD_ISSET(STDIN_FILENO, &read_fds)) {
-        if (!fn(STDIN_FILENO)) {
-          return;
+      if (FD_ISSET(i, &read_fds)) {
+        auto it = reaction.find(i);
+        if (it == reaction.end()) {
+          std::cerr << "not found fd(" << i << ")" << std::endl;
+          continue;
         }
+        it->second(i);
       }
     }
   }

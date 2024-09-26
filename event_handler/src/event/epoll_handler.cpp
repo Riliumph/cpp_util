@@ -47,7 +47,7 @@ EpollHandler::CanReady()
 /// @param event 監視したいイベント
 /// @return 成否
 int
-EpollHandler::RegisterEvent(int fd, int event)
+EpollHandler::RegisterEvent(int fd, int event, event_func fn)
 {
   struct epoll_event e;
   e.data.fd = fd;
@@ -58,6 +58,7 @@ EpollHandler::RegisterEvent(int fd, int event)
     close(epoll_fd);
     return ok;
   }
+  reaction[fd] = fn;
   return ok;
 }
 
@@ -66,7 +67,7 @@ EpollHandler::RegisterEvent(int fd, int event)
 /// @param event 変更したいイベント
 /// @return 成否
 int
-EpollHandler::ModifyEvent(int fd, int event)
+EpollHandler::ModifyEvent(int fd, int event, std::optional<event_func> fn)
 {
   struct epoll_event e;
   e.data.fd = fd;
@@ -76,6 +77,9 @@ EpollHandler::ModifyEvent(int fd, int event)
     perror("epoll modify event");
     close(epoll_fd);
     return ok;
+  }
+  if (fn.has_value()) {
+    reaction[fd] = *fn;
   }
   return ok;
 }
@@ -96,6 +100,7 @@ EpollHandler::DeleteEvent(int fd, int event)
     close(epoll_fd);
     return ok;
   }
+  reaction.erase(fd);
   return ok;
 }
 
@@ -120,10 +125,11 @@ EpollHandler::Timeout(std::chrono::milliseconds timeout)
 /// @brief イベント監視ループ関数
 /// @param fn イベント検出時に実行するコールバック
 void
-EpollHandler::LoopEvent(std::function<bool(int)> fn)
+EpollHandler::LoopEvent()
 {
   while (true) {
     events = std::vector<struct epoll_event>(event_max);
+    std::cout << "wait event ..." << std::endl;
     auto updated_fd_num = WaitEvent();
     if (updated_fd_num == -1) {
       perror("epoll_wait");
@@ -131,12 +137,14 @@ EpollHandler::LoopEvent(std::function<bool(int)> fn)
     }
 
     for (int i = 0; i < updated_fd_num; ++i) {
-      if (events[i].data.fd == STDIN_FILENO && events[i].events & EPOLLIN) {
-        // 反応したFDがSTDIN_FILENOの場合
-        if (!fn(events[i].data.fd)) {
-          return;
-        }
+      auto& event = events[i];
+      auto it = reaction.find(event.data.fd);
+      if (it == reaction.end()) {
+        std::cerr << "not found fd(" << event.data.fd << ")" << std::endl;
+        continue;
       }
+      std::cout << "callback fd(" << event.data.fd << ")" << std::endl;
+      it->second(event.data.fd);
     }
   }
 }
