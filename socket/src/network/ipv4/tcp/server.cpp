@@ -212,8 +212,9 @@ Server::Accept()
 int
 Server::CurrentConnection()
 {
-  auto count = std::count_if(
-    client_fds.begin(), client_fds.end(), [](int x) { return x != -1; });
+  auto count = std::count_if(client_fds.begin(), client_fds.end(), [](int fd) {
+    return fd != DISABLE_FD;
+  });
   return count;
 }
 
