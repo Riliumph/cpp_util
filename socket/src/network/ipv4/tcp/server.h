@@ -40,7 +40,6 @@ public:
 
 private:
   void Hint(const struct addrinfo&);
-  struct timeval* Timeout();
   void SafeClose();
 
 private:

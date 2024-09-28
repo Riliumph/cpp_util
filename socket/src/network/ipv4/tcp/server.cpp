@@ -108,15 +108,6 @@ Server::Hint(const struct addrinfo& hint_data)
   hint->ai_flags = hint_data.ai_flags;
 }
 
-struct timeval*
-Server::Timeout()
-{
-  if (timeout.tv_sec == 0 && timeout.tv_usec == 0) {
-    return NULL;
-  }
-  return &timeout;
-}
-
 #endif // ACCESSOR
 
 /// @brief ヒント情報からアドレス情報を決定する
