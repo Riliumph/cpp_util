@@ -87,13 +87,26 @@ Server::Start(std::function<bool(int)> fn)
     std::cerr << "event_handler not ready" << std::endl;
     return false;
   }
-  auto ok = event_handler->RegisterEvent(server_fd, EPOLLIN);
+  auto ok = event_handler->RegisterEvent(server_fd, EPOLLIN, [&](int fd) {
+    std::cerr << "accepting new comer ..." << std::endl;
+    auto client_fd = Accept();
+    if (client_fd < 0) {
+      return false;
+    }
+    // 最大接続数制限のために独自管理が必要
+    auto idx = ControlMaxConnection(client_fd);
+    if (idx < 0) {
+      std::cerr << "reject new comer for limit connection" << std::endl;
+      close(client_fd);
+      return false;
+    }
+  });
   if (ok != 0) {
     std::cerr << "failed to set event" << std::endl;
     return false;
   }
   std::cout << "start event_handler" << std::endl;
-  event_handler->LoopEvent(fn);
+  event_handler->Run();
   return true;
 }
 
