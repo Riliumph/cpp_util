@@ -8,7 +8,7 @@
 // 3rd
 #include <pqxx/pqxx>
 // original
-#include "postgres/define.hpp"
+#include "define.hpp"
 
 namespace postgres {
 
@@ -32,7 +32,5 @@ private:
   db_table Convert2Any(pqxx::result&);
 };
 
-std::ostream&
-operator<<(std::ostream&, const ResultSet&);
 } // namespace postgres
 #endif // INCLUDE_POSTGRES_RESULT_SET_HPP
