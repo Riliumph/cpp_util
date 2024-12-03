@@ -18,6 +18,15 @@ $ docker compose up -d
  ✔ Container postgres-db-1       Started   1.0s
 ```
 
+## 停止
+
+```console
+$ docker compose down --volumes
+[+] Running 2/2
+ ✔ Container postgres-db-1  Removed        0.4s
+ ✔ Network postgres_db_nw   Removed        0.2s
+```
+
 ## デバッグ
 
 ```console

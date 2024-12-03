@@ -1,4 +1,4 @@
-CREATE TABLE student (
+CREATE TABLE students (
   student_id serial NOT NULL PRIMARY KEY,
   name text NOT NULL,
   age int NOT NULL,

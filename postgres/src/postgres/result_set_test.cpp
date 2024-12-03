@@ -26,13 +26,25 @@ TEST(ResultSet, Convert2Any)
     struct TestResult expected;
   };
   struct TestSet tt[] = {
-    { "ID1のデータ検証",
+    {
+      "ID1のデータ検証",
       { "select * from student where student_id = 1" },
-      { { { { "student_id", 1 }, { "name", "student1"s }, { "age", 17 } } } } },
-    { "ID2のデータ検証",
+      {
+        {
+          { { "student_id", 1 }, { "name", "student1"s }, { "age", 17 } },
+        },
+      },
+    },
+    {
+      "ID2のデータ検証",
       { "select * from student" },
-      { { { { "student_id", 1 }, { "name", "student1"s }, { "age", 17 } },
-          { { "student_id", 2 }, { "name", "student2"s }, { "age", 18 } } } } },
+      {
+        {
+          { { "student_id", 1 }, { "name", "student1"s }, { "age", 17 } },
+          { { "student_id", 2 }, { "name", "student2"s }, { "age", 18 } },
+        },
+      },
+    },
   };
 
   // 事前準備
