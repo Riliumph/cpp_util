@@ -79,7 +79,7 @@ C++17を解釈可能にする
    リンク時には、上記ファイルから生成された`/etc/ld.so.cache`が参照されるため、以下のコマンドで生成・更新すること。  
    `sudo ldconfig`
 1. `/usr/lib`, `/lib`, `/lib64`
-1. コンパイル時に`-Wl, -rpath=xxx`で指定されたパス
+1. コンパイル時に`-Wl,-rpath=xxx`で指定されたパス
 
 どれかで解決するが、基本4なのではないだろうか。  
 だって、他のやり方はシステムに干渉する可能性あるし。。。
@@ -323,6 +323,18 @@ clean:
 すべてのオブジェクトをビルドするコマンド。  
 決して、`all`というファイルを生成するわけではない。  
 allコマンドは依存関係ファイルのビルドが自動で走ることを利用するため、依存関係の書き方は必ず`$(TARGET)`が一番最後になる。
+
+#### 動的ライブラリパスを設定する
+
+```makefile
+$(CXX) -o $(BIN_ROOT)/$@ $(BIN_OBJS) $(LDFLAGS) -Wl,-rpath,xxx $(LIBS)
+```
+
+GCCの`-wl,`オプションは、カンマ区切りのトークンリストをスペース区切りのリストに変更してリンカの引数に渡す。  
+
+> `-Wl,-rpath,xxx`でも`-Wl,-rpath=xxx`でもよかった
+
+- [I don't understand -Wl,-rpath -Wl,](https://stackoverflow.com/questions/6562403/i-dont-understand-wl-rpath-wl)
 
 ### cleanコマンド
 
