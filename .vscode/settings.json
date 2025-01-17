@@ -1,18 +1,31 @@
 {
+    "C_Cpp.autoAddFileAssociations": false,
+    "C_Cpp.clang_format_fallbackStyle": "Mozilla",
+    "C_Cpp.clang_format_sortIncludes": true,
+    "C_Cpp.clang_format_style": "Mozilla",
+    "C_Cpp.codeAnalysis.clangTidy.checks.disabled": [
+        "readability-identifier-length",
+        "readability-named-parameter"
+    ],
+    "C_Cpp.codeAnalysis.clangTidy.checks.enabled": [
+        "cppcoreguidelines-init-variables",
+        "readability-*"
+    ],
+    "C_Cpp.codeAnalysis.clangTidy.enabled": true,
+    "C_Cpp.codeAnalysis.runAutomatically": true,
+    "C_Cpp.inlayHints.parameterNames.enabled": true,
+    "C_Cpp.inlayHints.parameterNames.suppressWhenArgumentContainsName": true,
+    "C_Cpp.inlayHints.referenceOperator.enabled": true,
     "[c++]": {
         "editor.formatOnSave": true,
         "editor.tabSize": 2,
-        "files.insertFinalNewline": true,
+        "files.insertFinalNewline": true
     },
     "[sql]": {
         "editor.formatOnSave": false,
         "editor.tabSize": 2,
         "files.insertFinalNewline": true
     },
-    "C_Cpp.autoAddFileAssociations": false,
-    "C_Cpp.clang_format_fallbackStyle": "Mozilla",
-    "C_Cpp.clang_format_style": "Mozilla",
-    "C_Cpp.clang_format_sortIncludes": true,
     "cSpell.words": [
         "hgetall",
         "hmset",
@@ -44,5 +57,5 @@
         "UnitTest"
     ],
     "gtest-adapter.supportLocation": true,
-    "sql-formatter.uppercase": true,
+    "sql-formatter.uppercase": true
 }

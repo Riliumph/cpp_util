@@ -2,10 +2,20 @@ FROM mcr.microsoft.com/devcontainers/cpp:debian
 
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y\
+    # c++ libraries
     libboost1.81-all-dev\
     libgtest-dev\
     libpqxx-dev\
     nlohmann-json3-dev\
+    # clang
+    clang\
+    clang-format\
+    clang-tools\
+    # static analysis
+    cppcheck\
+    clang-tidy\
+    bear\
+    # utilities
     peco\
     silversearcher-ag\
     vim\
