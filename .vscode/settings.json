@@ -32,7 +32,8 @@
     "cSpell.words": [
         "hgetall",
         "hmset",
-        "pqxx"
+        "pqxx",
+        "TSTZ"
     ],
     "editor.tokenColorCustomizations": {
         "textMateRules": [
