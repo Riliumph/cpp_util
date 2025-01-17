@@ -9,7 +9,7 @@ namespace postgres {
 std::ostream&
 operator<<(std::ostream& os, const ResultSet& r)
 {
-  if (r.result_set.size() <= 0) {
+  if (r.result_set.empty()) {
     // pqxx::resultはテーブル接続時にカラム名を取得するため通らない。
     return os;
   }
