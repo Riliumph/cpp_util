@@ -10,11 +10,11 @@ namespace event::IF {
 class EventHandler
 {
 public:
-  using event_func = std::function<void(int)>;
+  using callback = std::function<void(int)>;
 
   virtual bool CanReady() = 0;
-  virtual int RegisterEvent(int, int, event_func) = 0;
-  virtual int ModifyEvent(int, int, std::optional<event_func>) = 0;
+  virtual int RegisterEvent(int, int, callback) = 0;
+  virtual int ModifyEvent(int, int, std::optional<callback>) = 0;
   virtual int DeleteEvent(int, int) = 0;
 
   virtual void LoopEvent() = 0;

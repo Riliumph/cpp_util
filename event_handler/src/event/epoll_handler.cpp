@@ -45,9 +45,10 @@ EpollHandler::CanReady()
 /// @brief 監視するイベントを登録する関数
 /// @param fd 新たに監視するFD
 /// @param event 監視したいイベント
+/// @param fn イベント発生時に実行するコールバック
 /// @return 成否
 int
-EpollHandler::RegisterEvent(int fd, int event, event_func fn)
+EpollHandler::RegisterEvent(int fd, int event, callback fn)
 {
   struct epoll_event e;
   e.data.fd = fd;
@@ -65,9 +66,10 @@ EpollHandler::RegisterEvent(int fd, int event, event_func fn)
 /// @brief 監視しているイベントを変更する関数
 /// @param fd 変更したいFD
 /// @param event 変更したいイベント
+/// @param fn 変更するコールバック（イベントのみ変更の場合はstd::nulloptを使用）
 /// @return 成否
 int
-EpollHandler::ModifyEvent(int fd, int event, std::optional<event_func> fn)
+EpollHandler::ModifyEvent(int fd, int event, std::optional<callback> fn)
 {
   struct epoll_event e;
   e.data.fd = fd;

@@ -44,7 +44,7 @@ SelectHandler::CanReady()
 /// @param event 監視したいイベント
 /// @return 成否
 int
-SelectHandler::RegisterEvent(int fd, int event, event_func fn)
+SelectHandler::RegisterEvent(int fd, int event, callback fn)
 {
   switch (event) {
     case EPOLLIN:
@@ -70,7 +70,7 @@ SelectHandler::RegisterEvent(int fd, int event, event_func fn)
 /// @param event 変更したいイベント
 /// @return 成否
 int
-SelectHandler::ModifyEvent(int fd, int event, std::optional<event_func> fn)
+SelectHandler::ModifyEvent(int fd, int event, std::optional<callback> fn)
 {
   (void)fd;
   (void)event;
