@@ -12,6 +12,9 @@
         "readability-*"
     ],
     "C_Cpp.codeAnalysis.clangTidy.enabled": true,
+    "C_Cpp.codeAnalysis.exclude": {
+        "**/*_test.cpp": true,
+    },
     "C_Cpp.codeAnalysis.runAutomatically": true,
     "C_Cpp.inlayHints.parameterNames.enabled": true,
     "C_Cpp.inlayHints.parameterNames.suppressWhenArgumentContainsName": true,
@@ -29,7 +32,9 @@
     "cSpell.words": [
         "hgetall",
         "hmset",
-        "pqxx"
+        "NOLINTNEXTLINE",
+        "pqxx",
+        "TSTZ"
     ],
     "editor.tokenColorCustomizations": {
         "textMateRules": [

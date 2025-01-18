@@ -21,6 +21,8 @@ main()
                                                       " user=postgres"
                                                       " password=postgres");
     pqxx::work transactor(*db_conn);
+    // 警告は次の方法で個別に消すことも可能
+    // NOLINTNEXTLINE(readability-qualified-auto)
     auto query = "select * from student";
     pqxx::result res(transactor.exec(query));
     transactor.commit();

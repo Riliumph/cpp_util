@@ -1,6 +1,8 @@
 #ifndef INCLUDE_POSTGRES_DEFINE_HPP
 #define INCLUDE_POSTGRES_DEFINE_HPP
 // STL
+#include <chrono>
+#include <optional>
 #include <string>
 // original
 #include "variant.hpp"
@@ -21,7 +23,21 @@ enum OID
   TSTZ = 1184
 };
 
-using db_record = record<bool, int, long, float, double, std::string>;
-using db_table = table<bool, int, long, float, double, std::string>;
+using db_record = record<std::monostate,
+                         bool,
+                         int,
+                         long,
+                         float,
+                         double,
+                         std::string,
+                         std::chrono::system_clock::time_point>;
+using db_table = table<std::monostate,
+                       bool,
+                       int,
+                       long,
+                       float,
+                       double,
+                       std::string,
+                       std::chrono::system_clock::time_point>;
 }
 #endif // INCLUDE_POSTGRES_DEFINE_HPP

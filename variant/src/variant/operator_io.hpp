@@ -12,7 +12,16 @@ template<typename T0, class... Ts>
 std::ostream&
 operator<<(std::ostream& os, const std::variant<T0, Ts...>& lv)
 {
-  std::visit([&](const auto& x) { os << x; }, lv);
+  std::visit(
+    [&](const auto& x) {
+      using decayed_t = std::decay_t<decltype(x)>;
+      if constexpr (std::is_same_v<decayed_t, std::monostate>) {
+        os << "(MONOSTATE)";
+      } else {
+        os << x;
+      }
+    },
+    lv);
   return os;
 }
 #endif // INCLUDE_VALIANT_OPERATOR_IO_HPP

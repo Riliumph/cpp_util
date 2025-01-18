@@ -29,7 +29,7 @@ public:
 private:
   pqxx::result result_set;
   db_table data;
-  db_table Convert2Any(pqxx::result&);
+  static db_table Convert2Any(pqxx::result&);
 };
 
 } // namespace postgres
