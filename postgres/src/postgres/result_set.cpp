@@ -57,7 +57,9 @@ ResultSet::Raw(pqxx::result result)
 
 #endif // ACCESSOR
 
-/// @brief
+/// @brief resultをPythonのmapのような形式に変換する
+/// @param result 返還対象
+/// @return 変換後のデータ
 postgres::db_table
 ResultSet::Convert2Any(pqxx::result& result)
 {
