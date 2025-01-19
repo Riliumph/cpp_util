@@ -54,7 +54,7 @@ EpollHandler::RegisterEvent(int fd, int event, callback fn)
   struct epoll_event e;
   e.data.fd = fd;
   e.events = event;
-  auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_ADD, e.data.fd, &e);
+  auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, &e);
   if (ok == -1) {
     perror("epoll register event");
     close(epoll_fd);
@@ -75,7 +75,7 @@ EpollHandler::ModifyEvent(int fd, int event, std::optional<callback> fn)
   struct epoll_event e;
   e.data.fd = fd;
   e.events = event;
-  auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_MOD, e.data.fd, &e);
+  auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &e);
   if (ok == -1) {
     perror("epoll modify event");
     close(epoll_fd);
@@ -97,7 +97,7 @@ EpollHandler::DeleteEvent(int fd, int event)
   struct epoll_event e;
   e.data.fd = fd;
   e.events = event;
-  auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_DEL, e.data.fd, &e);
+  auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, &e);
   if (ok == -1) {
     perror("epoll delete event");
     close(epoll_fd);
