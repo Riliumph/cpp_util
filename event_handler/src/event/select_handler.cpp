@@ -116,14 +116,19 @@ SelectHandler::WaitEvent()
 /// @brief イベント待機のタイムアウトを設定する関数
 /// @param to タイムアウト
 void
-SelectHandler::Timeout(std::chrono::milliseconds timeout)
+SelectHandler::Timeout(std::optional<std::chrono::milliseconds> timeout)
 {
   using secs = std::chrono::seconds;
   using usecs = std::chrono::microseconds;
-  auto s = std::chrono::duration_cast<secs>(timeout);
-  auto us = std::chrono::duration_cast<usecs>(timeout - s);
-  this->timeout.tv_sec = s.count();
-  this->timeout.tv_usec = us.count();
+  if (timeout) {
+    auto s = std::chrono::duration_cast<secs>(*timeout);
+    auto us = std::chrono::duration_cast<usecs>(*timeout - s);
+    this->timeout.tv_sec = s.count();
+    this->timeout.tv_usec = us.count();
+  } else {
+    this->timeout.tv_sec = 0;
+    this->timeout.tv_usec = 0;
+  }
 }
 
 /// @brief イベント監視ループ関数

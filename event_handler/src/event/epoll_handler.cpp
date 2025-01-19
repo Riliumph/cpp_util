@@ -11,6 +11,7 @@ EpollHandler::EpollHandler()
   : epoll_fd(0)
   , event_max(EVENT_MAX)
   , events(EVENT_MAX)
+  , timeout(std::nullopt)
 {
   CreateEpoll();
 }
@@ -21,7 +22,7 @@ EpollHandler::EpollHandler(size_t max_event_num)
   : epoll_fd(0)
   , event_max(max_event_num)
   , events(max_event_num)
-
+  , timeout(std::nullopt)
 {
   CreateEpoll();
 }
@@ -111,17 +112,27 @@ EpollHandler::DeleteEvent(int fd, int event)
 int
 EpollHandler::WaitEvent()
 {
-  auto to = timeout.count();
-  auto updated_fd_num = epoll_wait(epoll_fd, events.data(), event_max, to);
+  auto to = Timeout();
+  auto* head = events.data();
+  auto updated_fd_num = epoll_wait(epoll_fd, head, event_max, to);
   return updated_fd_num;
 }
 
 /// @brief イベント待機のタイムアウトを設定する関数
 /// @param to タイムアウト
 void
-EpollHandler::Timeout(std::chrono::milliseconds timeout)
+EpollHandler::Timeout(std::optional<std::chrono::milliseconds> timeout)
 {
   this->timeout = timeout;
+}
+
+int64_t
+EpollHandler::Timeout()
+{
+  if (timeout.has_value()) {
+    return timeout->count();
+  }
+  return -1;
 }
 
 /// @brief イベント監視ループ関数

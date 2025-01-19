@@ -25,7 +25,7 @@ public: // EventHandler
   int ModifyEvent(int, int, std::optional<callback> = std::nullopt) override;
   int DeleteEvent(int, int) override;
   void LoopEvent() override;
-  void Timeout(std::chrono::milliseconds) override;
+  void Timeout(std::optional<std::chrono::milliseconds>) override;
 
 private:
   int WaitEvent() override;

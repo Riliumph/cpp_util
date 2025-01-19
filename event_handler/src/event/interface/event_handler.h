@@ -18,7 +18,7 @@ public:
   virtual int DeleteEvent(int, int) = 0;
 
   virtual void LoopEvent() = 0;
-  virtual void Timeout(std::chrono::milliseconds to) = 0;
+  virtual void Timeout(std::optional<std::chrono::milliseconds>) = 0;
 
 protected:
   virtual int WaitEvent() = 0;
