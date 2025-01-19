@@ -27,6 +27,11 @@ read_and_print(int fd)
     perror("write");
     return;
   }
+  // 次のreturnは現状readability-redundant-control-flowを引き起こす
+  // ただし、上記if内のreturnは異常系の早期return
+  // 下記のreturnは正常系のreturnなので分けておくのが適切
+  // そのため、コメントによりlintを無効化する
+  // NOLINTNEXTLINE(readability-redundant-control-flow)
   return;
 }
 
