@@ -59,7 +59,7 @@ EpollHandler::RegisterEvent(int fd, int event, callback fn)
     close(epoll_fd);
     return ok;
   }
-  reaction[fd] = fn;
+  reaction[{ fd, event }] = fn;
   return ok;
 }
 
@@ -81,7 +81,7 @@ EpollHandler::ModifyEvent(int fd, int event, std::optional<callback> fn)
     return ok;
   }
   if (fn.has_value()) {
-    reaction[fd] = *fn;
+    reaction[{ fd, event }] = *fn;
   }
   return ok;
 }
@@ -102,7 +102,7 @@ EpollHandler::DeleteEvent(int fd, int event)
     close(epoll_fd);
     return ok;
   }
-  reaction.erase(fd);
+  reaction.erase({ fd, event });
   return ok;
 }
 
@@ -140,7 +140,11 @@ EpollHandler::LoopEvent()
 
     for (int i = 0; i < updated_fd_num; ++i) {
       auto& event = events[i];
-      auto it = reaction.find(event.data.fd);
+      // pack fieldをalignmentされた値に置き直し
+      // static_cast<int>を使ってもいいが、readability-redundant-casting警告が出る
+      int key_fd = event.data.fd;
+      int key_ev = event.events;
+      auto it = reaction.find({ key_fd, key_ev });
       if (it == reaction.end()) {
         std::cerr << "not found fd(" << event.data.fd << ")" << std::endl;
         continue;
