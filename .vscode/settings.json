@@ -5,7 +5,8 @@
     "C_Cpp.clang_format_style": "Mozilla",
     "C_Cpp.codeAnalysis.clangTidy.checks.disabled": [
         "readability-identifier-length",
-        "readability-named-parameter"
+        "readability-named-parameter",
+        "readability-redundant-access-specifiers"
     ],
     "C_Cpp.codeAnalysis.clangTidy.checks.enabled": [
         "cppcoreguidelines-init-variables",

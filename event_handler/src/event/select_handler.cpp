@@ -44,7 +44,7 @@ SelectHandler::CanReady()
 /// @param event 監視したいイベント
 /// @return 成否
 int
-SelectHandler::RegisterEvent(int fd, int event, event_func fn)
+SelectHandler::RegisterEvent(int fd, int event, callback fn)
 {
   switch (event) {
     case EPOLLIN:
@@ -70,7 +70,7 @@ SelectHandler::RegisterEvent(int fd, int event, event_func fn)
 /// @param event 変更したいイベント
 /// @return 成否
 int
-SelectHandler::ModifyEvent(int fd, int event, std::optional<event_func> fn)
+SelectHandler::ModifyEvent(int fd, int event, std::optional<callback> fn)
 {
   (void)fd;
   (void)event;
@@ -116,14 +116,19 @@ SelectHandler::WaitEvent()
 /// @brief イベント待機のタイムアウトを設定する関数
 /// @param to タイムアウト
 void
-SelectHandler::Timeout(std::chrono::milliseconds timeout)
+SelectHandler::Timeout(std::optional<std::chrono::milliseconds> timeout)
 {
   using secs = std::chrono::seconds;
   using usecs = std::chrono::microseconds;
-  auto s = std::chrono::duration_cast<secs>(timeout);
-  auto us = std::chrono::duration_cast<usecs>(timeout - s);
-  this->timeout.tv_sec = s.count();
-  this->timeout.tv_usec = us.count();
+  if (timeout) {
+    auto s = std::chrono::duration_cast<secs>(*timeout);
+    auto us = std::chrono::duration_cast<usecs>(*timeout - s);
+    this->timeout.tv_sec = s.count();
+    this->timeout.tv_usec = us.count();
+  } else {
+    this->timeout.tv_sec = 0;
+    this->timeout.tv_usec = 0;
+  }
 }
 
 /// @brief イベント監視ループ関数

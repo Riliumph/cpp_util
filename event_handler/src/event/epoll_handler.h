@@ -20,24 +20,25 @@ public:
 
 public: // EventHandler
   bool CanReady() override;
-  int RegisterEvent(int, int, event_func) override;
-  int ModifyEvent(int, int, std::optional<event_func> = std::nullopt) override;
+  int RegisterEvent(int, int, callback) override;
+  int ModifyEvent(int, int, std::optional<callback> = std::nullopt) override;
   int DeleteEvent(int, int) override;
   void LoopEvent() override;
-  void Timeout(std::chrono::milliseconds) override;
+  void Timeout(std::optional<std::chrono::milliseconds>) override;
 
 private:
   int WaitEvent() override;
 
   void CreateEpoll();
+  int64_t Timeout();
 
 private:
   int epoll_fd;
   size_t event_max;
   std::vector<struct epoll_event> events;
-  std::chrono::milliseconds timeout;
-  // TODO: fdのみをキーとする。今後イベントの種類にも対応
-  std::map<int, event_func> reaction;
+  std::optional<std::chrono::milliseconds> timeout;
+  // std::map<int, std::map<int, callback>>ではなく、少し特殊な型を使ってみる
+  std::map<std::pair<int, uint32_t>, callback> reaction;
 };
 }
 #endif // INCLUDE_EVENT_EPOLL_EPOLL_HANDLER_H

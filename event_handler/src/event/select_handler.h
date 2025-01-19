@@ -21,11 +21,11 @@ public:
 
 public: // EventHandler
   bool CanReady() override;
-  int RegisterEvent(int, int, event_func) override;
-  int ModifyEvent(int, int, std::optional<event_func> = std::nullopt) override;
+  int RegisterEvent(int, int, callback) override;
+  int ModifyEvent(int, int, std::optional<callback> = std::nullopt) override;
   int DeleteEvent(int, int) override;
   void LoopEvent() override;
-  void Timeout(std::chrono::milliseconds) override;
+  void Timeout(std::optional<std::chrono::milliseconds>) override;
 
 private:
   int WaitEvent() override;
@@ -41,7 +41,7 @@ private:
   fd_set write_fds;
   fd_set except_fds;
   struct timeval timeout;
-  std::map<int, event_func> reaction;
+  std::map<int, callback> reaction;
 };
 }
 #endif // INCLUDE_EVENT_SELECT_HANDLER_H
