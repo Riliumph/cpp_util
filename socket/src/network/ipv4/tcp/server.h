@@ -33,10 +33,11 @@ public: // constructor
 public: // accessor
   void Timeout(struct timeval);
   void Timeout(time_t, suseconds_t);
+  void Event(event::IF::EventHandler::callback) override;
 
 public:
   int Establish() override;
-  bool Start(std::function<bool(int)>) override;
+  bool Start() override;
 
 private:
   void Hint(const struct addrinfo&);
@@ -50,12 +51,17 @@ private:
   int Accept();
   int CurrentConnection();
   int ControlMaxConnection(const int);
+  bool AcceptEvent(int);
+  bool CloseEvent(int);
 
 private: // File Descriptor
   fd_set fds;
   int server_fd; // サーバー接続を待ち受けているソケットFD
   std::array<int, CONNECTION_MAX> client_fds;
+
+private: // Event Handler
   std::shared_ptr<event::IF::EventHandler> event_handler;
+  event::IF::EventHandler::callback event;
 
 protected: // IP config
   std::string ip;

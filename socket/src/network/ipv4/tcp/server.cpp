@@ -48,6 +48,12 @@ Server::Timeout(time_t sec, suseconds_t usec)
   timeout.tv_usec = usec;
 }
 
+void
+Server::Event(event::IF::EventHandler::callback e)
+{
+  event = e;
+}
+
 /// @brief サーバーを立ち上げるための
 /// @return
 int
@@ -77,7 +83,7 @@ Server::Establish()
 /// @param fn 反応時に処理する関数オブジェクト
 /// @return 成否
 bool
-Server::Start(std::function<bool(int)> fn)
+Server::Start()
 {
   if (!event_handler) {
     std::cerr << "event_handler not set" << std::endl;
@@ -87,24 +93,17 @@ Server::Start(std::function<bool(int)> fn)
     std::cerr << "event_handler not ready" << std::endl;
     return false;
   }
-  auto ok = event_handler->RegisterEvent(server_fd, EPOLLIN, [&](int fd) {
-    std::cerr << "accepting new comer ..." << std::endl;
-    auto client_fd = Accept();
-    if (client_fd < 0) {
-      return false;
-    }
-    // 最大接続数制限のために独自管理が必要
-    auto idx = ControlMaxConnection(client_fd);
-    if (idx < 0) {
-      std::cerr << "reject new comer for limit connection" << std::endl;
-      close(client_fd);
-      return false;
-    }
-  });
+  struct epoll_event ev;
+  ev.events = EPOLLIN;
+  ev.data.fd = server_fd;
+  auto ok = event_handler->CreateTrigger(ev.data.fd, ev.events);
   if (ok != 0) {
     std::cerr << "failed to set event" << std::endl;
     return false;
   }
+  event_handler->SetCallback(
+    ev.data.fd, ev.events, [this](int fd) { AcceptEvent(fd); });
+
   std::cout << "start event_handler" << std::endl;
   event_handler->Run();
   return true;
@@ -234,7 +233,7 @@ Server::CurrentConnection()
 int
 Server::ControlMaxConnection(const int client_fd)
 {
-  auto it = std::find(client_fds.begin(), client_fds.end(), DISABLE_FD);
+  auto* it = std::find(client_fds.begin(), client_fds.end(), DISABLE_FD);
   if (it == client_fds.end()) {
     return -1;
   }
@@ -242,6 +241,49 @@ Server::ControlMaxConnection(const int client_fd)
   printf("now clients: %d/%ld\n", CurrentConnection(), client_fds.size());
   auto index = std::distance(client_fds.begin(), it);
   return index;
+}
+
+bool
+Server::CloseEvent(int fd)
+{
+  std::cout << "Client disconnected: " << fd << std::endl;
+  event_handler->EraseCallback(fd);
+  event_handler->DeleteTrigger(fd, EPOLLIN);
+  close(fd);
+  return true;
+}
+
+bool
+Server::AcceptEvent(int server_fd)
+{
+  std::cout << "accepting new comer ..." << std::endl;
+  auto client_fd = Accept();
+  if (client_fd < 0) {
+    return false;
+  }
+  // 最大接続数制限のために独自管理が必要
+  auto idx = ControlMaxConnection(client_fd);
+  if (idx < 0) {
+    std::cerr << "reject new comer for limit connection" << std::endl;
+    close(client_fd);
+    return false;
+  }
+  // client_fdを引き出した後、
+  // そのクライアントからの接続時に発火するイベントを登録
+  struct epoll_event ev;
+  ev.data.fd = client_fd;
+  ev.events = (EPOLLIN | EPOLLRDHUP);
+  int ok = event_handler->CreateTrigger(ev.data.fd, ev.events);
+  if (ok != 0) {
+    std::cerr << "failed to set event" << std::endl;
+    close(client_fd);
+    return false;
+  }
+  event_handler->SetCallback(
+    ev.data.fd, EPOLLIN, [this](int fd) { event(fd); });
+  event_handler->SetCallback(
+    ev.data.fd, ev.events, [this](int fd) { CloseEvent(fd); });
+  return true;
 }
 
 void
