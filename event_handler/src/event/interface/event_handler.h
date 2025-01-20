@@ -17,7 +17,8 @@ public:
   virtual int ModifyEvent(int, int, std::optional<callback>) = 0;
   virtual int DeleteEvent(int, int) = 0;
 
-  virtual void LoopEvent() = 0;
+  virtual void RunOnce() = 0;
+  virtual void Run() = 0;
   virtual void Timeout(std::optional<std::chrono::milliseconds>) = 0;
 
 protected:

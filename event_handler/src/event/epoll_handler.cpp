@@ -138,31 +138,37 @@ EpollHandler::Timeout()
 /// @brief イベント監視ループ関数
 /// @param fn イベント検出時に実行するコールバック
 void
-EpollHandler::LoopEvent()
+EpollHandler::RunOnce()
+{
+  events = std::vector<struct epoll_event>(event_max);
+  std::cout << "wait event ..." << std::endl;
+  auto updated_fd_num = WaitEvent();
+  if (updated_fd_num == -1) {
+    perror("epoll_wait");
+    return;
+  }
+
+  for (int i = 0; i < updated_fd_num; ++i) {
+    auto& event = events[i];
+    // pack fieldをalignmentされた値に置き直し
+    // static_cast<int>を使ってもいいが、readability-redundant-casting警告が出る
+    int key_fd = event.data.fd;
+    int key_ev = event.events;
+    auto it = reaction.find({ key_fd, key_ev });
+    if (it == reaction.end()) {
+      std::cerr << "not found fd(" << event.data.fd << ")" << std::endl;
+      continue;
+    }
+    std::cout << "callback fd(" << event.data.fd << ")" << std::endl;
+    it->second(event.data.fd);
+  }
+}
+
+void
+EpollHandler::Run()
 {
   while (true) {
-    events = std::vector<struct epoll_event>(event_max);
-    std::cout << "wait event ..." << std::endl;
-    auto updated_fd_num = WaitEvent();
-    if (updated_fd_num == -1) {
-      perror("epoll_wait");
-      return;
-    }
-
-    for (int i = 0; i < updated_fd_num; ++i) {
-      auto& event = events[i];
-      // pack fieldをalignmentされた値に置き直し
-      // static_cast<int>を使ってもいいが、readability-redundant-casting警告が出る
-      int key_fd = event.data.fd;
-      int key_ev = event.events;
-      auto it = reaction.find({ key_fd, key_ev });
-      if (it == reaction.end()) {
-        std::cerr << "not found fd(" << event.data.fd << ")" << std::endl;
-        continue;
-      }
-      std::cout << "callback fd(" << event.data.fd << ")" << std::endl;
-      it->second(event.data.fd);
-    }
+    RunOnce();
   }
 }
 

@@ -51,6 +51,6 @@ main()
     std::cerr << "failed to register event" << std::endl;
     return -1;
   }
-  e_handler.LoopEvent();
+  e_handler.Run();
   return 0;
 }

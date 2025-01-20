@@ -134,25 +134,33 @@ SelectHandler::Timeout(std::optional<std::chrono::milliseconds> timeout)
 /// @brief イベント監視ループ関数
 /// @param fn イベント検出時に実行するコールバック
 void
-SelectHandler::LoopEvent()
+SelectHandler::RunOnce()
+{
+  auto updated_fd_num = WaitEvent();
+  if (updated_fd_num == -1) {
+    perror("select_wait");
+    return;
+  }
+
+  for (int i = 0; i < updated_fd_num; ++i) {
+    if (FD_ISSET(i, &read_fds)) {
+      auto it = reaction.find(i);
+      if (it == reaction.end()) {
+        std::cerr << "not found fd(" << i << ")" << std::endl;
+        continue;
+      }
+      it->second(i);
+    }
+  }
+}
+
+/// @brief イベント監視ループ関数
+/// @param fn イベント検出時に実行するコールバック
+void
+SelectHandler::Run()
 {
   while (true) {
-    auto updated_fd_num = WaitEvent();
-    if (updated_fd_num == -1) {
-      perror("select_wait");
-      return;
-    }
-
-    for (int i = 0; i < updated_fd_num; ++i) {
-      if (FD_ISSET(i, &read_fds)) {
-        auto it = reaction.find(i);
-        if (it == reaction.end()) {
-          std::cerr << "not found fd(" << i << ")" << std::endl;
-          continue;
-        }
-        it->second(i);
-      }
-    }
+    RunOnce();
   }
 }
 
