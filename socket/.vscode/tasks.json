@@ -4,7 +4,7 @@
 		{
 			"type": "shell",
 			"label": "make_server",
-			"command": "make -f Makefile.server all",
+			"command": "make -f server.Makefile all",
 			"args": [],
 			"options": {},
 			"group": "build",
@@ -13,7 +13,7 @@
 		{
 			"type": "shell",
 			"label": "test",
-			"command": "make -f Makefile.server test && make -f Makefile.client test",
+			"command": "make -f server.Makefile test && make -f client.Makefile test",
 			"args": [],
 			"options": {},
 			"group": "build",
