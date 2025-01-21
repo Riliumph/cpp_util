@@ -4,6 +4,8 @@
 #include <vector>
 // system
 #include <unistd.h>
+// original
+#include "event/operator_io.hpp"
 
 namespace event {
 /// @brief デフォルトコンストラクタ
@@ -59,6 +61,7 @@ EpollHandler::CreateTrigger(int fd, int event)
     perror("epoll register event");
     return ok;
   }
+  std::cout << "create trigger: " << e << std::endl;
   return ok;
 }
 
@@ -78,6 +81,7 @@ EpollHandler::ModifyTrigger(int fd, int event)
     perror("epoll modify event");
     return ok;
   }
+  std::cout << "modify trigger: " << e << std::endl;
   return ok;
 }
 
@@ -96,6 +100,7 @@ EpollHandler::DeleteTrigger(int fd, int event)
     perror("epoll delete event");
     return ok;
   }
+  std::cout << "delete trigger: " << e << std::endl;
   reaction.erase({ fd, event });
   return ok;
 }
@@ -149,16 +154,16 @@ EpollHandler::RunOnce()
 
   for (int i = 0; i < updated_fd_num; ++i) {
     auto& event = events[i];
+    std::cout << "fire event: " << event << std::endl;
     // pack fieldをalignmentされた値に置き直し
     // static_cast<int>を使ってもいいが、readability-redundant-casting警告が出る
     int key_fd = event.data.fd;
     int key_ev = event.events;
     auto it = reaction.find({ key_fd, key_ev });
     if (it == reaction.end()) {
-      std::cerr << "not found fd(" << event.data.fd << ")" << std::endl;
+      std::cerr << "callback not found" << std::endl;
       continue;
     }
-    std::cout << "callback fd(" << event.data.fd << ")" << std::endl;
     it->second(event.data.fd);
   }
 }
