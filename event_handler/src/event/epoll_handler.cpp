@@ -49,7 +49,7 @@ EpollHandler::CanReady()
 /// @param fn イベント発生時に実行するコールバック
 /// @return 成否
 int
-EpollHandler::RegisterEvent(int fd, int event, callback fn)
+EpollHandler::CreateTrigger(int fd, int event)
 {
   struct epoll_event e;
   e.data.fd = fd;
@@ -57,10 +57,8 @@ EpollHandler::RegisterEvent(int fd, int event, callback fn)
   auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, &e);
   if (ok == -1) {
     perror("epoll register event");
-    close(epoll_fd);
     return ok;
   }
-  reaction[{ fd, event }] = fn;
   return ok;
 }
 
@@ -70,7 +68,7 @@ EpollHandler::RegisterEvent(int fd, int event, callback fn)
 /// @param fn 変更するコールバック（イベントのみ変更の場合はstd::nulloptを使用）
 /// @return 成否
 int
-EpollHandler::ModifyEvent(int fd, int event, std::optional<callback> fn)
+EpollHandler::ModifyTrigger(int fd, int event)
 {
   struct epoll_event e;
   e.data.fd = fd;
@@ -78,11 +76,7 @@ EpollHandler::ModifyEvent(int fd, int event, std::optional<callback> fn)
   auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &e);
   if (ok == -1) {
     perror("epoll modify event");
-    close(epoll_fd);
     return ok;
-  }
-  if (fn.has_value()) {
-    reaction[{ fd, event }] = *fn;
   }
   return ok;
 }
@@ -92,7 +86,7 @@ EpollHandler::ModifyEvent(int fd, int event, std::optional<callback> fn)
 /// @param event 削除したいイベント
 /// @return 成否
 int
-EpollHandler::DeleteEvent(int fd, int event)
+EpollHandler::DeleteTrigger(int fd, int event)
 {
   struct epoll_event e;
   e.data.fd = fd;
@@ -100,7 +94,6 @@ EpollHandler::DeleteEvent(int fd, int event)
   auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, &e);
   if (ok == -1) {
     perror("epoll delete event");
-    close(epoll_fd);
     return ok;
   }
   reaction.erase({ fd, event });

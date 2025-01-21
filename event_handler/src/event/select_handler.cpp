@@ -44,7 +44,7 @@ SelectHandler::CanReady()
 /// @param event 監視したいイベント
 /// @return 成否
 int
-SelectHandler::RegisterEvent(int fd, int event, callback fn)
+SelectHandler::CreateTrigger(int fd, int event)
 {
   switch (event) {
     case EPOLLIN:
@@ -61,7 +61,6 @@ SelectHandler::RegisterEvent(int fd, int event, callback fn)
       return -1;
   }
   max_fd = GetMaxFd();
-  reaction[fd] = fn;
   return 0;
 }
 
@@ -70,11 +69,10 @@ SelectHandler::RegisterEvent(int fd, int event, callback fn)
 /// @param event 変更したいイベント
 /// @return 成否
 int
-SelectHandler::ModifyEvent(int fd, int event, std::optional<callback> fn)
+SelectHandler::ModifyTrigger(int fd, int event)
 {
   (void)fd;
   (void)event;
-  (void)fn;
   return 0;
 }
 
@@ -83,7 +81,7 @@ SelectHandler::ModifyEvent(int fd, int event, std::optional<callback> fn)
 /// @param event 削除したいイベント
 /// @return 成否
 int
-SelectHandler::DeleteEvent(int fd, int event)
+SelectHandler::DeleteTrigger(int fd, int event)
 {
   switch (event) {
     case EPOLLIN:
