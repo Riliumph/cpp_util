@@ -23,6 +23,7 @@ public: // EventHandler
   int CreateTrigger(int, int) override;
   int ModifyTrigger(int, int) override;
   int DeleteTrigger(int, int) override;
+  void SetCallback(int, int, callback) override;
 
   void RunOnce() override;
   void Run() override;

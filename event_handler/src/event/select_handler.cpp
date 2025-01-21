@@ -101,6 +101,13 @@ SelectHandler::DeleteTrigger(int fd, int event)
   return 0;
 }
 
+void
+SelectHandler::SetCallback(int fd, int event, callback fn)
+{
+  // TODO: Selectのコールバックは別で実装する
+  reaction[fd] = fn;
+}
+
 /// @brief イベントを待機する処理
 /// @return 準備ができているFD数
 int

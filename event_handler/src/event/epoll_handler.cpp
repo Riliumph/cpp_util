@@ -100,6 +100,12 @@ EpollHandler::DeleteTrigger(int fd, int event)
   return ok;
 }
 
+void
+EpollHandler::SetCallback(int fd, int event, callback fn)
+{
+  reaction[{ fd, event }] = fn;
+}
+
 /// @brief イベントを待機する処理
 /// @return 準備ができているFD数
 int
