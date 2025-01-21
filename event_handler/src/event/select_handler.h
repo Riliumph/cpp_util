@@ -21,9 +21,10 @@ public:
 
 public: // EventHandler
   bool CanReady() override;
-  int RegisterEvent(int, int, callback) override;
-  int ModifyEvent(int, int, std::optional<callback> = std::nullopt) override;
-  int DeleteEvent(int, int) override;
+  int CreateTrigger(int, int) override;
+  int ModifyTrigger(int, int) override;
+  int DeleteTrigger(int, int) override;
+  void SetCallback(int, int, callback) override;
   void RunOnce() override;
   void Run() override;
   void Timeout(std::optional<std::chrono::milliseconds>) override;
