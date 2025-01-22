@@ -19,7 +19,6 @@ stdin_sample(std::shared_ptr<event::IF::EventHandler> e_handler)
   struct epoll_event e;
   e.events = EPOLLIN;       // 読み込み可能なイベントを監視
   e.data.fd = STDIN_FILENO; // 標準入力を監視対象に設定
-  std::cout << "create trigger for STDIN: " << e << std::endl;
   auto ok = e_handler->CreateTrigger(e.data.fd, e.events);
   if (ok != 0) {
     std::cerr << "failed to register event" << std::endl;
