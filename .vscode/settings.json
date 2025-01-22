@@ -14,9 +14,10 @@
     ],
     "C_Cpp.codeAnalysis.clangTidy.enabled": true,
     "C_Cpp.codeAnalysis.exclude": {
-        "**/*_test.cpp": true,
+        "**/*_test.cpp": true
     },
     "C_Cpp.codeAnalysis.runAutomatically": true,
+    "C_Cpp.default.cppStandard": "c++23",
     "C_Cpp.inlayHints.parameterNames.enabled": true,
     "C_Cpp.inlayHints.parameterNames.suppressWhenArgumentContainsName": true,
     "C_Cpp.inlayHints.referenceOperator.enabled": true,

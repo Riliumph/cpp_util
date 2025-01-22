@@ -17,6 +17,7 @@ public:
   virtual int ModifyTrigger(int, int) = 0;
   virtual int DeleteTrigger(int, int) = 0;
   virtual void SetCallback(int, int, callback) = 0;
+  virtual void EraseCallback(int) = 0;
 
   virtual void RunOnce() = 0;
   virtual void Run() = 0;

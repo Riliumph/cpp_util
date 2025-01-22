@@ -122,6 +122,10 @@ socket_sample(std::shared_ptr<event::IF::EventHandler> e_handler)
       std::cout << "callback: " << fd << std::endl;
       // クライアントが切断した場合
       std::cout << "Client disconnected: " << fd << std::endl;
+      std::cout << "delete trigger: " << fd << std::endl;
+      e_handler->DeleteTrigger(fd, 0);
+      std::cout << "erase callback: " << fd << std::endl;
+      e_handler->EraseCallback(fd);
       close(fd);
     });
     std::cout << "New connection accepted: " << client_fd << std::endl;

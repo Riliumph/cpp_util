@@ -25,6 +25,7 @@ public: // EventHandler
   int ModifyTrigger(int, int) override;
   int DeleteTrigger(int, int) override;
   void SetCallback(int, int, callback) override;
+  void EraseCallback(int) override;
   void RunOnce() override;
   void Run() override;
   void Timeout(std::optional<std::chrono::milliseconds>) override;

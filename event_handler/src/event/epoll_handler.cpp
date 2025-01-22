@@ -114,6 +114,14 @@ EpollHandler::SetCallback(int fd, int event, callback fn)
   reaction[{ fd, event }] = fn;
 }
 
+/// @brief 指定された条件のコールバックを削除する関数
+/// @param fd 削除したいコールバックに関連づくFD
+void
+EpollHandler::EraseCallback(int fd)
+{
+  std::erase_if(reaction, [fd](auto& p) { return p.first.first == fd; });
+}
+
 /// @brief イベントを待機する処理
 /// @return イベントが発火したFD数
 int

@@ -1,6 +1,6 @@
 # compiler setting
 CXX      = g++
-CXXVER   = c++17
+CXXVER   = c++23
 CXXFLAGS = -MMD
 CXXFLAGS+= -Wall -Wextra -Winit-self
 CXXFLAGS+= -std=$(CXXVER)
