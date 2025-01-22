@@ -104,6 +104,7 @@ SelectHandler::DeleteTrigger(int fd, int event)
 void
 SelectHandler::SetCallback(int fd, int event, callback fn)
 {
+  (void)event;
   // TODO: Selectのコールバックは別で実装する
   reaction[fd] = fn;
 }

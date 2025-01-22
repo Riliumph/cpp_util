@@ -38,6 +38,7 @@ EpollHandler::~EpollHandler()
 }
 
 /// @brief 実行可能を判定する関数
+/// epollインスタンスが作成されていれば実行可能とみなす。
 /// @return 成否
 bool
 EpollHandler::CanReady()
@@ -48,8 +49,7 @@ EpollHandler::CanReady()
 /// @brief 監視するイベントを登録する関数
 /// @param fd 新たに監視するFD
 /// @param event 監視したいイベント
-/// @param fn イベント発生時に実行するコールバック
-/// @return 成否
+/// @return 0: 成功 / -1: 失敗
 int
 EpollHandler::CreateTrigger(int fd, int event)
 {
@@ -58,18 +58,17 @@ EpollHandler::CreateTrigger(int fd, int event)
   e.events = event;
   auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, &e);
   if (ok == -1) {
-    perror("epoll register event");
+    perror("failed create epoll trigger");
     return ok;
   }
-  std::cout << "create trigger: " << e << std::endl;
+  std::cout << "trigger created: " << e << std::endl;
   return ok;
 }
 
 /// @brief 監視しているイベントを変更する関数
 /// @param fd 変更したいFD
 /// @param event 変更したいイベント
-/// @param fn 変更するコールバック（イベントのみ変更の場合はstd::nulloptを使用）
-/// @return 成否
+/// @return 0: 成功 / -1: 失敗
 int
 EpollHandler::ModifyTrigger(int fd, int event)
 {
@@ -78,58 +77,78 @@ EpollHandler::ModifyTrigger(int fd, int event)
   e.events = event;
   auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &e);
   if (ok == -1) {
-    perror("epoll modify event");
+    perror("failed modify epoll trigger");
     return ok;
   }
-  std::cout << "modify trigger: " << e << std::endl;
+  std::cout << "trigger modified: " << e << std::endl;
   return ok;
 }
 
 /// @brief 監視しているイベントを削除する関数
 /// @param fd 削除したいFD
-/// @param event 削除したいイベント
-/// @return 成否
+/// @param event 削除したいイベント（使われない）
+/// @return 0: 成功 / -1: 失敗
 int
 EpollHandler::DeleteTrigger(int fd, int event)
 {
   struct epoll_event e;
   e.data.fd = fd;
   e.events = event;
-  auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, &e);
+  auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, nullptr);
   if (ok == -1) {
-    perror("epoll delete event");
+    perror("failed delete epoll trigger");
     return ok;
   }
-  std::cout << "delete trigger: " << e << std::endl;
-  reaction.erase({ fd, event });
+  std::cout << "trigger deleted: " << e << std::endl;
   return ok;
 }
 
+/// @brief 発火したイベントに対応するコールバックを設定する関数
+/// @param fd 発火したFD
+/// @param event 発火したイベント
+/// @param fn 設定するコールバック
 void
 EpollHandler::SetCallback(int fd, int event, callback fn)
 {
+  struct epoll_event e;
+  e.data.fd = fd;
+  e.events = event;
   reaction[{ fd, event }] = fn;
+  std::cout << "callback set: " << e << std::endl;
+}
+
+/// @brief 指定された条件のコールバックを削除する関数
+/// @param fd 削除したいコールバックに関連づくFD
+void
+EpollHandler::EraseCallback(int fd)
+{
+  std::erase_if(reaction, [fd](auto& p) { return p.first.first == fd; });
+  std::cout << "callback erased: " << fd << std::endl;
 }
 
 /// @brief イベントを待機する処理
-/// @return 準備ができているFD数
+/// @return イベントが発火したFD数
 int
 EpollHandler::WaitEvent()
 {
+  std::cout << "waiting event ..." << std::endl;
   auto to = Timeout();
   auto* head = events.data();
   auto updated_fd_num = epoll_wait(epoll_fd, head, event_max, to);
   return updated_fd_num;
 }
 
-/// @brief イベント待機のタイムアウトを設定する関数
-/// @param to タイムアウト
+/// @brief イベント待機のタイムアウト値を設定する関数
+/// @param to タイムアウト値
 void
 EpollHandler::Timeout(std::optional<std::chrono::milliseconds> timeout)
 {
   this->timeout = timeout;
 }
 
+/// @brief イベント待機のタイムアウト値を設定する関数
+/// 無効値の場合は-1となり、epoll系APIにそのまま使える
+/// @return タイムアウト値
 int64_t
 EpollHandler::Timeout()
 {
@@ -139,13 +158,11 @@ EpollHandler::Timeout()
   return -1;
 }
 
-/// @brief イベント監視ループ関数
-/// @param fn イベント検出時に実行するコールバック
+/// @brief 一度だけイベントを監視する関数
 void
 EpollHandler::RunOnce()
 {
   events = std::vector<struct epoll_event>(event_max);
-  std::cout << "wait event ..." << std::endl;
   auto updated_fd_num = WaitEvent();
   if (updated_fd_num == -1) {
     perror("epoll_wait");
@@ -154,7 +171,7 @@ EpollHandler::RunOnce()
 
   for (int i = 0; i < updated_fd_num; ++i) {
     auto& event = events[i];
-    std::cout << "fire event: " << event << std::endl;
+    std::cout << "event(" << event << ") fired!!" << std::endl;
     // pack fieldをalignmentされた値に置き直し
     // static_cast<int>を使ってもいいが、readability-redundant-casting警告が出る
     int key_fd = event.data.fd;
@@ -168,6 +185,7 @@ EpollHandler::RunOnce()
   }
 }
 
+/// @brief イベントを無限に監視する関数
 void
 EpollHandler::Run()
 {

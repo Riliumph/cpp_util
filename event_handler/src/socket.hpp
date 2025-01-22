@@ -69,7 +69,6 @@ socket_sample(std::shared_ptr<event::IF::EventHandler> e_handler)
   struct epoll_event e;
   e.data.fd = server_fd;
   e.events = EPOLLIN;
-  std::cout << "create trigger for server: " << e << std::endl;
   ok = e_handler->CreateTrigger(e.data.fd, e.events);
   if (ok == -1) {
     perror("trigger create failed");
@@ -95,10 +94,9 @@ socket_sample(std::shared_ptr<event::IF::EventHandler> e_handler)
     struct epoll_event e;
     e.events = (EPOLLIN | EPOLLRDHUP);
     e.data.fd = client_fd;
-    std::cout << "create trigger for client: " << e << std::endl;
+    std::cout << "create trigger for client" << std::endl;
     e_handler->CreateTrigger(e.data.fd, e.events);
     e_handler->SetCallback(e.data.fd, EPOLLIN, [&](int fd) {
-      std::cout << "callback: " << fd << std::endl;
       char buffer[BUF_SIZE];
       ssize_t bytes_read = read(fd, buffer, sizeof(buffer) - 1);
       if (bytes_read == -1) {
@@ -119,9 +117,9 @@ socket_sample(std::shared_ptr<event::IF::EventHandler> e_handler)
     // バッファに改行コードが残っていると、両方のフラグが立って同時にイベント発火する
     // telnetで切断（`^]'とctrl+d）すると両方が飛んでくる。
     e_handler->SetCallback(e.data.fd, (EPOLLIN | EPOLLRDHUP), [&](int fd) {
-      std::cout << "callback: " << fd << std::endl;
-      // クライアントが切断した場合
       std::cout << "Client disconnected: " << fd << std::endl;
+      e_handler->DeleteTrigger(fd, 0);
+      e_handler->EraseCallback(fd);
       close(fd);
     });
     std::cout << "New connection accepted: " << client_fd << std::endl;
