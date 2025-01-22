@@ -58,10 +58,10 @@ EpollHandler::CreateTrigger(int fd, int event)
   e.events = event;
   auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, &e);
   if (ok == -1) {
-    perror("epoll register event");
+    perror("failed create epoll trigger");
     return ok;
   }
-  std::cout << "create trigger: " << e << std::endl;
+  std::cout << "trigger created: " << e << std::endl;
   return ok;
 }
 
@@ -77,10 +77,10 @@ EpollHandler::ModifyTrigger(int fd, int event)
   e.events = event;
   auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &e);
   if (ok == -1) {
-    perror("epoll modify event");
+    perror("failed modify epoll trigger");
     return ok;
   }
-  std::cout << "modify trigger: " << e << std::endl;
+  std::cout << "trigger modified: " << e << std::endl;
   return ok;
 }
 
@@ -96,11 +96,10 @@ EpollHandler::DeleteTrigger(int fd, int event)
   e.events = event;
   auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, nullptr);
   if (ok == -1) {
-    perror("epoll delete event");
+    perror("failed delete epoll trigger");
     return ok;
   }
-  std::cout << "delete trigger: " << e << std::endl;
-  reaction.erase({ fd, event });
+  std::cout << "trigger deleted: " << e << std::endl;
   return ok;
 }
 
@@ -111,7 +110,11 @@ EpollHandler::DeleteTrigger(int fd, int event)
 void
 EpollHandler::SetCallback(int fd, int event, callback fn)
 {
+  struct epoll_event e;
+  e.data.fd = fd;
+  e.events = event;
   reaction[{ fd, event }] = fn;
+  std::cout << "callback set: " << e << std::endl;
 }
 
 /// @brief 指定された条件のコールバックを削除する関数
@@ -120,6 +123,7 @@ void
 EpollHandler::EraseCallback(int fd)
 {
   std::erase_if(reaction, [fd](auto& p) { return p.first.first == fd; });
+  std::cout << "callback erased: " << fd << std::endl;
 }
 
 /// @brief イベントを待機する処理
@@ -127,6 +131,7 @@ EpollHandler::EraseCallback(int fd)
 int
 EpollHandler::WaitEvent()
 {
+  std::cout << "waiting event ..." << std::endl;
   auto to = Timeout();
   auto* head = events.data();
   auto updated_fd_num = epoll_wait(epoll_fd, head, event_max, to);
@@ -158,7 +163,6 @@ void
 EpollHandler::RunOnce()
 {
   events = std::vector<struct epoll_event>(event_max);
-  std::cout << "wait event ..." << std::endl;
   auto updated_fd_num = WaitEvent();
   if (updated_fd_num == -1) {
     perror("epoll_wait");
@@ -167,7 +171,7 @@ EpollHandler::RunOnce()
 
   for (int i = 0; i < updated_fd_num; ++i) {
     auto& event = events[i];
-    std::cout << "fire event: " << event << std::endl;
+    std::cout << "event(" << event << ") fired!!" << std::endl;
     // pack fieldをalignmentされた値に置き直し
     // static_cast<int>を使ってもいいが、readability-redundant-casting警告が出る
     int key_fd = event.data.fd;
