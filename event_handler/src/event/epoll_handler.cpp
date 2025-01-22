@@ -38,6 +38,7 @@ EpollHandler::~EpollHandler()
 }
 
 /// @brief 実行可能を判定する関数
+/// epollインスタンスが作成されていれば実行可能とみなす。
 /// @return 成否
 bool
 EpollHandler::CanReady()
@@ -48,8 +49,7 @@ EpollHandler::CanReady()
 /// @brief 監視するイベントを登録する関数
 /// @param fd 新たに監視するFD
 /// @param event 監視したいイベント
-/// @param fn イベント発生時に実行するコールバック
-/// @return 成否
+/// @return 0: 成功 / -1: 失敗
 int
 EpollHandler::CreateTrigger(int fd, int event)
 {
@@ -68,8 +68,7 @@ EpollHandler::CreateTrigger(int fd, int event)
 /// @brief 監視しているイベントを変更する関数
 /// @param fd 変更したいFD
 /// @param event 変更したいイベント
-/// @param fn 変更するコールバック（イベントのみ変更の場合はstd::nulloptを使用）
-/// @return 成否
+/// @return 0: 成功 / -1: 失敗
 int
 EpollHandler::ModifyTrigger(int fd, int event)
 {
@@ -87,15 +86,15 @@ EpollHandler::ModifyTrigger(int fd, int event)
 
 /// @brief 監視しているイベントを削除する関数
 /// @param fd 削除したいFD
-/// @param event 削除したいイベント
-/// @return 成否
+/// @param event 削除したいイベント（使われない）
+/// @return 0: 成功 / -1: 失敗
 int
 EpollHandler::DeleteTrigger(int fd, int event)
 {
   struct epoll_event e;
   e.data.fd = fd;
   e.events = event;
-  auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, &e);
+  auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, nullptr);
   if (ok == -1) {
     perror("epoll delete event");
     return ok;
@@ -105,6 +104,10 @@ EpollHandler::DeleteTrigger(int fd, int event)
   return ok;
 }
 
+/// @brief 発火したイベントに対応するコールバックを設定する関数
+/// @param fd 発火したFD
+/// @param event 発火したイベント
+/// @param fn 設定するコールバック
 void
 EpollHandler::SetCallback(int fd, int event, callback fn)
 {
@@ -112,7 +115,7 @@ EpollHandler::SetCallback(int fd, int event, callback fn)
 }
 
 /// @brief イベントを待機する処理
-/// @return 準備ができているFD数
+/// @return イベントが発火したFD数
 int
 EpollHandler::WaitEvent()
 {
@@ -122,14 +125,17 @@ EpollHandler::WaitEvent()
   return updated_fd_num;
 }
 
-/// @brief イベント待機のタイムアウトを設定する関数
-/// @param to タイムアウト
+/// @brief イベント待機のタイムアウト値を設定する関数
+/// @param to タイムアウト値
 void
 EpollHandler::Timeout(std::optional<std::chrono::milliseconds> timeout)
 {
   this->timeout = timeout;
 }
 
+/// @brief イベント待機のタイムアウト値を設定する関数
+/// 無効値の場合は-1となり、epoll系APIにそのまま使える
+/// @return タイムアウト値
 int64_t
 EpollHandler::Timeout()
 {
@@ -139,8 +145,7 @@ EpollHandler::Timeout()
   return -1;
 }
 
-/// @brief イベント監視ループ関数
-/// @param fn イベント検出時に実行するコールバック
+/// @brief 一度だけイベントを監視する関数
 void
 EpollHandler::RunOnce()
 {
@@ -168,6 +173,7 @@ EpollHandler::RunOnce()
   }
 }
 
+/// @brief イベントを無限に監視する関数
 void
 EpollHandler::Run()
 {
