@@ -1,7 +1,16 @@
 FROM mcr.microsoft.com/devcontainers/cpp:debian
 
+RUN echo "INSTALL UTILITIES"
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y\
+    # utilities
+    peco\
+    silversearcher-ag\
+    vim\
+    # network
+    telnet
+RUN echo "INSTALL C++ TOOLS"
+RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y\
     # c++ libraries
     libboost1.81-all-dev\
     libgtest-dev\
@@ -15,12 +24,6 @@ RUN apt-get update \
     cppcheck\
     clang-tidy\
     bear\
-    # utilities
-    peco\
-    silversearcher-ag\
-    vim\
-    # network
-    telnet\
     && apt-get clean\
     && rm -rf /var/lib/apt/lists/*
 
