@@ -171,6 +171,7 @@ Server::CreateSocket()
     }
     // bindのチェックまでやった方がいい
   }
+  std::cout << "server_fd: " << server_fd << std::endl;
   return server_fd;
 }
 
