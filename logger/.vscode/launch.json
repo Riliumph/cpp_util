@@ -1,0 +1,78 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/bin/${workspaceFolderBasename}",
+            "additionalSOLibSearchPath": "${workspaceFolder}/lib",
+            "args": [],
+            "environment": [
+                {
+                    "name": "LOG_LEVEL",
+                    "value": "debug"
+                }
+            ],
+            "externalConsole": false,
+            "stopAtEntry": true,
+            "preLaunchTask": "debug",
+            "linux": {
+                "MIMode": "gdb",
+                "miDebuggerPath": "/usr/bin/gdb",
+                "showDisplayString": true,
+                "visualizerFile": "${workspaceFolder}/${workspaceFolderBasename}.natvis",
+            },
+            "osx": {
+                "MIMode": "gdb",
+            },
+            "windows": {
+                "MIMode": "gdb",
+                "miDebuggerPath": "C:\\MinGw\\bin\\gdb.exe"
+            },
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "UnitTest",
+            "type": "cppdbg",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/bin/test",
+            "additionalSOLibSearchPath": "${workspaceFolder}/lib",
+            "args": [],
+            "environment": [],
+            "externalConsole": false,
+            "preLaunchTask": "unit test",
+            "stopAtEntry": false,
+            "linux": {
+                "MIMode": "gdb",
+                "miDebuggerPath": "/usr/bin/gdb",
+                "showDisplayString": true,
+            },
+            "osx": {
+                "MIMode": "gdb",
+            },
+            "windows": {
+                "MIMode": "gdb",
+                "miDebuggerPath": "C:\\MinGw\\bin\\gdb.exe"
+            },
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}
