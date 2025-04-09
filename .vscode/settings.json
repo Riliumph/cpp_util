@@ -21,10 +21,11 @@
     "C_Cpp.inlayHints.parameterNames.enabled": true,
     "C_Cpp.inlayHints.parameterNames.suppressWhenArgumentContainsName": true,
     "C_Cpp.inlayHints.referenceOperator.enabled": true,
-    "[c++]": {
+    "[cpp]": {
         "editor.formatOnSave": true,
         "editor.tabSize": 2,
-        "files.insertFinalNewline": true
+        "files.insertFinalNewline": true,
+        "editor.defaultFormatter": "ms-vscode.cpptools"
     },
     "[sql]": {
         "editor.formatOnSave": false,
@@ -64,5 +65,5 @@
         "UnitTest"
     ],
     "gtest-adapter.supportLocation": true,
-    "sql-formatter.uppercase": true
+    "sql-formatter.uppercase": true,
 }

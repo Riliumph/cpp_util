@@ -16,6 +16,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y\
     libgtest-dev\
     libpqxx-dev\
     nlohmann-json3-dev\
+    libspdlog-dev\
     # clang
     clang\
     clang-format\
