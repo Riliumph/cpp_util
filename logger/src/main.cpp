@@ -3,6 +3,7 @@
 // json
 #include <nlohmann/json.hpp>
 // spdlog
+#include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 // logger
@@ -10,13 +11,11 @@
 int
 main()
 {
-  auto logger = spdlog::stdout_color_mt("app_logger");
-  logger->set_formatter(std::make_unique<logger::JsonFormatter>());
-  logger->set_level(spdlog::level::info);
+  auto log_system = logger::Logger("app_logger", "app.log");
+  auto logger = spdlog::get("app_logger");
   logger->debug("debug message");
   logger->info("This is a test message");
   logger->warn("Something might be wrong!");
   logger->error("An error occurred");
-
   return 0;
 }
