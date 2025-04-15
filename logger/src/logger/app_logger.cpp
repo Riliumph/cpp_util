@@ -4,10 +4,17 @@
 // logger
 #include "common.hpp"
 namespace logger {
+/// @brief アプリケーションロガーの名前
+/// @details spdlogのグローバル空間からこの名前で取り出す
 const char* const AppLogger::name = "app_logger";
-const size_t AppLogger::default_max_file_size = 1024 * 1024 * 10; // 10MB
-const size_t AppLogger::default_max_files = 3; // 保持するファイル数
+/// @brief デフォルトの最大ファイルサイズ(10MB)
+const size_t AppLogger::default_max_file_size = 1024 * 1024 * 10;
+/// @brief デフォルトの最大ファイル数(3)
+/// @details この数以上のファイル数になると古いファイルから削除される。
+const size_t AppLogger::default_max_files = 3;
 
+/// @brief コンストラクタ
+/// @param filename ログファイル名
 AppLogger::AppLogger(const std::string& filename)
   : logger_name_(name)
   , file_sink_(std::make_shared<file_sink_t>(filename,
@@ -20,6 +27,10 @@ AppLogger::AppLogger(const std::string& filename)
   Config();
 }
 
+/// @brief コンストラクタ
+/// @param filename ログファイル名
+/// @param max_file_size 最大ファイルサイズ
+/// @param max_files 最大ファイル数
 AppLogger::AppLogger(const std::string& filename,
                      size_t max_file_size,
                      size_t max_files)
@@ -32,6 +43,7 @@ AppLogger::AppLogger(const std::string& filename,
   Config();
 }
 
+/// @brief ロガーの初期化処理
 void
 AppLogger::Init()
 {
@@ -41,6 +53,8 @@ AppLogger::Init()
   spdlog::register_logger(logger_);
 }
 
+/// @brief デストラクタ
+/// @details ロガーの登録解除とsinkのflushを行う
 AppLogger::~AppLogger()
 {
   spdlog::drop(logger_name_);
@@ -51,6 +65,7 @@ AppLogger::~AppLogger()
   logger_.reset();
 }
 
+/// @brief ロガーの設定を行う
 void
 AppLogger::Config()
 {
@@ -66,8 +81,9 @@ AppLogger::Config()
   logger_->set_formatter(std::make_unique<formatter_t>());
 }
 
-/// @brief デフォルトinfoレベルで初期化
-/// @param log_level_str
+/// @brief ロガーにログレベルを設定する
+/// @details デフォルトinfoレベルで初期化
+/// @param log_level_str ログレベルの文字列
 void
 AppLogger::SetLevel(const std::string& log_level_str)
 {

@@ -13,18 +13,31 @@
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/sinks/base_sink.h>
 namespace logger {
+/// @brief タイムスタンプを付与するローテーションファイルシンク
+/// @tparam Mutex ミューテックスの型
+/// @details ログファイル名にタイムスタンプを付与してローテーションする
 template<typename Mutex>
 class timestamp_rotating_file_sink final
   : public spdlog::sinks::base_sink<Mutex>
 {
 public:
+  /// @brief クラス名
   static constexpr const char* const class_name =
     "timestamp_rotating_file_sink";
+  /// @brief 最小ファイルサイズ
   static constexpr std::size_t min_file_size = 0;
+  /// @brief 最大ファイル数
   static constexpr std::size_t max_max_files = 200000;
+  /// @brief ファイル末尾に付与するタイムスタンプフォーマット
   static constexpr const char* const time_format = "%Y-%m-%dT%H-%M-%S";
 
 public:
+  /// @brief コンストラクタ
+  /// @param log_filename ログファイル名
+  /// @param max_size ログファイルの最大サイズ
+  /// @param max_files ログファイルの管理最大数
+  /// @param rotate_on_open 最初に開いたときにローテーションするか
+  /// @param event_handlers イベントハンドラ
   explicit timestamp_rotating_file_sink(
     spdlog::filename_t log_filename,
     std::size_t max_size,
@@ -56,6 +69,10 @@ public:
     }
   }
 
+  /// @brief ファイル名を決める関数
+  /// @param filename ベースとなるファイル名
+  /// @param timestamp 付与したいタイムスタンプ
+  /// @return ファイル名
   static spdlog::filename_t calc_filename(
     const spdlog::filename_t& filename,
     std::chrono::system_clock::time_point timestamp)
@@ -69,6 +86,9 @@ public:
   }
 
 protected:
+  /// @brief ログメッセージをファイルに書き込む関数
+  /// @details logger->infoなどの関数で自動で使用される。
+  /// @param msg ログメッセージ
   void sink_it_(const spdlog::details::log_msg& msg) override
   {
     spdlog::memory_buf_t formatted;
@@ -85,9 +105,12 @@ protected:
     current_size_ = new_size;
   }
 
+  /// @brief ログメッセージをファイルに書き込む関数
+  /// @details spdlogによって自動で使用される。
   void flush_() override { file_helper_.flush(); }
 
 private:
+  /// @brief ファイルローテーションを行う関数
   void rotate_()
   {
     file_helper_.close();
@@ -98,6 +121,7 @@ private:
     file_helper_.reopen(true);
   }
 
+  /// @brief ファイル名を変更する関数
   bool rename_file_(const spdlog::filename_t& src_filename,
                     const spdlog::filename_t& dst_filename)
   {
@@ -114,10 +138,10 @@ private:
   spdlog::details::file_helper file_helper_;
 };
 
-// エイリアス（マルチスレッド版）
+/// @brief マルチスレッド用のタイムスタンプローテーションファイルシンク
 using timestamp_rotating_file_sink_mt =
   timestamp_rotating_file_sink<std::mutex>;
-// シングルスレッドなら null_mutex で
+/// @brief シングルスレッド用のタイムスタンプローテーションファイルシンク
 using timestamp_rotating_file_sink_st =
   timestamp_rotating_file_sink<spdlog::details::null_mutex>;
 }
