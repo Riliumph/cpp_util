@@ -2,6 +2,20 @@
 
 ## ビルド方法
 
+前提として以下のライブラリをインストールする必要がある。
+
+```console
+$ cd /cpp/util/event_handler
+$ make all
+$ sudo make install
+```
+
+```console
+$ cd /cpp_util/endian
+$ make all
+$ sudo make install
+```
+
 ### サーバー
 
 ```console

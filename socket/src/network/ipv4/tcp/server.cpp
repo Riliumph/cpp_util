@@ -12,6 +12,10 @@
 // original
 #include "network/util.h"
 namespace nw::ipv4::tcp {
+/// @brief コンストラクタ
+/// @param e_handler イベントハンドラ
+/// @param port サーバーポート番号
+/// @param hint IPv4のヒント情報
 Server::Server(std::shared_ptr<event::IF::EventHandler> e_handler,
                const u_short port,
                const struct addrinfo hint)
@@ -28,19 +32,23 @@ Server::Server(std::shared_ptr<event::IF::EventHandler> e_handler,
   Hint(hint);
 }
 
+/// @brief デストラクタ
 Server::~Server()
 {
   SafeClose();
 }
 
-#ifndef ACCESSOR
-
+/// @brief タイムアウト時間を設定する
+/// @param tm
 void
 Server::Timeout(struct timeval tm)
 {
   timeout = tm;
 }
 
+/// @brief タイムアウト時間を設定する
+/// @param sec 秒数
+/// @param usec マイクロ秒数
 void
 Server::Timeout(time_t sec, suseconds_t usec)
 {
@@ -48,14 +56,16 @@ Server::Timeout(time_t sec, suseconds_t usec)
   timeout.tv_usec = usec;
 }
 
+/// @brief コールバックイベントの設定
+/// @param e イベント
 void
 Server::Event(event::IF::EventHandler::callback e)
 {
   event = e;
 }
 
-/// @brief サーバーを立ち上げるための
-/// @return
+/// @brief サーバーを立ち上げる関数
+/// @return 成否
 int
 Server::Establish()
 {
@@ -79,8 +89,7 @@ Server::Establish()
   return ok;
 }
 
-/// @brief Select待ちループ
-/// @param fn 反応時に処理する関数オブジェクト
+/// @brief サーバー処理をスタートする関数
 /// @return 成否
 bool
 Server::Start()
@@ -120,8 +129,6 @@ Server::Hint(const struct addrinfo& hint_data)
   hint->ai_flags = hint_data.ai_flags;
 }
 
-#endif // ACCESSOR
-
 /// @brief ヒント情報からアドレス情報を決定する
 /// @param hint 不完全なaddrinfo構造体
 /// @param service_name サービス名
@@ -158,6 +165,8 @@ Server::Identify(std::string service_name)
   return 0;
 }
 
+/// @brief サーバーソケットを生成する関数
+/// @return 成否
 int
 Server::CreateSocket()
 {
@@ -175,6 +184,8 @@ Server::CreateSocket()
   return server_fd;
 }
 
+/// @brief サーバーソケットにアドレスをバインドする
+/// @return 成否
 int
 Server::AttachAddress()
 {
@@ -186,6 +197,8 @@ Server::AttachAddress()
   return ok;
 }
 
+/// @brief サーバーがリッスンする
+/// @return 成否
 int
 Server::Listen()
 {
@@ -197,8 +210,8 @@ Server::Listen()
   return err;
 }
 
-/// @brief Accept処理
-/// @return fd値
+/// @brief 接続に来たクライアントをAcceptする
+/// @return クライアントに割り当てられたfd値
 int
 Server::Accept()
 {
@@ -222,6 +235,8 @@ Server::Accept()
   return client_fd;
 }
 
+/// @brief 今の接続数を取得する
+/// @return 接続数
 int
 Server::CurrentConnection()
 {
@@ -231,6 +246,9 @@ Server::CurrentConnection()
   return count;
 }
 
+/// @brief 流量制限処理
+/// @param client_fd 新しく接続されたクライアントのfd
+/// @return 管理番号
 int
 Server::ControlMaxConnection(const int client_fd)
 {
@@ -244,6 +262,9 @@ Server::ControlMaxConnection(const int client_fd)
   return index;
 }
 
+/// @brief クライアントから切断を受けたときのイベント
+/// @param fd 切断にきたクライアントのFD
+/// @return 成否
 bool
 Server::CloseEvent(int fd)
 {
@@ -254,6 +275,9 @@ Server::CloseEvent(int fd)
   return true;
 }
 
+/// @brief クライアントから接続を受けたときのイベント
+/// @param server_fd サーバーのFD（イベントIF上必要なだけで未使用）
+/// @return 成否
 bool
 Server::AcceptEvent(int server_fd)
 {
@@ -287,6 +311,7 @@ Server::AcceptEvent(int server_fd)
   return true;
 }
 
+/// @brief サーバーのクローズ処理
 void
 Server::SafeClose()
 {
