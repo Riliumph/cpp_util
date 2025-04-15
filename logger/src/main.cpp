@@ -11,11 +11,13 @@
 int
 main()
 {
-  auto log_system = logger::Logger("app_logger", "app.log");
+  auto log_system = logger::Logger("app.log");
   auto logger = spdlog::get("app_logger");
-  logger->debug("debug message");
-  logger->info("This is a test message");
-  logger->warn("Something might be wrong!");
-  logger->error("An error occurred");
+  APP_TRACE("msg: {}", "trace message");
+  APP_DEBUG("msg: {}", "debug message");
+  APP_INFO("msg: {}", "info message");
+  APP_WARN("msg: {}", "warn message");
+  APP_ERROR("msg: {}", "error message");
+  APP_CRIT("msg: {}", "critical message");
   return 0;
 }
