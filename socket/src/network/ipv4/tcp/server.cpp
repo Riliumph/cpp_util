@@ -12,18 +12,11 @@
 // original
 #include "network/util.h"
 namespace nw::ipv4::tcp {
-Server::Server()
+Server::Server(std::shared_ptr<event::IF::EventHandler> e_handler,
+               const u_short port,
+               const struct addrinfo hint)
   : server_fd{ 0 }
-  , ip{ "" }
-  , port_{ 0 }
-  , inet0{ nullptr }
-  , hint{ nullptr }
-  , timeout{ 0, 0 }
-{
-  FD_ZERO(&fds);
-}
-Server::Server(const u_short port, const struct addrinfo hint)
-  : server_fd{ 0 }
+  , event_handler{ e_handler }
   , ip{ "" }
   , port_{ port }
   , inet0{ new struct addrinfo }
@@ -55,6 +48,12 @@ Server::Timeout(time_t sec, suseconds_t usec)
   timeout.tv_usec = usec;
 }
 
+void
+Server::Event(event::IF::EventHandler::callback e)
+{
+  event = e;
+}
+
 /// @brief サーバーを立ち上げるための
 /// @return
 int
@@ -80,6 +79,36 @@ Server::Establish()
   return ok;
 }
 
+/// @brief Select待ちループ
+/// @param fn 反応時に処理する関数オブジェクト
+/// @return 成否
+bool
+Server::Start()
+{
+  if (!event_handler) {
+    std::cerr << "event_handler not set" << std::endl;
+    return false;
+  }
+  if (!event_handler->CanReady()) {
+    std::cerr << "event_handler not ready" << std::endl;
+    return false;
+  }
+  struct epoll_event ev;
+  ev.events = EPOLLIN;
+  ev.data.fd = server_fd;
+  auto ok = event_handler->CreateTrigger(ev.data.fd, ev.events);
+  if (ok != 0) {
+    std::cerr << "failed to set event" << std::endl;
+    return false;
+  }
+  event_handler->SetCallback(
+    ev.data.fd, ev.events, [this](int fd) { AcceptEvent(fd); });
+
+  std::cout << "start event_handler" << std::endl;
+  event_handler->Run();
+  return true;
+}
+
 /// @brief サーバーを構築するネットワーク情報のヒントを設定する
 /// @param hint ヒント
 void
@@ -89,15 +118,6 @@ Server::Hint(const struct addrinfo& hint_data)
   hint->ai_family = hint_data.ai_family;
   hint->ai_socktype = hint_data.ai_socktype;
   hint->ai_flags = hint_data.ai_flags;
-}
-
-struct timeval*
-Server::Timeout()
-{
-  if (timeout.tv_sec == 0 && timeout.tv_usec == 0) {
-    return NULL;
-  }
-  return &timeout;
 }
 
 #endif // ACCESSOR
@@ -151,6 +171,7 @@ Server::CreateSocket()
     }
     // bindのチェックまでやった方がいい
   }
+  std::cout << "server_fd: " << server_fd << std::endl;
   return server_fd;
 }
 
@@ -204,15 +225,16 @@ Server::Accept()
 int
 Server::CurrentConnection()
 {
-  auto count = std::count_if(
-    client_fds.begin(), client_fds.end(), [](int x) { return x != -1; });
+  auto count = std::count_if(client_fds.begin(), client_fds.end(), [](int fd) {
+    return fd != DISABLE_FD;
+  });
   return count;
 }
 
 int
 Server::ControlMaxConnection(const int client_fd)
 {
-  auto it = std::find(client_fds.begin(), client_fds.end(), DISABLE_FD);
+  auto* it = std::find(client_fds.begin(), client_fds.end(), DISABLE_FD);
   if (it == client_fds.end()) {
     return -1;
   }
@@ -220,6 +242,49 @@ Server::ControlMaxConnection(const int client_fd)
   printf("now clients: %d/%ld\n", CurrentConnection(), client_fds.size());
   auto index = std::distance(client_fds.begin(), it);
   return index;
+}
+
+bool
+Server::CloseEvent(int fd)
+{
+  std::cout << "Client disconnected: " << fd << std::endl;
+  event_handler->EraseCallback(fd);
+  event_handler->DeleteTrigger(fd, EPOLLIN);
+  close(fd);
+  return true;
+}
+
+bool
+Server::AcceptEvent(int server_fd)
+{
+  std::cout << "accepting new comer ..." << std::endl;
+  auto client_fd = Accept();
+  if (client_fd < 0) {
+    return false;
+  }
+  // 最大接続数制限のために独自管理が必要
+  auto idx = ControlMaxConnection(client_fd);
+  if (idx < 0) {
+    std::cerr << "reject new comer for limit connection" << std::endl;
+    close(client_fd);
+    return false;
+  }
+  // client_fdを引き出した後、
+  // そのクライアントからの接続時に発火するイベントを登録
+  struct epoll_event ev;
+  ev.data.fd = client_fd;
+  ev.events = (EPOLLIN | EPOLLRDHUP);
+  int ok = event_handler->CreateTrigger(ev.data.fd, ev.events);
+  if (ok != 0) {
+    std::cerr << "failed to set event" << std::endl;
+    close(client_fd);
+    return false;
+  }
+  event_handler->SetCallback(
+    ev.data.fd, EPOLLIN, [this](int fd) { event(fd); });
+  event_handler->SetCallback(
+    ev.data.fd, ev.events, [this](int fd) { CloseEvent(fd); });
+  return true;
 }
 
 void
@@ -235,105 +300,4 @@ Server::SafeClose()
     freeaddrinfo(hint);
   }
 }
-
-/// @brief Select待ちループ
-/// @param fn 反応時に処理する関数オブジェクト
-/// @return 成否
-bool
-Server::LoopBySelect(std::function<bool(int)> fn)
-{
-  FD_SET(server_fd, &fds);
-  while (1) {
-    fd_set readable = fds;
-    auto updated_fd_num = select(FD_SETSIZE, &readable, 0, 0, Timeout());
-    if (updated_fd_num < 0) {
-      perror("select");
-      exit(1);
-    } else if (updated_fd_num == 0) {
-      perror("select timeout");
-      continue;
-    }
-    // Accept
-    if (FD_ISSET(server_fd, &readable)) {
-      FD_CLR(server_fd, &readable);
-      printf("accepting new comer ...\n");
-      auto client_fd = Accept();
-      if (client_fd < 0) {
-        continue;
-      }
-      // 最大接続数制限のために独自管理が必要
-      auto idx = ControlMaxConnection(client_fd);
-      if (idx < 0) {
-        printf("reject new comer for limit connection");
-        close(client_fd);
-      } else {
-        // 全体集合に追加。READ集合ではないことに注意。
-        FD_SET(client_fd, &fds);
-      }
-    }
-    // 実際の処理
-    for (const auto& client_fd : client_fds) {
-      if (FD_ISSET(client_fd, &readable)) {
-        std::printf("[FD:%d] is ready ...\n", client_fd);
-        auto success = fn(client_fd);
-        if (!success) {
-          close(client_fd);
-          FD_CLR(client_fd, &fds);
-          std::replace(
-            client_fds.begin(), client_fds.end(), client_fd, DISABLE_FD);
-        }
-      }
-    }
-  }
-}
-
-#ifdef EPOLL
-const int EVENT_SIZE = 1024;
-
-bool
-Server::LoopByEPoll(std::function<bool(int)> fn)
-{
-  struct epoll_event evs[EVENT_SIZE];
-  auto ep_fd = epoll_create(1);
-  epoll_ctl(ep_fd, listen_sock, EPOLLIN | EPOLLOUT | EPOLLET);
-  while (1) {
-    struct epoll_event ev;
-    std::printf("wait epoll ...\n");
-    auto updated_fd_num = epoll_wait(ep_fd, evs, sizeof(evs), -1);
-    if (updated_fd_num <= 0) {
-      perror("epoll");
-      exit(1);
-    }
-    // Accept
-    auto exist =
-      std::any_of(std::begin(evs), std::end(evs), [this](const auto& e) {
-        return e.data.fd == server->FD();
-      });
-    if (exist) {
-      std::printf(
-        "[PID:%d][FD:%d] accepting connections ...\n", getpid(), server->FD());
-      auto client_fd = Accept();
-      if (client_fd < 0) {
-        perror("accept");
-        exit(1);
-      }
-      setnonblocking(client_fd);
-      ev.events = EPOLLIN | EPOLLET;
-      ev.data.fd = client_fd;
-      if (epoll_ctl(ep_fd, EPOLL_CTL_ADD, client_fd, &ev) < 0) {
-        fprintf(stderr, "epoll set insertion error: fd=%d\n", client_fd);
-        return false;
-      }
-    }
-    // TODO:
-    // FD_SETSIZEは上限値であり、接続されたFDの最大値ではないため無駄なループが回っている
-    for (auto i = 0; i < updated_fd_num; ++i) {
-      if (evs[i].data.fd == server->FD()) {
-
-        fn(evs[i].data.fd);
-      }
-    }
-  }
-}
-#endif // EPOLL
-}
+} // namespace nw::ipv4::tcp
