@@ -1,5 +1,5 @@
-#ifndef INCLUDE_TIMESTAMP_ROTATING_FILE_SINK_HPP
-#define INCLUDE_TIMESTAMP_ROTATING_FILE_SINK_HPP
+#ifndef INCLUDE_LOGGER_SINKS_TIMESTAMP_ROTATING_FILE_SINK_HPP
+#define INCLUDE_LOGGER_SINKS_TIMESTAMP_ROTATING_FILE_SINK_HPP
 // STL
 #include <chrono>
 #include <cstdlib>
@@ -13,6 +13,7 @@
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/sinks/base_sink.h>
 namespace logger {
+namespace sinks {
 /// @brief タイムスタンプを付与するローテーションファイルシンク
 /// @tparam Mutex ミューテックスの型
 /// @details ログファイル名にタイムスタンプを付与してローテーションする
@@ -144,5 +145,6 @@ using timestamp_rotating_file_sink_mt =
 /// @brief シングルスレッド用のタイムスタンプローテーションファイルシンク
 using timestamp_rotating_file_sink_st =
   timestamp_rotating_file_sink<spdlog::details::null_mutex>;
-}
-#endif // INCLUDE_TIMESTAMP_ROTATING_FILE_SINK_HPP
+} // namespace sinks
+} // namespace logger
+#endif // INCLUDE_LOGGER_SINKS_TIMESTAMP_ROTATING_FILE_SINK_HPP
