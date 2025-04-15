@@ -11,11 +11,11 @@ const size_t AppLogger::default_max_files = 3; // 保持するファイル数
 
 AppLogger::AppLogger(const std::string& filename)
   : logger_name_(name)
-  , file_sink_(std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
-      filename,
-      default_max_file_size,
-      default_max_files,
-      true))
+  , file_sink_(
+      std::make_shared<timestamp_rotating_file_sink_mt>(filename,
+                                                        default_max_file_size,
+                                                        default_max_files,
+                                                        true))
   , console_sink_(std::make_shared<spdlog::sinks::stdout_color_sink_mt>())
 {
   Init();
@@ -26,11 +26,10 @@ AppLogger::AppLogger(const std::string& filename,
                      size_t max_file_size,
                      size_t max_files)
   : logger_name_(name)
-  , file_sink_(std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
-      filename,
-      max_file_size,
-      max_files, // ローテーション数
-      true))     // append
+  , file_sink_(std::make_shared<timestamp_rotating_file_sink_mt>(filename,
+                                                                 max_file_size,
+                                                                 max_files,
+                                                                 true))
   , console_sink_(std::make_shared<spdlog::sinks::stdout_color_sink_mt>())
 {
   Init();

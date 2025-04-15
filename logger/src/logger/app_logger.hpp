@@ -11,6 +11,8 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 // original
+#include "timestamp_rotating_file_sink.hpp"
+
 namespace logger {
 class AppLogger
 {
@@ -39,7 +41,7 @@ private:
 
 private:
   std::string logger_name_;
-  std::shared_ptr<spdlog::sinks::rotating_file_sink_mt> file_sink_;
+  std::shared_ptr<timestamp_rotating_file_sink_mt> file_sink_;
   std::shared_ptr<spdlog::sinks::stdout_color_sink_mt> console_sink_;
   std::shared_ptr<spdlog::logger> logger_;
 };
