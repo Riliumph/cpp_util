@@ -4,7 +4,7 @@
 // logger
 #include "common.hpp"
 namespace logger {
-const char* AppLogger::name = "app_logger";
+const char* const AppLogger::name = "app_logger";
 const size_t AppLogger::default_max_file_size = 1024 * 1024 * 10; // 10MB
 const size_t AppLogger::default_max_files = 3; // 保持するファイル数
 

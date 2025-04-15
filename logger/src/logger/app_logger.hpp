@@ -18,7 +18,7 @@ namespace logger {
 class AppLogger
 {
 public:
-  static const char* name;
+  static const char* const name;
   static const size_t default_max_file_size;
   static const size_t default_max_files;
   using file_sink_t = timestamp_rotating_file_sink_mt;

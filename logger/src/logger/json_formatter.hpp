@@ -17,6 +17,9 @@ namespace logger {
 class JsonFormatter : public spdlog::formatter
 {
 public:
+  static constexpr const char* const iso8601 = "%FT%T%z";
+
+public:
   void format(const spdlog::details::log_msg& msg,
               spdlog::memory_buf_t& dest) override
   {
@@ -66,9 +69,6 @@ public:
   {
     return std::make_unique<JsonFormatter>();
   }
-
-private:
-  const char* iso8601 = "%FT%T%z";
 };
 }
 #endif // INCLUDE_LOGGER_JSON_FORMATTER_HPP

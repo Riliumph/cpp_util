@@ -18,6 +18,13 @@ class timestamp_rotating_file_sink final
   : public spdlog::sinks::base_sink<Mutex>
 {
 public:
+  static constexpr const char* const class_name =
+    "timestamp_rotating_file_sink";
+  static constexpr std::size_t min_file_size = 0;
+  static constexpr std::size_t max_max_files = 200000;
+  static constexpr const char* const time_format = "%Y-%m-%dT%H-%M-%S";
+
+public:
   explicit timestamp_rotating_file_sink(
     spdlog::filename_t log_filename,
     std::size_t max_size,
@@ -29,14 +36,17 @@ public:
     , max_files_(max_files)
     , file_helper_{ event_handlers }
   {
-    if (max_size == 0) {
-      spdlog::throw_spdlog_ex("timestamp_rotating_file_sink constructor: "
-                              "max_size arg cannot be zero");
+    if (max_size == min_file_size) {
+      auto msg = fmt::format(
+        "{} constructor: max_size arg cannot be {}", class_name, min_file_size);
+      spdlog::throw_spdlog_ex(msg);
     }
 
-    if (max_files > 200000) {
-      spdlog::throw_spdlog_ex("timestamp_rotating_file_sink constructor: "
-                              "max_files arg cannot exceed 200000");
+    if (max_max_files < max_files) {
+      auto msg = fmt::format("{} constructor: max_files arg cannot exceed {}",
+                             class_name,
+                             max_max_files);
+      spdlog::throw_spdlog_ex(msg);
     }
     file_helper_.open(base_filename_);
     current_size_ = file_helper_.size();
@@ -54,7 +64,7 @@ public:
       spdlog::details::file_helper::split_by_extension(filename);
     std::ostringstream ts;
     auto time = std::chrono::system_clock::to_time_t(timestamp);
-    ts << std::put_time(std::localtime(&time), "%Y-%m-%dT%H-%M-%S");
+    ts << std::put_time(std::localtime(&time), time_format);
     return fmt::format("{}_{}{}", basename, ts.str(), ext);
   }
 
