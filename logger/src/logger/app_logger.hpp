@@ -12,24 +12,28 @@
 #include <spdlog/spdlog.h>
 // original
 namespace logger {
-class Logger
+class AppLogger
 {
 public:
   static const char* name;
+  static const size_t default_max_file_size;
+  static const size_t default_max_files;
 
 public:
-  Logger(const std::string&);
-  ~Logger();
+  AppLogger(const std::string&);
+  AppLogger(const std::string&, size_t max_file_size, size_t max_files);
+  ~AppLogger();
 
   // Deleted copy constructor and assignment operator
-  Logger(const Logger&) = delete;
-  Logger& operator=(const Logger&) = delete;
+  AppLogger(const AppLogger&) = delete;
+  AppLogger& operator=(const AppLogger&) = delete;
 
   // Deleted move constructor and assignment operator
-  Logger(Logger&&) = delete;
-  Logger& operator=(Logger&&) = delete;
+  AppLogger(AppLogger&&) = delete;
+  AppLogger& operator=(AppLogger&&) = delete;
 
 private:
+  void Init();
   void Config();
   void SetLevel(const std::string& log_level);
 
