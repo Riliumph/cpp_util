@@ -3,7 +3,6 @@
 #include <iostream>
 // logger
 #include "common.hpp"
-#include "json_formatter.hpp"
 namespace logger {
 const char* AppLogger::name = "app_logger";
 const size_t AppLogger::default_max_file_size = 1024 * 1024 * 10; // 10MB
@@ -11,12 +10,11 @@ const size_t AppLogger::default_max_files = 3; // 保持するファイル数
 
 AppLogger::AppLogger(const std::string& filename)
   : logger_name_(name)
-  , file_sink_(
-      std::make_shared<timestamp_rotating_file_sink_mt>(filename,
-                                                        default_max_file_size,
-                                                        default_max_files,
-                                                        true))
-  , console_sink_(std::make_shared<spdlog::sinks::stdout_color_sink_mt>())
+  , file_sink_(std::make_shared<file_sink_t>(filename,
+                                             default_max_file_size,
+                                             default_max_files,
+                                             true))
+  , console_sink_(std::make_shared<console_sink_t>())
 {
   Init();
   Config();
@@ -26,11 +24,9 @@ AppLogger::AppLogger(const std::string& filename,
                      size_t max_file_size,
                      size_t max_files)
   : logger_name_(name)
-  , file_sink_(std::make_shared<timestamp_rotating_file_sink_mt>(filename,
-                                                                 max_file_size,
-                                                                 max_files,
-                                                                 true))
-  , console_sink_(std::make_shared<spdlog::sinks::stdout_color_sink_mt>())
+  , file_sink_(
+      std::make_shared<file_sink_t>(filename, max_file_size, max_files, true))
+  , console_sink_(std::make_shared<console_sink_t>())
 {
   Init();
   Config();
@@ -67,7 +63,7 @@ AppLogger::Config()
   SetLevel(log_level);
 
   // フォーマッタ設定
-  logger_->set_formatter(std::make_unique<JsonFormatter>());
+  logger_->set_formatter(std::make_unique<formatter_t>());
 }
 
 /// @brief デフォルトinfoレベルで初期化

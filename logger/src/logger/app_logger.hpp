@@ -11,6 +11,7 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 // original
+#include "json_formatter.hpp"
 #include "timestamp_rotating_file_sink.hpp"
 
 namespace logger {
@@ -20,6 +21,9 @@ public:
   static const char* name;
   static const size_t default_max_file_size;
   static const size_t default_max_files;
+  using file_sink_t = timestamp_rotating_file_sink_mt;
+  using console_sink_t = spdlog::sinks::stdout_color_sink_mt;
+  using formatter_t = JsonFormatter;
 
 public:
   AppLogger(const std::string&);
@@ -41,8 +45,8 @@ private:
 
 private:
   std::string logger_name_;
-  std::shared_ptr<timestamp_rotating_file_sink_mt> file_sink_;
-  std::shared_ptr<spdlog::sinks::stdout_color_sink_mt> console_sink_;
+  std::shared_ptr<file_sink_t> file_sink_;
+  std::shared_ptr<console_sink_t> console_sink_;
   std::shared_ptr<spdlog::logger> logger_;
 };
 }
