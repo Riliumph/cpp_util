@@ -25,9 +25,7 @@ class Server : public nw::IF::Server
   static constexpr int DISABLE_FD = -1;
 
 public: // constructor
-  Server(std::shared_ptr<event::IF::EventHandler>,
-         const u_short,
-         const struct addrinfo);
+  Server(std::shared_ptr<event::IF::EventHandler>, u_short, struct addrinfo);
   ~Server();
 
 public: // accessor
@@ -47,15 +45,14 @@ private:
   int Identify(std::string = "");
   int CreateSocket();
   int AttachAddress();
-  int Listen();
-  int Accept();
+  int Listen() const;
+  int Accept() const;
   int CurrentConnection();
-  int ControlMaxConnection(const int);
+  int ControlMaxConnection(int);
   bool AcceptEvent(int);
   bool CloseEvent(int);
 
-private: // File Descriptor
-  fd_set fds;
+private:         // File Descriptor
   int server_fd; // サーバー接続を待ち受けているソケットFD
   std::array<int, CONNECTION_MAX> client_fds;
 
@@ -64,7 +61,6 @@ private: // Event Handler
   event::IF::EventHandler::callback event;
 
 protected: // IP config
-  std::string ip;
   u_short port_;
   struct addrinfo* inet0; // Linux変数はC++で定義しない
   struct addrinfo* hint;

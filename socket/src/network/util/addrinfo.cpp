@@ -74,8 +74,9 @@ ConvertIPv4(struct addrinfo* inet)
 {
   std::string buf;
   buf.resize(INET_ADDRSTRLEN);
-  auto ipv4 = reinterpret_cast<struct sockaddr_in*>(inet->ai_addr);
-  auto p = inet_ntop(inet->ai_family, &ipv4->sin_addr, buf.data(), buf.size());
+  auto* ipv4 = reinterpret_cast<struct sockaddr_in*>(inet->ai_addr);
+  const auto* p =
+    inet_ntop(inet->ai_family, &ipv4->sin_addr, buf.data(), buf.size());
   if (p == nullptr) {
     perror("get ip");
     return std::nullopt;
@@ -94,8 +95,8 @@ int
 ConvertPort(struct addrinfo* inet)
 {
   int port = 0;
-  for (auto info = inet; info != nullptr; info = info->ai_next) {
-    auto ipv4 = (struct sockaddr_in*)info->ai_addr;
+  for (auto* info = inet; info != nullptr; info = info->ai_next) {
+    auto* ipv4 = (struct sockaddr_in*)info->ai_addr;
     port = static_cast<int>(ntohs(ipv4->sin_port));
   }
   return port;

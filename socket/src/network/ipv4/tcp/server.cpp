@@ -17,17 +17,15 @@ namespace nw::ipv4::tcp {
 /// @param port サーバーポート番号
 /// @param hint IPv4のヒント情報
 Server::Server(std::shared_ptr<event::IF::EventHandler> e_handler,
-               const u_short port,
-               const struct addrinfo hint)
+               u_short port,
+               struct addrinfo hint)
   : server_fd{ 0 }
   , event_handler{ e_handler }
-  , ip{ "" }
   , port_{ port }
   , inet0{ new struct addrinfo }
   , hint{ new struct addrinfo }
   , timeout{ 0, 0 }
 {
-  FD_ZERO(&fds);
   std::fill(client_fds.begin(), client_fds.end(), DISABLE_FD);
   Hint(hint);
 }
@@ -171,7 +169,7 @@ int
 Server::CreateSocket()
 {
   // addrinfo型はリンクリストを形成するため、forで対応する
-  for (auto info = inet0; info != nullptr; info = info->ai_next) {
+  for (auto* info = inet0; info != nullptr; info = info->ai_next) {
     server_fd =
       socket(inet0->ai_family, inet0->ai_socktype, inet0->ai_protocol);
     if (server_fd < 0) {
@@ -200,7 +198,7 @@ Server::AttachAddress()
 /// @brief サーバーがリッスンする
 /// @return 成否
 int
-Server::Listen()
+Server::Listen() const
 {
   auto err = listen(server_fd, QUEUE_SIZE);
   if (err < 0) {
@@ -213,7 +211,7 @@ Server::Listen()
 /// @brief 接続に来たクライアントをAcceptする
 /// @return クライアントに割り当てられたfd値
 int
-Server::Accept()
+Server::Accept() const
 {
   struct sockaddr_storage from;
   auto len = (socklen_t)sizeof(from);
