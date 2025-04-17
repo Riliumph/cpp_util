@@ -4,5 +4,6 @@
 #include "chrono/frame.hpp"
 #include "chrono/operator_io.hpp"
 #include "chrono/sleep.hpp"
+#include "chrono/string.hpp"
 #include "chrono/type.hpp"
 #endif // INCLUDE_CHRONO_HPP
