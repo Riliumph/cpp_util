@@ -33,6 +33,16 @@ logger/
   └ logger      # 実行ファイル
 ```
 
+## ビルドに必要なもの
+
+`chrono`ユーティリティライブラリのインストールが必要。
+
+```console
+$ cd /cpp_util/chrono
+$ make all
+$ sudo make install
+```
+
 ## ビルド方法
 
 ```console
@@ -54,3 +64,13 @@ $ ls -la | grep .log
 ```
 
 ローテーションされたファイルが生まれていることが確認できる。
+
+## 仕様
+
+### ロガーの仕様
+
+ロガー仕様の詳細は[こちら](./doc/logger.md)
+
+### ログローテーションの仕様
+
+ローテーション仕様の詳細は[こちら](./doc/log_rotation.md)
