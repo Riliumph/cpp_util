@@ -56,6 +56,14 @@ public:
     opened_at_ = clock_t::now();
   }
 
+  ~timely_rotating_file_sink()
+  {
+    flush_();
+    file_helper_.close();
+    move_to_rotate(clock_t::now());
+    // not open new file: file_helper_.reopen(true);
+  }
+
   /// @brief ファイル名を決める関数
   /// @param filename ベースとなるファイル名
   /// @param timestamp 付与したいタイムスタンプ
@@ -75,7 +83,7 @@ protected:
   /// @param msg ログメッセージ
   void sink_it_(const spdlog::details::log_msg& msg) override
   {
-    if (should_rotate(clock_t::now())) {
+    if (should_rotate_(clock_t::now())) {
       rotate_();
     }
     spdlog::memory_buf_t formatted;
@@ -89,39 +97,39 @@ protected:
 
 private:
   /// @brief ファイルローテーションを行う関数
+  /// @details ローテーションは、閉じる、退避、新規作成の３ステップで行う
   void rotate_()
   {
+    // close file
     file_helper_.close();
+    // move file
     auto will_rotate_at = clock_t::now();
-    auto cur_filename = file_helper_.filename();
-    auto new_filename = calc_filename(base_filename_, will_rotate_at);
-    // TODO: 成功前提とする
-    rename_file_(cur_filename, new_filename);
-    auto rotated_at = will_rotate_at;
-    file_helper_.reopen(true);
-    opened_at_ = rotated_at;
+    auto rotated = move_to_rotate(will_rotate_at);
+    // reopen file
+    if (rotated) {
+      auto rotated_at = will_rotate_at;
+      file_helper_.reopen(true);
+      opened_at_ = rotated_at;
+    }
   }
 
-  /// @brief ファイル名を変更する関数
-  /// @param src_filename 移動元のファイル名
-  /// @param dst_filename 移動先のファイル名
-  /// @return 成否
-  bool rename_file_(const spdlog::filename_t& src_filename,
-                    const spdlog::filename_t& dst_filename)
+  /// @brief ファイルを移動させる関数
+  /// @param will_rotate_at ローテーション予定の時刻
+  /// @return ローテーションの成否
+  bool move_to_rotate(time_point_t will_rotate_at)
   {
-    // caution:
-    // new_filenameがすでに存在する場合、上書きされるのでファイルは失われる。
-    return spdlog::details::os::rename(src_filename, dst_filename) == 0;
+    auto src = file_helper_.filename();
+    auto dst = calc_filename(base_filename_, will_rotate_at);
+    return spdlog::details::os::rename(src, dst) == 0;
   }
 
-  /// @brief ローテーションするべき時間かどうかを計算する関数
-  /// @details
-  /// 前回ローテーションした時刻からTimeUnit分過ぎたかどうかを判定する。
-  /// @param tp 対象の時間
+  /// @brief ローテーションするべき時間かどうかを判断する関数
+  /// @details 前回開いた時刻からTimeUnit分過ぎたかどうかを判定する。
+  /// @param will_rotate_at ローテーション予定の時刻
   /// @return ローテーションすべきかどうか
-  bool should_rotate(const time_point_t& tp) const
+  bool should_rotate_(const time_point_t& will_rotate_at) const
   {
-    return is_unit_time_changed<TimeUnit>(opened_at_, tp);
+    return is_unit_time_changed<TimeUnit>(opened_at_, will_rotate_at);
   }
 
 private:
