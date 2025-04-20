@@ -1,6 +1,7 @@
 #ifndef INCLUDE_LOGGER_SINKS_TIMELY_ROTATING_FILE_SINK_HPP
 #define INCLUDE_LOGGER_SINKS_TIMELY_ROTATING_FILE_SINK_HPP
 // STL
+#include <algorithm>
 #include <chrono>
 #include <cstdlib>
 #include <ctime>
@@ -74,6 +75,7 @@ public:
     using fh = spdlog::details::file_helper;
     auto [basename, ext] = fh::split_by_extension(filename);
     auto ts = to_iso8601<time_unit_on_filename>(timestamp);
+    std::replace(ts.begin(), ts.end(), ':', '-');
     return fmt::format("{}_{}{}", basename, ts, ext);
   }
 
