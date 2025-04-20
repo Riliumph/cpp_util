@@ -94,12 +94,14 @@ protected:
   {
     spdlog::memory_buf_t formatted;
     spdlog::sinks::base_sink<Mutex>::formatter_->format(msg, formatted);
+    // まだ書き込まれていないのでサイズを計算する
     auto new_size = current_size_ + formatted.size();
-    if (max_size_ < new_size) {
+    if (should_rotate(new_size)) {
       file_helper_.flush();
       if (0 < file_helper_.size()) {
         rotate_();
-        new_size = formatted.size();
+        // 再計算する
+        new_size = current_size_ + formatted.size();
       }
     }
     file_helper_.write(formatted);
@@ -120,6 +122,8 @@ private:
     auto new_filename = calc_filename(base_filename_, now);
     rename_file_(cur_filename, new_filename);
     file_helper_.reopen(true);
+    // 0になっているはず（size()が重たいので0代入でも良いかも）
+    current_size_ = file_helper_.size();
   }
 
   /// @brief ファイル名を変更する関数
@@ -130,6 +134,12 @@ private:
     // new_filenameがすでに存在する場合、上書きされるのでファイルは失われる。
     return spdlog::details::os::rename(src_filename, dst_filename) == 0;
   }
+
+  /// @brief ローテーションするべきかどうかを計算する関数
+  /// @details ログファイルのサイズが最大サイズを超えた場合にtrueを返す。
+  /// @param log_size ログファイルのサイズ
+  /// @return ローテーションするべきかどうか
+  bool should_rotate(size_t log_size) const { return max_size_ < log_size; }
 
 private:
   spdlog::filename_t base_filename_;

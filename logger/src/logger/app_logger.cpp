@@ -17,10 +17,7 @@ const size_t AppLogger::default_max_files = 3;
 /// @param filename ログファイル名
 AppLogger::AppLogger(const std::string& filename)
   : logger_name_(name)
-  , file_sink_(std::make_shared<file_sink_t>(filename,
-                                             default_max_file_size,
-                                             default_max_files,
-                                             true))
+  , file_sink_(std::make_shared<file_sink_t>(filename, true))
   , console_sink_(std::make_shared<console_sink_t>())
 {
   Init();
@@ -35,8 +32,7 @@ AppLogger::AppLogger(const std::string& filename,
                      size_t max_file_size,
                      size_t max_files)
   : logger_name_(name)
-  , file_sink_(
-      std::make_shared<file_sink_t>(filename, max_file_size, max_files, true))
+  , file_sink_(std::make_shared<file_sink_t>(filename, true))
   , console_sink_(std::make_shared<console_sink_t>())
 {
   Init();
@@ -59,10 +55,7 @@ AppLogger::~AppLogger()
 {
   spdlog::drop(logger_name_);
   file_sink_->flush();
-  file_sink_.reset();
   console_sink_->flush();
-  console_sink_.reset();
-  logger_.reset();
 }
 
 /// @brief ロガーの設定を行う
