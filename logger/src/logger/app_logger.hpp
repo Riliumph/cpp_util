@@ -7,7 +7,6 @@
 #include <string>
 // spdlog
 #include <spdlog/fmt/fmt.h>
-#include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 // original
@@ -35,7 +34,7 @@ public:
   static const char* const name;
   static const size_t default_max_file_size;
   static const size_t default_max_files;
-  using file_sink_t = sinks::timestamp_rotating_file_sink_mt;
+  using file_sink_t = sinks::timely_rotating_file_sink_mt<std::chrono::seconds>;
   using console_sink_t = spdlog::sinks::stdout_color_sink_mt;
   using formatter_t = formatters::JsonFormatter;
 
