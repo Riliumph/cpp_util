@@ -24,21 +24,6 @@ AppLogger::AppLogger(const std::string& filename)
   Config();
 }
 
-/// @brief コンストラクタ
-/// @param filename ログファイル名
-/// @param max_file_size 最大ファイルサイズ
-/// @param max_files 最大ファイル数
-AppLogger::AppLogger(const std::string& filename,
-                     size_t max_file_size,
-                     size_t max_files)
-  : logger_name_(name)
-  , file_sink_(std::make_shared<file_sink_t>(filename, true))
-  , console_sink_(std::make_shared<console_sink_t>())
-{
-  Init();
-  Config();
-}
-
 /// @brief ロガーの初期化処理
 void
 AppLogger::Init()

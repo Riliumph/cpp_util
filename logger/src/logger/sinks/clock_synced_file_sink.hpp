@@ -48,7 +48,6 @@ public:
   /// @param event_handlers イベントハンドラ
   explicit clock_synced_file_sink(
     spdlog::filename_t log_filename,
-    bool rotate_on_open = false,
     const spdlog::file_event_handlers& event_handlers = {})
     : base_filename_(log_filename)
     , file_helper_{ event_handlers }
