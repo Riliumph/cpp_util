@@ -34,7 +34,13 @@ public:
   static const char* const name;
   static const size_t default_max_file_size;
   static const size_t default_max_files;
-  using file_sink_t = sinks::timely_rotating_file_sink_mt<std::chrono::seconds>;
+#ifdef DEBUG_
+  // 挙動テスト用に秒単位でログローテーションを行う
+  using time_unit = std::chrono::seconds;
+#else
+  using time_unit = std::chrono::minutes;
+#endif
+  using file_sink_t = sinks::clock_synced_file_sink_mt<time_unit>;
   using console_sink_t = spdlog::sinks::stdout_color_sink_mt;
   using formatter_t = formatters::JsonFormatter;
 

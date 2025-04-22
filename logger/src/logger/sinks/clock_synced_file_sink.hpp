@@ -1,5 +1,5 @@
-#ifndef INCLUDE_LOGGER_SINKS_TIMELY_ROTATING_FILE_SINK_HPP
-#define INCLUDE_LOGGER_SINKS_TIMELY_ROTATING_FILE_SINK_HPP
+#ifndef INCLUDE_LOGGER_SINKS_CLOCK_SYNCED_FILE_SINK_HPP
+#define INCLUDE_LOGGER_SINKS_CLOCK_SYNCED_FILE_SINK_HPP
 // STL
 #include <algorithm>
 #include <chrono>
@@ -28,7 +28,7 @@ template<
   typename = typename std::enable_if_t<std::is_base_of_v<
     std::chrono::duration<typename TimeUnit::rep, typename TimeUnit::period>,
     TimeUnit>>>
-class timely_rotating_file_sink final : public spdlog::sinks::base_sink<Mutex>
+class clock_synced_file_sink final : public spdlog::sinks::base_sink<Mutex>
 {
 public:
   using super_sink = spdlog::sinks::base_sink<Mutex>;
@@ -39,14 +39,14 @@ public:
 
 public:
   /// @brief クラス名
-  static constexpr const char* const class_name = "timely_rotating_file_sink";
+  static constexpr const char* const class_name = "clock_synced_file_sink";
 
 public:
   /// @brief コンストラクタ
   /// @param log_filename ログファイル名
   /// @param rotate_on_open 最初に開いたときにローテーションするか
   /// @param event_handlers イベントハンドラ
-  explicit timely_rotating_file_sink(
+  explicit clock_synced_file_sink(
     spdlog::filename_t log_filename,
     bool rotate_on_open = false,
     const spdlog::file_event_handlers& event_handlers = {})
@@ -57,7 +57,7 @@ public:
     opened_at_ = clock_t::now();
   }
 
-  ~timely_rotating_file_sink()
+  ~clock_synced_file_sink()
   {
     flush_();
     file_helper_.close();
@@ -140,13 +140,13 @@ private:
   spdlog::details::file_helper file_helper_;
 };
 
-/// @brief マルチスレッド用のタイムスタンプローテーションファイルシンク
+/// @brief マルチスレッド用の時刻同期ローテーションファイルシンク
 template<typename T>
-using timely_rotating_file_sink_mt = timely_rotating_file_sink<std::mutex, T>;
-/// @brief シングルスレッド用のタイムスタンプローテーションファイルシンク
+using clock_synced_file_sink_mt = clock_synced_file_sink<std::mutex, T>;
+/// @brief シングルスレッド用の時刻同期ローテーションファイルシンク
 template<typename T>
-using timely_rotating_file_sink_st =
-  timely_rotating_file_sink<spdlog::details::null_mutex, T>;
+using clock_synced_file_sink_st =
+  clock_synced_file_sink<spdlog::details::null_mutex, T>;
 } // namespace sinks
 } // namespace logger
-#endif // INCLUDE_LOGGER_SINKS_TIMELY_ROTATING_FILE_SINK_HPP
+#endif // INCLUDE_LOGGER_SINKS_CLOCK_SYNCED_FILE_SINK_HPP

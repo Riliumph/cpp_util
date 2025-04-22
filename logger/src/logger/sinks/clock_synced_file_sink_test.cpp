@@ -1,4 +1,4 @@
-#include "timely_rotating_file_sink.hpp"
+#include "clock_synced_file_sink.hpp"
 // STL
 #include <chrono>
 #include <thread>
@@ -12,14 +12,15 @@ using namespace logger::sinks;
 using namespace std::literals::chrono_literals;
 
 namespace {
-const char* filename = "timely_rotating_file_sink.log";
+const char* filename = "clock_synced_file_sink.log";
 const char* logger_name = "timely_rotating_file_sink_test_logger";
 }
 
-TEST(secondly_rotating_file_sink, sec)
+TEST(clock_synced_file_sink, sec)
 {
+  using time_unit = std::chrono::seconds;
   using logger_t = spdlog::logger;
-  using file_sink_t = timely_rotating_file_sink_mt<std::chrono::seconds>;
+  using file_sink_t = clock_synced_file_sink_mt<time_unit>;
   auto file_sink = std::make_shared<file_sink_t>(filename);
   spdlog::sinks_init_list sinks = { file_sink };
   auto logger = std::make_shared<logger_t>(logger_name, sinks);
