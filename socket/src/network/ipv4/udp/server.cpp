@@ -19,11 +19,8 @@ namespace udp {
 /// @param e_handler イベントハンドラ
 /// @param port サーバーポート番号
 /// @param hint_ IPv4のヒント情報
-Server::Server(std::shared_ptr<event::IF::EventHandler> e_handler,
-               u_short port,
-               struct addrinfo hint)
+Server::Server(u_short port, struct addrinfo hint)
   : server_fd_{ 0 }
-  , event_handler_{ e_handler }
   , port_{ port }
   , inet0_{ new struct addrinfo }
   , hint_{ new struct addrinfo }
@@ -37,6 +34,12 @@ Server::Server(std::shared_ptr<event::IF::EventHandler> e_handler,
 Server::~Server()
 {
   SafeClose();
+}
+
+void
+Server::EventHandler(std::shared_ptr<event::IF::EventHandler> eh)
+{
+  event_handler_ = eh;
 }
 
 /// @brief タイムアウト時間を設定する

@@ -4,9 +4,7 @@ namespace nw {
 namespace ipv4 {
 //
 std::unique_ptr<abc::SocketServer>
-MakeServer(std::shared_ptr<event::IF::EventHandler> e,
-           u_short p,
-           struct addrinfo hint_)
+MakeServer(u_short p, struct addrinfo hint_)
 {
   using TcpServer = nw::ipv4::tcp::Server;
   using UdpServer = nw::ipv4::udp::Server;
@@ -15,9 +13,9 @@ MakeServer(std::shared_ptr<event::IF::EventHandler> e,
   bool is_tcp = (hint_.ai_socktype == SOCK_STREAM);
   bool is_udp = (hint_.ai_family == SOCK_DGRAM);
   if (is_tcp) {
-    return std::make_unique<TcpServer>(e, p, hint_);
+    return std::make_unique<TcpServer>(p, hint_);
   } else if (is_udp) {
-    return std::make_unique<UdpServer>(e, p, hint_);
+    return std::make_unique<UdpServer>(p, hint_);
   }
   static_assert("not supported server type");
   return nullptr;

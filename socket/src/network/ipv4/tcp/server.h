@@ -23,13 +23,14 @@ class Server : public nw::ipv4::abc::SocketServer
   static constexpr int DISABLE_FD = -1;
 
 public: // constructor
-  Server(std::shared_ptr<event::IF::EventHandler>, u_short, struct addrinfo);
+  Server(u_short, struct addrinfo);
   ~Server();
 
 public: // accessor
   void Timeout(struct timeval);
   void Timeout(time_t, suseconds_t);
   void Event(event::IF::EventHandler::callback) override;
+  void EventHandler(std::shared_ptr<event::IF::EventHandler>) override;
 
 public:
   int Establish() override;
