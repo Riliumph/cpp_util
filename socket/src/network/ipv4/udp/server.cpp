@@ -35,24 +35,6 @@ Server::EventHandler(std::shared_ptr<event::IF::EventHandler> eh)
   event_handler_ = eh;
 }
 
-/// @brief タイムアウト時間を設定する
-/// @param tm
-void
-Server::Timeout(struct timeval tm)
-{
-  timeout_ = tm;
-}
-
-/// @brief タイムアウト時間を設定する
-/// @param sec 秒数
-/// @param usec マイクロ秒数
-void
-Server::Timeout(time_t sec, suseconds_t usec)
-{
-  timeout_.tv_sec = sec;
-  timeout_.tv_usec = usec;
-}
-
 /// @brief コールバックイベントの設定
 /// @param e イベント
 void

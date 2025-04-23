@@ -21,8 +21,6 @@ public:
   ~Server();
 
 public: // accessor
-  void Timeout(struct timeval);
-  void Timeout(time_t, suseconds_t);
   void Event(event::IF::EventHandler::callback) override;
   void EventHandler(std::shared_ptr<event::IF::EventHandler>) override;
 
