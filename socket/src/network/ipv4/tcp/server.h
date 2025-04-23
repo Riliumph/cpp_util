@@ -1,5 +1,7 @@
 #ifndef INCLUDE_NETWORK_IPV4_TCP_SERVER_H
 #define INCLUDE_NETWORK_IPV4_TCP_SERVER_H
+// Inherit
+#include "network/ipv4/abc/socket_server.h"
 // STL
 #include <array>
 #include <functional>
@@ -11,14 +13,10 @@
 #include <sys/select.h>
 #include <sys/socket.h>
 #include <sys/types.h>
-// Original Lib
-#include <event.h>
-// Original
-#include "network/interface/server.h"
 
 namespace nw::ipv4::tcp {
 /// @brief IPv4でTCP通信を行うサーバー
-class Server : public nw::IF::Server
+class Server : public nw::ipv4::abc::SocketServer
 {
   static const int QUEUE_SIZE = SOMAXCONN;
   static constexpr int CONNECTION_MAX = 20;

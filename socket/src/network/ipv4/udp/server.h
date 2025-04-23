@@ -1,5 +1,7 @@
 #ifndef INCLUDE_NETWORK_IPV4_UDP_SERVER_H
 #define INCLUDE_NETWORK_IPV4_UDP_SERVER_H
+// Inherit
+#include "network/ipv4/abc/socket_server.h"
 // STL
 #include <memory>
 // Standard
@@ -7,14 +9,12 @@
 // System
 #include <sys/socket.h>
 #include <sys/types.h>
-// original
-#include "network/interface/server.h"
 
 namespace nw {
 namespace ipv4 {
 namespace udp {
 
-class Server : public nw::IF::Server
+class Server : public nw::ipv4::abc::SocketServer
 {
 public:
   Server(std::shared_ptr<event::IF::EventHandler>, u_short, struct addrinfo);

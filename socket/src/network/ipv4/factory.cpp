@@ -3,7 +3,7 @@
 namespace nw {
 namespace ipv4 {
 //
-std::unique_ptr<nw::IF::Server>
+std::unique_ptr<abc::SocketServer>
 MakeServer(std::shared_ptr<event::IF::EventHandler> e,
            u_short p,
            struct addrinfo hint)
