@@ -41,7 +41,8 @@ main()
   eh->Timeout(std::nullopt);
 
   std::cout << "create server..." << std::endl;
-  auto srv = nw::ipv4::MakeServer(eh, port_no, hint);
+  auto srv = nw::ipv4::MakeServer(port_no, hint);
+  srv->EventHandler(eh);
   srv->Event(receive_event);
 
   std::cout << "establish server..." << std::endl;
