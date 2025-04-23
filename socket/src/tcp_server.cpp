@@ -9,6 +9,8 @@
 // original
 #include "network.h"
 
+#define UDP
+
 void
 receive_event(int fd)
 {
@@ -24,10 +26,16 @@ main()
   auto pid = getpid();
   std::cout << "server pid: " << pid << std::endl;
 
+#if defined(UDP)
+  int protocol = SOCK_DGRAM;
+#else
+  int protocol = SOCK_STREAM;
+#endif
+
   u_short port_no = 80;
   struct addrinfo hint;
   hint.ai_family = AF_INET;
-  hint.ai_socktype = SOCK_STREAM;
+  hint.ai_socktype = protocol;
   hint.ai_flags = AI_PASSIVE;
   auto eh = std::make_shared<event::EpollHandler>();
   eh->Timeout(std::nullopt);
