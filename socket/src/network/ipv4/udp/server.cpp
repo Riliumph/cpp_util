@@ -24,7 +24,6 @@ Server::Server(u_short port, struct addrinfo hint)
   , timeout_{ 0, 0 }
 {
   std::cout << "create udp server" << std::endl;
-  Hint(hint);
 }
 
 /// @brief デストラクタ
@@ -113,17 +112,6 @@ Server::Start()
   std::cout << "start event_handler" << std::endl;
   event_handler_->Run();
   return true;
-}
-
-/// @brief サーバーを構築するネットワーク情報のヒントを設定する
-/// @param hint ヒント
-void
-Server::Hint(const struct addrinfo& hint_data)
-{
-  std::cout << "copy hint" << std::endl;
-  hint_->ai_family = hint_data.ai_family;
-  hint_->ai_socktype = hint_data.ai_socktype;
-  hint_->ai_flags = hint_data.ai_flags;
 }
 
 /// @brief ヒント情報からアドレス情報を決定する

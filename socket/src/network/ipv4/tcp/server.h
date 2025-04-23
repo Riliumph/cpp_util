@@ -37,7 +37,6 @@ public:
   bool Start() override;
 
 private:
-  void Hint(const struct addrinfo&);
   void SafeClose();
 
 private:

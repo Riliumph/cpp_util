@@ -25,6 +25,9 @@ public: // IF
   virtual void Event(event_callback_t) = 0;
   virtual void EventHandler(std::shared_ptr<event_handler_t>) = 0;
 
+private:
+  void Hint(const struct addrinfo&);
+
 protected:
   int server_fd_;
 
