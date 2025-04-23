@@ -18,16 +18,16 @@ namespace udp {
 /// @brief コンストラクタ
 /// @param e_handler イベントハンドラ
 /// @param port サーバーポート番号
-/// @param hint IPv4のヒント情報
+/// @param hint_ IPv4のヒント情報
 Server::Server(std::shared_ptr<event::IF::EventHandler> e_handler,
                u_short port,
                struct addrinfo hint)
-  : server_fd{ 0 }
-  , event_handler{ e_handler }
+  : server_fd_{ 0 }
+  , event_handler_{ e_handler }
   , port_{ port }
-  , inet0{ new struct addrinfo }
-  , hint{ new struct addrinfo }
-  , timeout{ 0, 0 }
+  , inet0_{ new struct addrinfo }
+  , hint_{ new struct addrinfo }
+  , timeout_{ 0, 0 }
 {
   std::cout << "create udp server" << std::endl;
   Hint(hint);
@@ -44,7 +44,7 @@ Server::~Server()
 void
 Server::Timeout(struct timeval tm)
 {
-  timeout = tm;
+  timeout_ = tm;
 }
 
 /// @brief タイムアウト時間を設定する
@@ -53,8 +53,8 @@ Server::Timeout(struct timeval tm)
 void
 Server::Timeout(time_t sec, suseconds_t usec)
 {
-  timeout.tv_sec = sec;
-  timeout.tv_usec = usec;
+  timeout_.tv_sec = sec;
+  timeout_.tv_usec = usec;
 }
 
 /// @brief コールバックイベントの設定
@@ -62,7 +62,7 @@ Server::Timeout(time_t sec, suseconds_t usec)
 void
 Server::Event(event::IF::EventHandler::callback e)
 {
-  event = e;
+  event_ = e;
 }
 
 /// @brief サーバーを立ち上げる関数
@@ -75,7 +75,7 @@ Server::Establish()
   if (ok < 0) {
     return ok;
   }
-  ok = ReuseAddress(server_fd);
+  ok = ReuseAddress(server_fd_);
   if (ok < 0) {
     return ok;
   }
@@ -91,27 +91,27 @@ Server::Establish()
 bool
 Server::Start()
 {
-  if (!event_handler) {
+  if (!event_handler_) {
     std::cerr << "event_handler not set" << std::endl;
     return false;
   }
-  if (!event_handler->CanReady()) {
+  if (!event_handler_->CanReady()) {
     std::cerr << "event_handler not ready" << std::endl;
     return false;
   }
   struct epoll_event ev;
   ev.events = EPOLLIN;
-  ev.data.fd = server_fd;
-  auto ok = event_handler->CreateTrigger(ev.data.fd, ev.events);
+  ev.data.fd = server_fd_;
+  auto ok = event_handler_->CreateTrigger(ev.data.fd, ev.events);
   if (ok != 0) {
     std::cerr << "failed to set event" << std::endl;
     return false;
   }
-  event_handler->SetCallback(
-    ev.data.fd, ev.events, [this](int fd) { event(fd); });
+  event_handler_->SetCallback(
+    ev.data.fd, ev.events, [this](int fd) { event_(fd); });
 
   std::cout << "start event_handler" << std::endl;
-  event_handler->Run();
+  event_handler_->Run();
   return true;
 }
 
@@ -121,9 +121,9 @@ void
 Server::Hint(const struct addrinfo& hint_data)
 {
   std::cout << "copy hint" << std::endl;
-  hint->ai_family = hint_data.ai_family;
-  hint->ai_socktype = hint_data.ai_socktype;
-  hint->ai_flags = hint_data.ai_flags;
+  hint_->ai_family = hint_data.ai_family;
+  hint_->ai_socktype = hint_data.ai_socktype;
+  hint_->ai_flags = hint_data.ai_flags;
 }
 
 /// @brief ヒント情報からアドレス情報を決定する
@@ -140,25 +140,25 @@ Server::Identify(std::string service_name)
   }
   // ヒント変数からアドレスを決定し、inet0変数へ設定
   // docに解説有り
-  auto err = getaddrinfo(NULL, service_name.data(), hint, &inet0);
+  auto err = getaddrinfo(NULL, service_name.data(), hint_, &inet0_);
   if (err != 0) {
     std::cerr << "getaddrinfo(): " << gai_strerror(err) << std::endl;
     return -1;
   }
 
-  err = getnameinfo(inet0->ai_addr,
-                    inet0->ai_addrlen,
-                    host_name, // output引数
-                    sizeof(host_name),
-                    serv_name, // output引数
-                    sizeof(serv_name),
+  err = getnameinfo(inet0_->ai_addr,
+                    inet0_->ai_addrlen,
+                    host_name_, // output引数
+                    sizeof(host_name_),
+                    serv_name_, // output引数
+                    sizeof(serv_name_),
                     NI_NUMERICHOST | NI_NUMERICSERV);
   if (err != 0) {
     std::cerr << "getnameinfo(): " << gai_strerror(err) << std::endl;
-    freeaddrinfo(inet0);
+    freeaddrinfo(inet0_);
     return -1;
   }
-  printf("identify: %s:%s\n", host_name, serv_name);
+  printf("identify: %s:%s\n", host_name_, serv_name_);
   return 0;
 }
 
@@ -168,17 +168,17 @@ int
 Server::CreateSocket()
 {
   // addrinfo型はリンクリストを形成するため、forで対応する
-  for (auto* info = inet0; info != nullptr; info = info->ai_next) {
-    server_fd =
-      socket(inet0->ai_family, inet0->ai_socktype, inet0->ai_protocol);
-    if (server_fd < 0) {
+  for (auto* info = inet0_; info != nullptr; info = info->ai_next) {
+    server_fd_ =
+      socket(inet0_->ai_family, inet0_->ai_socktype, inet0_->ai_protocol);
+    if (server_fd_ < 0) {
       perror("make socket");
       continue;
     }
     // bindのチェックまでやった方がいい
   }
-  std::cout << "server_fd: " << server_fd << std::endl;
-  return server_fd;
+  std::cout << "server_fd_: " << server_fd_ << std::endl;
+  return server_fd_;
 }
 
 /// @brief サーバーソケットにアドレスをバインドする
@@ -186,7 +186,7 @@ Server::CreateSocket()
 int
 Server::AttachAddress()
 {
-  auto ok = bind(server_fd, inet0->ai_addr, inet0->ai_addrlen);
+  auto ok = bind(server_fd_, inet0_->ai_addr, inet0_->ai_addrlen);
   if (ok < 0) {
     perror("bind");
     return ok;
@@ -201,8 +201,8 @@ bool
 Server::CloseEvent(int fd)
 {
   std::cout << "Client disconnected: " << fd << std::endl;
-  event_handler->EraseCallback(fd);
-  event_handler->DeleteTrigger(fd, EPOLLIN);
+  event_handler_->EraseCallback(fd);
+  event_handler_->DeleteTrigger(fd, EPOLLIN);
   close(fd);
   return true;
 }
@@ -211,14 +211,14 @@ Server::CloseEvent(int fd)
 void
 Server::SafeClose()
 {
-  if (0 < server_fd) {
-    close(server_fd);
+  if (0 < server_fd_) {
+    close(server_fd_);
   }
-  if (inet0 != nullptr) {
-    freeaddrinfo(inet0);
+  if (inet0_ != nullptr) {
+    freeaddrinfo(inet0_);
   }
-  if (hint != nullptr) {
-    freeaddrinfo(hint);
+  if (hint_ != nullptr) {
+    freeaddrinfo(hint_);
   }
 }
 } // namespace udp

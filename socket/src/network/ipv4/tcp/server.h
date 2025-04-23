@@ -50,23 +50,23 @@ private:
   bool AcceptEvent(int);
   bool CloseEvent(int);
 
-private:         // File Descriptor
-  int server_fd; // サーバー接続を待ち受けているソケットFD
-  std::array<int, CONNECTION_MAX> client_fds;
+private:          // File Descriptor
+  int server_fd_; // サーバー接続を待ち受けているソケットFD
+  std::array<int, CONNECTION_MAX> client_fds_;
 
 private: // Event Handler
-  std::shared_ptr<event::IF::EventHandler> event_handler;
-  event::IF::EventHandler::callback event;
+  std::shared_ptr<event::IF::EventHandler> event_handler_;
+  event::IF::EventHandler::callback event_;
 
 protected: // IP config
   u_short port_;
-  struct addrinfo* inet0; // Linux変数はC++で定義しない
-  struct addrinfo* hint;
+  struct addrinfo* inet0_; // Linux変数はC++で定義しない
+  struct addrinfo* hint_;
 
 protected: // Server Config
-  char host_name[NI_MAXHOST];
-  char serv_name[NI_MAXSERV];
-  struct timeval timeout;
+  char host_name_[NI_MAXHOST];
+  char serv_name_[NI_MAXSERV];
+  struct timeval timeout_;
 };
 }
 #endif // INCLUDE_NETWORK_IPV4_TCP_SERVER_H
