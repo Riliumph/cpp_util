@@ -26,7 +26,7 @@ protected:
 public:
   ~SocketServer();
   void EventHandler(std::shared_ptr<event_handler_t>);
-  void Event(event::IF::EventHandler::callback);
+  void Event(event_callback_t);
   virtual int Establish() = 0;
   virtual bool Start() = 0;
 
@@ -49,8 +49,8 @@ protected:
   struct addrinfo* hint_;
 
 protected: // EventLib
-  std::shared_ptr<event::IF::EventHandler> event_handler_;
-  event::IF::EventHandler::callback event_;
+  std::shared_ptr<event_handler_t> event_handler_;
+  event_callback_t event_;
 };
 } // namespace abc
 } // ipv4

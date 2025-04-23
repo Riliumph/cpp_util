@@ -126,7 +126,7 @@ SocketServer::Hint(const struct addrinfo& hint)
 /// @brief イベントハンドラの設定を行う
 /// @param eh イベントハンドラの共有ポインタ
 void
-SocketServer::EventHandler(std::shared_ptr<event::IF::EventHandler> eh)
+SocketServer::EventHandler(std::shared_ptr<event_handler_t> eh)
 {
   event_handler_ = eh;
 }
@@ -134,7 +134,7 @@ SocketServer::EventHandler(std::shared_ptr<event::IF::EventHandler> eh)
 /// @brief コールバックイベントの設定
 /// @param e イベント
 void
-SocketServer::Event(event::IF::EventHandler::callback e)
+SocketServer::Event(event_callback_t e)
 {
   event_ = e;
 }
