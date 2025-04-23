@@ -9,6 +9,8 @@
 // original
 #include "network.h"
 
+#define UDP
+
 void
 receive_event(int fd)
 {
@@ -24,24 +26,30 @@ main()
   auto pid = getpid();
   std::cout << "server pid: " << pid << std::endl;
 
-  u_short port_no = 50000;
+#if defined(UDP)
+  int protocol = SOCK_DGRAM;
+#else
+  int protocol = SOCK_STREAM;
+#endif
+
+  u_short port_no = 80;
   struct addrinfo hint;
   hint.ai_family = AF_INET;
-  hint.ai_socktype = SOCK_STREAM;
+  hint.ai_socktype = protocol;
   hint.ai_flags = AI_PASSIVE;
   auto eh = std::make_shared<event::EpollHandler>();
   eh->Timeout(std::nullopt);
 
   std::cout << "create server..." << std::endl;
-  nw::ipv4::tcp::Server srv(eh, port_no, hint);
-  srv.Event(receive_event);
+  auto srv = nw::ipv4::MakeServer(eh, port_no, hint);
+  srv->Event(receive_event);
 
   std::cout << "establish server..." << std::endl;
-  if (srv.Establish() < 0) {
+  if (srv->Establish() < 0) {
     std::cerr << "failed to establish server" << std::endl;
     return -1;
   }
 
   std::cout << "start server..." << std::endl;
-  srv.Start();
+  srv->Start();
 }
