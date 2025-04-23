@@ -115,25 +115,6 @@ Server::Start()
   return true;
 }
 
-/// @brief サーバーソケットを生成する関数
-/// @return 成否
-int
-Server::CreateSocket()
-{
-  // addrinfo型はリンクリストを形成するため、forで対応する
-  for (auto* info = inet0_; info != nullptr; info = info->ai_next) {
-    server_fd_ =
-      socket(inet0_->ai_family, inet0_->ai_socktype, inet0_->ai_protocol);
-    if (server_fd_ < 0) {
-      perror("make socket");
-      continue;
-    }
-    // bindのチェックまでやった方がいい
-  }
-  std::cout << "server_fd_: " << server_fd_ << std::endl;
-  return server_fd_;
-}
-
 /// @brief サーバーソケットにアドレスをバインドする
 /// @return 成否
 int

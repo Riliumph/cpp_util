@@ -40,7 +40,6 @@ private:
   void SafeClose();
 
 private:
-  int CreateSocket();
   int AttachAddress();
   int Listen() const;
   int Accept() const;

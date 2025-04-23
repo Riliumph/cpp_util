@@ -34,7 +34,6 @@ private:
   void SafeClose();
 
 private:
-  int CreateSocket();
   int AttachAddress();
 
   bool CloseEvent(int);

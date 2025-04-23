@@ -19,6 +19,7 @@ class SocketServer : public nw::IF::Server
 protected:
   SocketServer(u_short, struct addrinfo);
   int Identify(std::string = "");
+  int CreateSocket();
 
 public: // IF
   virtual int Establish() = 0;
