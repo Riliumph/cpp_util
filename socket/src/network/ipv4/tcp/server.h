@@ -37,9 +37,6 @@ public:
   bool Start() override;
 
 private:
-  void SafeClose();
-
-private:
   int AttachAddress();
   int Listen() const;
   int Accept() const;

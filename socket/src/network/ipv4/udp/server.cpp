@@ -27,10 +27,7 @@ Server::Server(u_short port, struct addrinfo hint)
 }
 
 /// @brief デストラクタ
-Server::~Server()
-{
-  SafeClose();
-}
+Server::~Server() {}
 
 void
 Server::EventHandler(std::shared_ptr<event::IF::EventHandler> eh)
@@ -140,20 +137,6 @@ Server::CloseEvent(int fd)
   return true;
 }
 
-/// @brief サーバーのクローズ処理
-void
-Server::SafeClose()
-{
-  if (0 < server_fd_) {
-    close(server_fd_);
-  }
-  if (inet0_ != nullptr) {
-    freeaddrinfo(inet0_);
-  }
-  if (hint_ != nullptr) {
-    freeaddrinfo(hint_);
-  }
-}
 } // namespace udp
 } // namespace ipv4
 } // namespace nw

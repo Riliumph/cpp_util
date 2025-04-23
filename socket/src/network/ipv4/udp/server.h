@@ -31,9 +31,6 @@ public:
   bool Start() override;
 
 private:
-  void SafeClose();
-
-private:
   int AttachAddress();
 
   bool CloseEvent(int);

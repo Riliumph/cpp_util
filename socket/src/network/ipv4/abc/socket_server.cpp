@@ -1,6 +1,8 @@
 #include "socket_server.h"
 // STL
 #include <iostream>
+// POSIX Standard
+#include <unistd.h>
 
 namespace nw {
 namespace ipv4 {
@@ -12,6 +14,17 @@ SocketServer::SocketServer(u_short port, struct addrinfo hint)
   , hint_{ new struct addrinfo }
 {
   Hint(hint);
+}
+
+/// @brief デストラクタ
+/// @attention
+/// std::unique_ptr<T>などを使う場合は、protectedではコンパイルできない。
+/// publicな仮想デストラクタにしてstd::unique_ptr<T>がdeleteできるようにすること。
+/// TODO:
+/// 仮想デストラクタはオーバーライドの可能性があるため挙動確認とカスタムデリータの検討をすること
+SocketServer::~SocketServer()
+{
+  SafeClose();
 }
 
 /// @brief ヒント情報からアドレス情報を決定する
@@ -67,6 +80,21 @@ SocketServer::CreateSocket()
   }
   std::cout << "server_fd_: " << server_fd_ << std::endl;
   return server_fd_;
+}
+
+/// @brief サーバーのクローズ処理
+void
+SocketServer::SafeClose()
+{
+  if (0 < server_fd_) {
+    close(server_fd_);
+  }
+  if (inet0_ != nullptr) {
+    freeaddrinfo(inet0_);
+  }
+  if (hint_ != nullptr) {
+    freeaddrinfo(hint_);
+  }
 }
 
 /// @brief サーバーを構築するネットワーク情報のヒントを設定する

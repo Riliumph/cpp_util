@@ -16,6 +16,9 @@ using event_callback_t = event_handler_t::callback;
 namespace abc {
 class SocketServer : public nw::IF::Server
 {
+public:
+  ~SocketServer();
+
 protected:
   SocketServer(u_short, struct addrinfo);
   int Identify(std::string = "");
@@ -29,6 +32,7 @@ public: // IF
 
 private:
   void Hint(const struct addrinfo&);
+  void SafeClose();
 
 protected:
   int server_fd_;
