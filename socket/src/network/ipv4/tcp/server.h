@@ -11,7 +11,6 @@ class Server : public nw::ipv4::abc::SocketServer
 {
   static const int QUEUE_SIZE = SOMAXCONN;
   static constexpr int CONNECTION_MAX = 20;
-  static constexpr int DISABLE_FD = -1;
 
 public: // constructor
   Server(u_short, struct addrinfo);

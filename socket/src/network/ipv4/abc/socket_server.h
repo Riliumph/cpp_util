@@ -16,6 +16,9 @@ using event_callback_t = event_handler_t::callback;
 namespace abc {
 class SocketServer : public nw::IF::Server
 {
+protected:
+  static constexpr int DISABLE_FD = -1;
+
 public:
   ~SocketServer();
   void EventHandler(std::shared_ptr<event_handler_t>);
