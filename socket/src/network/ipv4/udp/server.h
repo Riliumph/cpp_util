@@ -26,9 +26,6 @@ public:
 
 private:
   bool CloseEvent(int);
-
-protected: // Server Config
-  struct timeval timeout_;
 };
 
 } // namespace udp

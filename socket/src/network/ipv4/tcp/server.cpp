@@ -18,7 +18,6 @@ namespace nw::ipv4::tcp {
 /// @param hint IPv4のヒント情報
 Server::Server(u_short port, struct addrinfo hint)
   : SocketServer(port, hint)
-  , timeout_{ 0, 0 }
 {
   std::fill(client_fds_.begin(), client_fds_.end(), DISABLE_FD);
 }

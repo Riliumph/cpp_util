@@ -21,7 +21,6 @@ namespace udp {
 /// @param hint_ IPv4のヒント情報
 Server::Server(u_short port, struct addrinfo hint)
   : SocketServer(port, hint)
-  , timeout_{ 0, 0 }
 {
   std::cout << "create udp server" << std::endl;
 }

@@ -40,9 +40,6 @@ private:
 
 private: // File Descriptor
   std::array<int, CONNECTION_MAX> client_fds_;
-
-protected: // Server Config
-  struct timeval timeout_;
 };
 }
 #endif // INCLUDE_NETWORK_IPV4_TCP_SERVER_H
