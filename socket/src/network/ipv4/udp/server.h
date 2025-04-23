@@ -20,20 +20,12 @@ public:
   Server(u_short, struct addrinfo);
   ~Server();
 
-public: // accessor
-  void Event(event::IF::EventHandler::callback) override;
-  void EventHandler(std::shared_ptr<event::IF::EventHandler>) override;
-
 public:
   int Establish() override;
   bool Start() override;
 
 private:
   bool CloseEvent(int);
-
-private: // Event Handler
-  std::shared_ptr<event::IF::EventHandler> event_handler_;
-  event::IF::EventHandler::callback event_;
 
 protected: // Server Config
   struct timeval timeout_;

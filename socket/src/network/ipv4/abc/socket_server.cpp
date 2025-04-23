@@ -120,6 +120,19 @@ SocketServer::Hint(const struct addrinfo& hint_data)
   hint_->ai_flags = hint_data.ai_flags;
 }
 
+void
+SocketServer::EventHandler(std::shared_ptr<event::IF::EventHandler> eh)
+{
+  event_handler_ = eh;
+}
+
+/// @brief コールバックイベントの設定
+/// @param e イベント
+void
+SocketServer::Event(event::IF::EventHandler::callback e)
+{
+  event_ = e;
+}
 } // namespace abc
 } // namespace ipv4
 } // namespace nw

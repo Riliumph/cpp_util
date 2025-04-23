@@ -29,20 +29,6 @@ Server::Server(u_short port, struct addrinfo hint)
 /// @brief デストラクタ
 Server::~Server() {}
 
-void
-Server::EventHandler(std::shared_ptr<event::IF::EventHandler> eh)
-{
-  event_handler_ = eh;
-}
-
-/// @brief コールバックイベントの設定
-/// @param e イベント
-void
-Server::Event(event::IF::EventHandler::callback e)
-{
-  event_ = e;
-}
-
 /// @brief サーバーを立ち上げる関数
 /// @return 成否
 int

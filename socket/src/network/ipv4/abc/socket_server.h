@@ -18,6 +18,8 @@ class SocketServer : public nw::IF::Server
 {
 public:
   ~SocketServer();
+  void EventHandler(std::shared_ptr<event_handler_t>);
+  void Event(event::IF::EventHandler::callback);
 
 protected:
   SocketServer(u_short, struct addrinfo);
@@ -28,8 +30,6 @@ protected:
 public: // IF
   virtual int Establish() = 0;
   virtual bool Start() = 0;
-  virtual void Event(event_callback_t) = 0;
-  virtual void EventHandler(std::shared_ptr<event_handler_t>) = 0;
 
 private:
   void Hint(const struct addrinfo&);
@@ -39,6 +39,10 @@ protected:
   int server_fd_;
   char host_name_[NI_MAXHOST];
   char serv_name_[NI_MAXSERV];
+
+protected: // EventLib
+  std::shared_ptr<event::IF::EventHandler> event_handler_;
+  event::IF::EventHandler::callback event_;
 
 protected: // IP config
   u_short port_;
