@@ -13,7 +13,7 @@ class Server : public nw::ipv4::abc::SocketServer
   static constexpr int CONNECTION_MAX = 20;
 
 public: // constructor
-  Server(const std::string&, struct addrinfo);
+  Server(const std::string&, const std::string&, struct addrinfo);
   ~Server();
 
 public:

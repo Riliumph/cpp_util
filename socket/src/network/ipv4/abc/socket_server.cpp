@@ -10,13 +10,17 @@ namespace abc {
 /// @brief コンストラクタ
 /// @param port サーバーのポート番号
 /// @param hint サーバーのヒント情報
-SocketServer::SocketServer(const std::string& port, struct addrinfo hint)
+SocketServer::SocketServer(const std::string& ip,
+                           const std::string& port,
+                           struct addrinfo hint)
   : server_fd_{ DISABLE_FD }
+  , ip_{ ip }
   , port_{ port }
   , inet0_{ new struct addrinfo }
   , hint_{ new struct addrinfo }
 {
   Hint(hint);
+  Identify();
 }
 
 /// @brief デストラクタ
@@ -42,7 +46,7 @@ SocketServer::Identify()
   {
     // ヒント変数からアドレスを決定し、inet0変数へ設定
     // docに解説有り
-    auto ok = getaddrinfo(NULL, port_.data(), hint_, &inet0_);
+    auto ok = getaddrinfo(ip_.data(), port_.data(), hint_, &inet0_);
     if (ok != 0) {
       std::cerr << "getaddrinfo(): " << gai_strerror(ok) << std::endl;
       return -1;

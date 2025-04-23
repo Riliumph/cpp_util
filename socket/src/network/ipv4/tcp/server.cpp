@@ -16,8 +16,10 @@ namespace nw::ipv4::tcp {
 /// @param e_handler イベントハンドラ
 /// @param port サーバーポート番号
 /// @param hint IPv4のヒント情報
-Server::Server(u_short port, struct addrinfo hint)
-  : SocketServer(port, hint)
+Server::Server(const std::string& ip,
+               const std::string& port,
+               struct addrinfo hint)
+  : SocketServer(ip, port, hint)
 {
   std::fill(client_fds_.begin(), client_fds_.end(), DISABLE_FD);
 }
@@ -30,7 +32,6 @@ Server::~Server() {}
 int
 Server::Establish()
 {
-  Identify();
   auto ok = CreateSocket();
   if (ok < 0) {
     return ok;

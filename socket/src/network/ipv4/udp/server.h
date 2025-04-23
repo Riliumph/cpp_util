@@ -10,7 +10,7 @@ namespace udp {
 class Server : public nw::ipv4::abc::SocketServer
 {
 public:
-  Server(const std::string&, struct addrinfo);
+  Server(const std::string&, const std::string&, struct addrinfo);
   ~Server();
 
 public:
