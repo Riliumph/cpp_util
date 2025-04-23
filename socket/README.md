@@ -30,13 +30,12 @@ $ make -f client.Makefile all
 
 ## 使い方
 
+### TCPサーバー
+
 terminalで以下のコマンドを投入する。
 
 ```terminal
-$ make all
-$ ./bin/socket
-wait select ...
-（受信待機中）
+$ ./bin/server tcp 127.0.0.1 50000
 ```
 
 別のターミナルで以下のコマンドを投入する。
@@ -47,6 +46,20 @@ Trying 127.0.0.1...
 Connected to 127.0.0.1.
 Escape character is '^]'.
 （入力待機中）
+```
+
+### UDPサーバー
+
+terminalで以下のコマンドを投入する。
+
+```terminal
+$ ./bin/server udp 127.0.0.1 50000
+```
+
+別ターミナルで以下のコマンドを投入する
+
+```terminal
+$ echo "HELLO, WORLD" | nc -u 127.0.0.1 50000
 ```
 
 ## TCPDUMP

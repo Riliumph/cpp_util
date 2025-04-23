@@ -4,7 +4,7 @@ namespace nw {
 namespace ipv4 {
 //
 std::unique_ptr<abc::SocketServer>
-MakeServer(u_short p, struct addrinfo hint_)
+MakeServer(const std::string& p, struct addrinfo hint_)
 {
   using TcpServer = nw::ipv4::tcp::Server;
   using UdpServer = nw::ipv4::udp::Server;

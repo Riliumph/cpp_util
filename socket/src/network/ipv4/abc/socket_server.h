@@ -31,8 +31,8 @@ public:
   virtual bool Start() = 0;
 
 protected:
-  SocketServer(u_short, struct addrinfo);
-  int Identify(std::string = "");
+  SocketServer(const std::string&, struct addrinfo);
+  int Identify();
   int CreateSocket();
   int AttachAddress();
 
@@ -44,7 +44,7 @@ protected:
   int server_fd_;
   char host_name_[NI_MAXHOST];
   char serv_name_[NI_MAXSERV];
-  u_short port_;
+  std::string port_;
   struct addrinfo* inet0_; // Linux変数はC++で定義しない
   struct addrinfo* hint_;
 
