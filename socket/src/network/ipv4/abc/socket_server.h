@@ -23,16 +23,14 @@ public:
   ~SocketServer();
   void EventHandler(std::shared_ptr<event_handler_t>);
   void Event(event::IF::EventHandler::callback);
+  virtual int Establish() = 0;
+  virtual bool Start() = 0;
 
 protected:
   SocketServer(u_short, struct addrinfo);
   int Identify(std::string = "");
   int CreateSocket();
   int AttachAddress();
-
-public: // IF
-  virtual int Establish() = 0;
-  virtual bool Start() = 0;
 
 private:
   void Hint(const struct addrinfo&);
@@ -42,15 +40,13 @@ protected:
   int server_fd_;
   char host_name_[NI_MAXHOST];
   char serv_name_[NI_MAXSERV];
+  u_short port_;
+  struct addrinfo* inet0_; // Linux変数はC++で定義しない
+  struct addrinfo* hint_;
 
 protected: // EventLib
   std::shared_ptr<event::IF::EventHandler> event_handler_;
   event::IF::EventHandler::callback event_;
-
-protected: // IP config
-  u_short port_;
-  struct addrinfo* inet0_; // Linux変数はC++で定義しない
-  struct addrinfo* hint_;
 };
 } // namespace abc
 } // ipv4
