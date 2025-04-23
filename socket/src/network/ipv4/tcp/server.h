@@ -40,7 +40,6 @@ private:
   void SafeClose();
 
 private:
-  int Identify(std::string = "");
   int CreateSocket();
   int AttachAddress();
   int Listen() const;
@@ -58,8 +57,6 @@ private: // Event Handler
   event::IF::EventHandler::callback event_;
 
 protected: // Server Config
-  char host_name_[NI_MAXHOST];
-  char serv_name_[NI_MAXSERV];
   struct timeval timeout_;
 };
 }

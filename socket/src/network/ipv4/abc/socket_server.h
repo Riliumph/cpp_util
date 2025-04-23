@@ -18,6 +18,7 @@ class SocketServer : public nw::IF::Server
 {
 protected:
   SocketServer(u_short, struct addrinfo);
+  int Identify(std::string = "");
 
 public: // IF
   virtual int Establish() = 0;
@@ -30,6 +31,8 @@ private:
 
 protected:
   int server_fd_;
+  char host_name_[NI_MAXHOST];
+  char serv_name_[NI_MAXSERV];
 
 protected: // IP config
   u_short port_;
