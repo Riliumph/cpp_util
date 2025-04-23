@@ -35,7 +35,6 @@ public:
   bool Start() override;
 
 private:
-  int AttachAddress();
   int Listen() const;
   int Accept() const;
   int CurrentConnection();

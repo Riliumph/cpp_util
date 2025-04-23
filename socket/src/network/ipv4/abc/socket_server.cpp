@@ -82,6 +82,19 @@ SocketServer::CreateSocket()
   return server_fd_;
 }
 
+/// @brief サーバーソケットにアドレスをバインドする
+/// @return 成否
+int
+SocketServer::AttachAddress()
+{
+  auto ok = bind(server_fd_, inet0_->ai_addr, inet0_->ai_addrlen);
+  if (ok < 0) {
+    perror("bind");
+    return ok;
+  }
+  return ok;
+}
+
 /// @brief サーバーのクローズ処理
 void
 SocketServer::SafeClose()

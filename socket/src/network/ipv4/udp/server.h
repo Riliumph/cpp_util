@@ -29,8 +29,6 @@ public:
   bool Start() override;
 
 private:
-  int AttachAddress();
-
   bool CloseEvent(int);
 
 private: // Event Handler

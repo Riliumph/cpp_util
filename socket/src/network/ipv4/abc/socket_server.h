@@ -23,6 +23,7 @@ protected:
   SocketServer(u_short, struct addrinfo);
   int Identify(std::string = "");
   int CreateSocket();
+  int AttachAddress();
 
 public: // IF
   virtual int Establish() = 0;
