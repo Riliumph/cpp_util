@@ -6,9 +6,12 @@ RUN apt-get update \
     # utilities
     peco\
     silversearcher-ag\
-    vim\
-    # network
-    telnet
+    vim
+RUN echo "INSTALL NETWORK TOOLS"
+RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y\
+    telnet\
+    netcat-openbsd
+
 RUN echo "INSTALL C++ TOOLS"
 RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y\
     # c++ libraries
