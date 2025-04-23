@@ -2,13 +2,6 @@
 #define INCLUDE_NETWORK_IPV4_UDP_SERVER_H
 // Inherit
 #include "network/ipv4/abc/socket_server.h"
-// STL
-#include <memory>
-// Standard
-#include <netdb.h>
-// System
-#include <sys/socket.h>
-#include <sys/types.h>
 
 namespace nw {
 namespace ipv4 {
