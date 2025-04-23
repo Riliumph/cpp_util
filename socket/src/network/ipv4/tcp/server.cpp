@@ -177,7 +177,7 @@ Server::AcceptEvent(int server_fd)
     return false;
   }
   // client_fdを引き出した後、
-  // そのクライアントからの接続時に発火するイベントを登録
+  // そのクライアントからのデータ受信時に発火するイベントを登録
   struct epoll_event ev;
   ev.data.fd = client_fd;
   ev.events = (EPOLLIN | EPOLLRDHUP);
@@ -189,6 +189,7 @@ Server::AcceptEvent(int server_fd)
   }
   event_handler_->SetCallback(
     ev.data.fd, EPOLLIN, [this](int fd) { event_(fd); });
+  // 切断情報の場合のイベントを登録
   event_handler_->SetCallback(
     ev.data.fd, ev.events, [this](int fd) { CloseEvent(fd); });
   return true;

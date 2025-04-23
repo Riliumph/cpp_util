@@ -14,9 +14,13 @@ namespace ipv4 {
 using event_handler_t = event::IF::EventHandler;
 using event_callback_t = event_handler_t::callback;
 namespace abc {
+/// @brief ソケットサーバーの抽象基底クラス
+/// @details TCP/UDPサーバーが継承する基底クラスである。
+/// TCP/UDPサーバーの共通処理が実装される。
 class SocketServer : public nw::IF::Server
 {
 protected:
+  /// @brief FDの無効値
   static constexpr int DISABLE_FD = -1;
 
 public:

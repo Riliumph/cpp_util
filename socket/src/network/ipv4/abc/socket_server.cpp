@@ -7,6 +7,9 @@
 namespace nw {
 namespace ipv4 {
 namespace abc {
+/// @brief コンストラクタ
+/// @param port サーバーのポート番号
+/// @param hint サーバーのヒント情報
 SocketServer::SocketServer(u_short port, struct addrinfo hint)
   : server_fd_{ DISABLE_FD }
   , port_{ port }
@@ -32,7 +35,7 @@ SocketServer::~SocketServer()
 /// @param service_name サービス名
 /// Linux: /etc/services
 /// Windows: C:\Windows\system32\drivers\etc\services
-/// @return
+/// @return 成否
 int
 SocketServer::Identify(std::string service_name)
 {
@@ -113,13 +116,15 @@ SocketServer::SafeClose()
 /// @brief サーバーを構築するネットワーク情報のヒントを設定する
 /// @param hint ヒント
 void
-SocketServer::Hint(const struct addrinfo& hint_data)
+SocketServer::Hint(const struct addrinfo& hint)
 {
-  hint_->ai_family = hint_data.ai_family;
-  hint_->ai_socktype = hint_data.ai_socktype;
-  hint_->ai_flags = hint_data.ai_flags;
+  hint_->ai_family = hint.ai_family;
+  hint_->ai_socktype = hint.ai_socktype;
+  hint_->ai_flags = hint.ai_flags;
 }
 
+/// @brief イベントハンドラの設定を行う
+/// @param eh イベントハンドラの共有ポインタ
 void
 SocketServer::EventHandler(std::shared_ptr<event::IF::EventHandler> eh)
 {

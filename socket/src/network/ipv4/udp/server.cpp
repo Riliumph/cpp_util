@@ -16,7 +16,6 @@ namespace nw {
 namespace ipv4 {
 namespace udp {
 /// @brief コンストラクタ
-/// @param e_handler イベントハンドラ
 /// @param port サーバーポート番号
 /// @param hint_ IPv4のヒント情報
 Server::Server(u_short port, struct addrinfo hint)
