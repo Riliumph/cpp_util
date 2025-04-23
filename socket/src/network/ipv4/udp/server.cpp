@@ -77,20 +77,6 @@ Server::Start()
   event_handler_->Run();
   return true;
 }
-
-/// @brief クライアントから切断を受けたときのイベント
-/// @param fd 切断にきたクライアントのFD
-/// @return 成否
-bool
-Server::CloseEvent(int fd)
-{
-  std::cout << "Client disconnected: " << fd << std::endl;
-  event_handler_->EraseCallback(fd);
-  event_handler_->DeleteTrigger(fd, EPOLLIN);
-  close(fd);
-  return true;
-}
-
 } // namespace udp
 } // namespace ipv4
 } // namespace nw

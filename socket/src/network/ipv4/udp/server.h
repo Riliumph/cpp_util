@@ -23,11 +23,7 @@ public:
 public:
   int Establish() override;
   bool Start() override;
-
-private:
-  bool CloseEvent(int);
 };
-
 } // namespace udp
 } // namespace ipv4
 } // namespace nw
