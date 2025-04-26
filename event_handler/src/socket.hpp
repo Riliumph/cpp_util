@@ -11,7 +11,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 // original
-#include "event.h"
+#include "event.hpp"
 
 #include <arpa/inet.h>
 #include <cstring>
@@ -31,7 +31,7 @@ constexpr int BUF_SIZE = 1024;
 using Callback = std::function<void(int)>;
 
 void
-socket_sample(std::shared_ptr<event::IF::EventHandler> e_handler)
+socket_sample(std::shared_ptr<event::interface::EventHandler> e_handler)
 {
   // ソケットの作成
   int server_fd = socket(AF_INET, SOCK_STREAM, 0);

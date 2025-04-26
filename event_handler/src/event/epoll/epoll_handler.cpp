@@ -1,19 +1,17 @@
-#include "epoll_handler.h"
+#include "epoll_handler.hpp"
 // STL
 #include <iostream>
 #include <vector>
 // system
 #include <unistd.h>
 // original
-#include "event/operator_io.hpp"
+#include "operator_io.hpp"
 
 namespace event {
 /// @brief デフォルトコンストラクタ
 EpollHandler::EpollHandler()
-  : epoll_fd(0)
-  , event_max(EVENT_MAX)
-  , events(EVENT_MAX)
-  , timeout(std::nullopt)
+  : events_(event_max_)
+
 {
   CreateEpoll();
 }
@@ -21,30 +19,14 @@ EpollHandler::EpollHandler()
 /// @brief コンストラクタ
 /// @param max_event_num 監視イベント最大数
 EpollHandler::EpollHandler(size_t max_event_num)
-  : epoll_fd(0)
-  , event_max(max_event_num)
-  , events(max_event_num)
-  , timeout(std::nullopt)
+  : abc::EventHandler(max_event_num)
+  , events_(event_max_)
 {
   CreateEpoll();
 }
 
 /// @brief デストラクタ
-EpollHandler::~EpollHandler()
-{
-  if (0 < epoll_fd) {
-    close(epoll_fd);
-  }
-}
-
-/// @brief 実行可能を判定する関数
-/// epollインスタンスが作成されていれば実行可能とみなす。
-/// @return 成否
-bool
-EpollHandler::CanReady()
-{
-  return epoll_fd != -1;
-}
+EpollHandler::~EpollHandler() {}
 
 /// @brief 監視するイベントを登録する関数
 /// @param fd 新たに監視するFD
@@ -53,10 +35,10 @@ EpollHandler::CanReady()
 int
 EpollHandler::CreateTrigger(int fd, int event)
 {
-  struct epoll_event e;
+  event_t e;
   e.data.fd = fd;
   e.events = event;
-  auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, &e);
+  auto ok = epoll_ctl(event_handler_fd_, EPOLL_CTL_ADD, fd, &e);
   if (ok == -1) {
     perror("failed create epoll trigger");
     return ok;
@@ -72,10 +54,10 @@ EpollHandler::CreateTrigger(int fd, int event)
 int
 EpollHandler::ModifyTrigger(int fd, int event)
 {
-  struct epoll_event e;
+  event_t e;
   e.data.fd = fd;
   e.events = event;
-  auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &e);
+  auto ok = epoll_ctl(event_handler_fd_, EPOLL_CTL_MOD, fd, &e);
   if (ok == -1) {
     perror("failed modify epoll trigger");
     return ok;
@@ -91,10 +73,10 @@ EpollHandler::ModifyTrigger(int fd, int event)
 int
 EpollHandler::DeleteTrigger(int fd, int event)
 {
-  struct epoll_event e;
+  event_t e;
   e.data.fd = fd;
   e.events = event;
-  auto ok = epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, nullptr);
+  auto ok = epoll_ctl(event_handler_fd_, EPOLL_CTL_DEL, fd, nullptr);
   if (ok == -1) {
     perror("failed delete epoll trigger");
     return ok;
@@ -108,12 +90,12 @@ EpollHandler::DeleteTrigger(int fd, int event)
 /// @param event 発火したイベント
 /// @param fn 設定するコールバック
 void
-EpollHandler::SetCallback(int fd, int event, callback fn)
+EpollHandler::SetCallback(int fd, int event, callback_t fn)
 {
-  struct epoll_event e;
+  event_t e;
   e.data.fd = fd;
   e.events = event;
-  reaction[{ fd, event }] = fn;
+  reaction_[{ fd, event }] = fn;
   std::cout << "callback set: " << e << std::endl;
 }
 
@@ -122,7 +104,7 @@ EpollHandler::SetCallback(int fd, int event, callback fn)
 void
 EpollHandler::EraseCallback(int fd)
 {
-  std::erase_if(reaction, [fd](auto& p) { return p.first.first == fd; });
+  std::erase_if(reaction_, [fd](auto& p) { return p.first.first == fd; });
   std::cout << "callback erased: " << fd << std::endl;
 }
 
@@ -133,17 +115,17 @@ EpollHandler::WaitEvent()
 {
   std::cout << "waiting event ..." << std::endl;
   auto to = Timeout();
-  auto* head = events.data();
-  auto updated_fd_num = epoll_wait(epoll_fd, head, event_max, to);
+  auto* head = events_.data();
+  auto updated_fd_num = epoll_wait(event_handler_fd_, head, event_max_, to);
   return updated_fd_num;
 }
 
 /// @brief イベント待機のタイムアウト値を設定する関数
 /// @param to タイムアウト値
 void
-EpollHandler::Timeout(std::optional<std::chrono::milliseconds> timeout)
+EpollHandler::Timeout(std::optional<timeout_t> timeout)
 {
-  this->timeout = timeout;
+  timeout_ = timeout;
 }
 
 /// @brief イベント待機のタイムアウト値を設定する関数
@@ -152,8 +134,8 @@ EpollHandler::Timeout(std::optional<std::chrono::milliseconds> timeout)
 int64_t
 EpollHandler::Timeout()
 {
-  if (timeout.has_value()) {
-    return timeout->count();
+  if (timeout_.has_value()) {
+    return timeout_->count();
   }
   return -1;
 }
@@ -162,7 +144,7 @@ EpollHandler::Timeout()
 void
 EpollHandler::RunOnce()
 {
-  events = std::vector<struct epoll_event>(event_max);
+  events_ = std::vector<event_t>(event_max_);
   auto updated_fd_num = WaitEvent();
   if (updated_fd_num == -1) {
     perror("epoll_wait");
@@ -170,14 +152,14 @@ EpollHandler::RunOnce()
   }
 
   for (int i = 0; i < updated_fd_num; ++i) {
-    auto& event = events[i];
+    auto& event = events_[i];
     std::cout << "event(" << event << ") fired!!" << std::endl;
     // pack fieldをalignmentされた値に置き直し
     // static_cast<int>を使ってもいいが、readability-redundant-casting警告が出る
     int key_fd = event.data.fd;
     int key_ev = event.events;
-    auto it = reaction.find({ key_fd, key_ev });
-    if (it == reaction.end()) {
+    auto it = reaction_.find({ key_fd, key_ev });
+    if (it == reaction_.end()) {
       std::cerr << "callback not found" << std::endl;
       continue;
     }
@@ -198,8 +180,8 @@ EpollHandler::Run()
 void
 EpollHandler::CreateEpoll()
 {
-  epoll_fd = epoll_create1(EPOLL_CLOEXEC);
-  if (epoll_fd == -1) {
+  event_handler_fd_ = epoll_create1(EPOLL_CLOEXEC);
+  if (event_handler_fd_ == DISABLED_FD) {
     perror("epoll_create1");
   }
 }
