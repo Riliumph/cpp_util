@@ -12,6 +12,7 @@ class EventHandler
 {
 public:
   using callback_t = std::function<void(int)>;
+  using timeout_t = std::chrono::milliseconds;
 
   virtual bool CanReady() = 0;
   virtual int CreateTrigger(int, int) = 0;
@@ -22,7 +23,7 @@ public:
 
   virtual void RunOnce() = 0;
   virtual void Run() = 0;
-  virtual void Timeout(std::optional<std::chrono::milliseconds>) = 0;
+  virtual void Timeout(std::optional<timeout_t>) = 0;
 
 protected:
   virtual int WaitEvent() = 0;

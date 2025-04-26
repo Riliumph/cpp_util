@@ -123,7 +123,7 @@ EpollHandler::WaitEvent()
 /// @brief イベント待機のタイムアウト値を設定する関数
 /// @param to タイムアウト値
 void
-EpollHandler::Timeout(std::optional<std::chrono::milliseconds> timeout)
+EpollHandler::Timeout(std::optional<timeout_t> timeout)
 {
   timeout_ = timeout;
 }

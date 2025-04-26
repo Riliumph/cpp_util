@@ -104,7 +104,7 @@ SelectHandler::WaitEvent()
 /// @brief イベント待機のタイムアウトを設定する関数
 /// @param to タイムアウト
 void
-SelectHandler::Timeout(std::optional<std::chrono::milliseconds> timeout)
+SelectHandler::Timeout(std::optional<timeout_t> timeout)
 {
   using secs = std::chrono::seconds;
   using usecs = std::chrono::microseconds;

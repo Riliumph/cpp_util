@@ -25,7 +25,7 @@ public: // EventHandler
   void EraseCallback(int) override;
   void RunOnce() override;
   void Run() override;
-  void Timeout(std::optional<std::chrono::milliseconds>) override;
+  void Timeout(std::optional<timeout_t>) override;
 
 private:
   int WaitEvent() override;

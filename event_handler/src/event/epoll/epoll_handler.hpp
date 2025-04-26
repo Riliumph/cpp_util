@@ -25,7 +25,7 @@ public: // EventHandler
 
   void RunOnce() override;
   void Run() override;
-  void Timeout(std::optional<std::chrono::milliseconds>) override;
+  void Timeout(std::optional<timeout_t>) override;
 
 private:
   int WaitEvent() override;
@@ -35,7 +35,7 @@ private:
 
 private:
   std::vector<struct epoll_event> events_;
-  std::optional<std::chrono::milliseconds> timeout_;
+  std::optional<timeout_t> timeout_;
   // std::map<int, std::map<int, callback>>ではなく、少し特殊な型を使ってみる
   std::map<std::pair<int, uint32_t>, callback_t> reaction_;
 };
