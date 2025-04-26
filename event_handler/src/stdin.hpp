@@ -11,7 +11,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 // original
-#include "event.h"
+#include "event.hpp"
 
 void
 stdin_sample(std::shared_ptr<event::IF::EventHandler> e_handler)

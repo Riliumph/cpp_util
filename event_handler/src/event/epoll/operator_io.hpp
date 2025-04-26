@@ -1,5 +1,5 @@
-#ifndef INCLUDE_EVENT_OPERATOR_IO_H
-#define INCLUDE_EVENT_OPERATOR_IO_H
+#ifndef INCLUDE_EVENT_OPERATOR_IO_HPP
+#define INCLUDE_EVENT_OPERATOR_IO_HPP
 // STL
 #include <ostream>
 // system
@@ -8,4 +8,4 @@
 std::ostream&
 operator<<(std::ostream&, const struct epoll_event&);
 
-#endif // INCLUDE_EVENT_OPERATOR_IO_H
+#endif // INCLUDE_EVENT_OPERATOR_IO_HPP

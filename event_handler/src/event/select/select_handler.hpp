@@ -1,22 +1,23 @@
-#ifndef INCLUDE_EVENT_EPOLL_EPOLL_HANDLER_H
-#define INCLUDE_EVENT_EPOLL_EPOLL_HANDLER_H
+#ifndef INCLUDE_EVENT_SELECT_HANDLER_HPP
+#define INCLUDE_EVENT_SELECT_HANDLER_HPP
 // STL
 #include <map>
+#include <vector>
 // system
-#include <sys/epoll.h>
+#include <sys/select.h>
 // original
-#include "event/interface.h"
+#include "event/interface.hpp"
 
 namespace event {
 /// @brief Epollを使う上での抽象基底クラス（インターフェイスではない）
-class EpollHandler : public event::IF::EventHandler
+class SelectHandler : public event::IF::EventHandler
 {
 public:
   static constexpr int EVENT_MAX = 10;
 
-  EpollHandler();
-  EpollHandler(size_t);
-  ~EpollHandler();
+  SelectHandler();
+  SelectHandler(size_t);
+  ~SelectHandler();
 
 public: // EventHandler
   bool CanReady() override;
@@ -25,7 +26,6 @@ public: // EventHandler
   int DeleteTrigger(int, int) override;
   void SetCallback(int, int, callback) override;
   void EraseCallback(int) override;
-
   void RunOnce() override;
   void Run() override;
   void Timeout(std::optional<std::chrono::milliseconds>) override;
@@ -33,16 +33,18 @@ public: // EventHandler
 private:
   int WaitEvent() override;
 
-  void CreateEpoll();
-  int64_t Timeout();
+  void CreateSelect();
+  int GetMaxFd();
 
 private:
-  int epoll_fd;
+  int select_fd;
   size_t event_max;
-  std::vector<struct epoll_event> events;
-  std::optional<std::chrono::milliseconds> timeout;
-  // std::map<int, std::map<int, callback>>ではなく、少し特殊な型を使ってみる
-  std::map<std::pair<int, uint32_t>, callback> reaction;
+  int max_fd;
+  fd_set read_fds;
+  fd_set write_fds;
+  fd_set except_fds;
+  struct timeval timeout;
+  std::map<int, callback> reaction;
 };
 }
-#endif // INCLUDE_EVENT_EPOLL_EPOLL_HANDLER_H
+#endif // INCLUDE_EVENT_SELECT_HANDLER_HPP

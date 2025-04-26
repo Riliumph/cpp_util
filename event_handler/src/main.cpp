@@ -9,7 +9,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 // original
-#include "event.h"
+#include "event.hpp"
 #include "socket.hpp"
 #include "stdin.hpp"
 
