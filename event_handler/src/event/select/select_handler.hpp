@@ -21,7 +21,7 @@ public: // EventHandler
   int CreateTrigger(int, int) override;
   int ModifyTrigger(int, int) override;
   int DeleteTrigger(int, int) override;
-  void SetCallback(int, int, callback) override;
+  void SetCallback(int, int, callback_t) override;
   void EraseCallback(int) override;
   void RunOnce() override;
   void Run() override;
@@ -37,7 +37,7 @@ private:
   fd_set write_fds_;
   fd_set except_fds_;
   struct timeval timeout_;
-  std::map<int, callback> reaction_;
+  std::map<int, callback_t> reaction_;
 };
 }
 #endif // INCLUDE_EVENT_SELECT_HANDLER_HPP

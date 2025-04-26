@@ -90,7 +90,7 @@ EpollHandler::DeleteTrigger(int fd, int event)
 /// @param event 発火したイベント
 /// @param fn 設定するコールバック
 void
-EpollHandler::SetCallback(int fd, int event, callback fn)
+EpollHandler::SetCallback(int fd, int event, callback_t fn)
 {
   struct epoll_event e;
   e.data.fd = fd;

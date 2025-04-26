@@ -11,13 +11,13 @@ namespace interface {
 class EventHandler
 {
 public:
-  using callback = std::function<void(int)>;
+  using callback_t = std::function<void(int)>;
 
   virtual bool CanReady() = 0;
   virtual int CreateTrigger(int, int) = 0;
   virtual int ModifyTrigger(int, int) = 0;
   virtual int DeleteTrigger(int, int) = 0;
-  virtual void SetCallback(int, int, callback) = 0;
+  virtual void SetCallback(int, int, callback_t) = 0;
   virtual void EraseCallback(int) = 0;
 
   virtual void RunOnce() = 0;

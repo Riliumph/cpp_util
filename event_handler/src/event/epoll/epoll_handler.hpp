@@ -20,7 +20,7 @@ public: // EventHandler
   int CreateTrigger(int, int) override;
   int ModifyTrigger(int, int) override;
   int DeleteTrigger(int, int) override;
-  void SetCallback(int, int, callback) override;
+  void SetCallback(int, int, callback_t) override;
   void EraseCallback(int) override;
 
   void RunOnce() override;
@@ -37,7 +37,7 @@ private:
   std::vector<struct epoll_event> events_;
   std::optional<std::chrono::milliseconds> timeout_;
   // std::map<int, std::map<int, callback>>ではなく、少し特殊な型を使ってみる
-  std::map<std::pair<int, uint32_t>, callback> reaction_;
+  std::map<std::pair<int, uint32_t>, callback_t> reaction_;
 };
 }
 #endif // INCLUDE_EVENT_EPOLL_EPOLL_HANDLER_HPP
