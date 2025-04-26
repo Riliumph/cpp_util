@@ -17,7 +17,7 @@ namespace abc {
 /// @brief ソケットサーバーの抽象基底クラス
 /// @details TCP/UDPサーバーが継承する基底クラスである。
 /// TCP/UDPサーバーの共通処理が実装される。
-class SocketServer : public nw::IF::Server
+class SocketServer : public nw::interface::Server
 {
 protected:
   using fd_t = int;
