@@ -1,6 +1,8 @@
 // STL
 #include <algorithm>
 #include <iostream>
+// POSIX Standard
+#include <unistd.h>
 // original
 #include "network.h"
 
@@ -45,7 +47,7 @@ main(int argc, char* argv[])
   eh->Timeout(std::nullopt);
 
   std::cout << "create server..." << std::endl;
-  auto srv = nw::ipv4::MakeServer(port, hint);
+  auto srv = nw::ipv4::MakeServer(ip, port, hint);
   srv->EventHandler(eh);
   srv->Event(receive_event);
 

@@ -10,7 +10,8 @@
 
 namespace nw {
 namespace ipv4 {
-std::unique_ptr<abc::SocketServer> MakeServer(u_short, struct addrinfo);
+std::unique_ptr<abc::SocketServer>
+MakeServer(const std::string&, const std::string&, struct addrinfo);
 } // namespace ipv4
 } // namespace nw
 #endif // INCLUDE_NETWORK_IPV4_FACTORY_H

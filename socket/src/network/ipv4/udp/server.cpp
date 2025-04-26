@@ -18,8 +18,10 @@ namespace udp {
 /// @brief コンストラクタ
 /// @param port サーバーポート番号
 /// @param hint_ IPv4のヒント情報
-Server::Server(u_short port, struct addrinfo hint)
-  : SocketServer(port, hint)
+Server::Server(const std::string& ip,
+               const std::string& port,
+               struct addrinfo hint)
+  : SocketServer(ip, port, hint)
 {
   std::cout << "create udp server" << std::endl;
 }
@@ -32,7 +34,6 @@ Server::~Server() {}
 int
 Server::Establish()
 {
-  Identify();
   auto ok = CreateSocket();
   if (ok < 0) {
     return ok;
