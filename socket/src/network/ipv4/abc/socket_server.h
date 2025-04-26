@@ -7,12 +7,12 @@
 // Standard
 #include <netdb.h>
 // Original Lib
-#include <event.h>
+#include <event.hpp>
 
 namespace nw {
 namespace ipv4 {
-using event_handler_t = event::IF::EventHandler;
-using event_callback_t = event_handler_t::callback;
+using event_handler_if_t = event::interface::EventHandler;
+using event_callback_t = event_handler_if_t::callback_t;
 namespace abc {
 /// @brief ソケットサーバーの抽象基底クラス
 /// @details TCP/UDPサーバーが継承する基底クラスである。
@@ -20,12 +20,13 @@ namespace abc {
 class SocketServer : public nw::IF::Server
 {
 protected:
+  using fd_t = int;
   /// @brief FDの無効値
-  static constexpr int DISABLE_FD = -1;
+  static constexpr fd_t DISABLE_FD = -1;
 
 public:
   ~SocketServer();
-  void EventHandler(std::shared_ptr<event_handler_t>);
+  void EventHandler(std::shared_ptr<event_handler_if_t>);
   void Event(event_callback_t);
   virtual int Establish() = 0;
   virtual bool Start() = 0;
@@ -41,7 +42,7 @@ private:
   void SafeClose();
 
 protected:
-  int server_fd_;
+  fd_t server_fd_;
   char host_name_[NI_MAXHOST];
   char serv_name_[NI_MAXSERV];
   std::string ip_;
@@ -50,7 +51,7 @@ protected:
   struct addrinfo* hint_;
 
 protected: // EventLib
-  std::shared_ptr<event_handler_t> event_handler_;
+  std::shared_ptr<event_handler_if_t> event_handler_;
   event_callback_t event_;
 };
 } // namespace abc
