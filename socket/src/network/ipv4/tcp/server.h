@@ -5,7 +5,9 @@
 // STL
 #include <array>
 
-namespace nw::ipv4::tcp {
+namespace nw {
+namespace ipv4 {
+namespace tcp {
 /// @brief IPv4でTCP通信を行うサーバー
 class Server : public nw::ipv4::abc::SocketServer
 {
@@ -31,5 +33,7 @@ private:
 private: // File Descriptor
   std::array<int, CONNECTION_MAX> client_fds_;
 };
-}
+} // namespace tcp
+} // namespace ipv4
+} // namespace nw
 #endif // INCLUDE_NETWORK_IPV4_TCP_SERVER_H

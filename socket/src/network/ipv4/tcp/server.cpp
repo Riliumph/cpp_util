@@ -11,7 +11,9 @@
 #include <unistd.h>
 // original
 #include "network/util.h"
-namespace nw::ipv4::tcp {
+namespace nw {
+namespace ipv4 {
+namespace tcp {
 /// @brief コンストラクタ
 /// @param e_handler イベントハンドラ
 /// @param port サーバーポート番号
@@ -195,5 +197,6 @@ Server::AcceptEvent(int server_fd)
     ev.data.fd, ev.events, [this](int fd) { CloseEvent(fd); });
   return true;
 }
-
-} // namespace nw::ipv4::tcp
+} // namespace tcp
+} // namespace ipv4
+} // namespace nw
