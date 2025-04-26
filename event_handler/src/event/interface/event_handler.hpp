@@ -24,9 +24,6 @@ public:
   virtual void RunOnce() = 0;
   virtual void Run() = 0;
   virtual void Timeout(std::optional<timeout_t>) = 0;
-
-protected:
-  virtual int WaitEvent() = 0;
 };
 } // namespace interface
 } // namespace event

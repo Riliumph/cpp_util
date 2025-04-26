@@ -28,7 +28,7 @@ public: // EventHandler
   void Timeout(std::optional<timeout_t>) override;
 
 private:
-  int WaitEvent() override;
+  int WaitEvent();
   int GetMaxFd();
 
 private:
