@@ -9,35 +9,17 @@
 
 namespace event {
 /// @brief デフォルトコンストラクタ
-SelectHandler::SelectHandler()
-  : select_fd(0)
-  , event_max(EVENT_MAX)
-{
-}
+SelectHandler::SelectHandler() {}
 
 /// @brief コンストラクタ
 /// @param max_event_num 監視イベント最大数
 SelectHandler::SelectHandler(size_t max_event_num)
-  : select_fd(0)
-  , event_max(max_event_num)
+  : abc::EventHandler(max_event_num)
 {
 }
 
 /// @brief デストラクタ
-SelectHandler::~SelectHandler()
-{
-  if (0 < select_fd) {
-    close(select_fd);
-  }
-}
-
-/// @brief 実行可能を判定する関数
-/// @return 成否
-bool
-SelectHandler::CanReady()
-{
-  return select_fd != -1;
-}
+SelectHandler::~SelectHandler() {}
 
 /// @brief 監視するイベントを登録する関数
 /// @param fd 新たに監視するFD
@@ -48,19 +30,19 @@ SelectHandler::CreateTrigger(int fd, int event)
 {
   switch (event) {
     case EPOLLIN:
-      FD_SET(fd, &read_fds);
+      FD_SET(fd, &read_fds_);
       break;
     case EPOLLOUT:
-      FD_SET(fd, &write_fds);
+      FD_SET(fd, &write_fds_);
       break;
     case EPOLLERR:
-      FD_SET(fd, &except_fds);
+      FD_SET(fd, &except_fds_);
       break;
     default:
       printf("unknown event: %d\n", event);
       return -1;
   }
-  max_fd = GetMaxFd();
+  max_fd_ = GetMaxFd();
   return 0;
 }
 
@@ -85,19 +67,19 @@ SelectHandler::DeleteTrigger(int fd, int event)
 {
   switch (event) {
     case EPOLLIN:
-      FD_CLR(fd, &read_fds);
+      FD_CLR(fd, &read_fds_);
       break;
     case EPOLLOUT:
-      FD_CLR(fd, &write_fds);
+      FD_CLR(fd, &write_fds_);
       break;
     case EPOLLERR:
-      FD_CLR(fd, &except_fds);
+      FD_CLR(fd, &except_fds_);
       break;
     default:
       printf("unknown event: %d\n", event);
       return -1;
   }
-  max_fd = GetMaxFd();
+  max_fd_ = GetMaxFd();
   return 0;
 }
 
@@ -106,7 +88,7 @@ SelectHandler::SetCallback(int fd, int event, callback fn)
 {
   (void)event;
   // TODO: Selectのコールバックは別で実装する
-  reaction[fd] = fn;
+  reaction_[fd] = fn;
 }
 
 /// @brief イベントを待機する処理
@@ -115,7 +97,7 @@ int
 SelectHandler::WaitEvent()
 {
   auto updated_fd_num =
-    select(max_fd + 1, &read_fds, &write_fds, &except_fds, &timeout);
+    select(max_fd_ + 1, &read_fds_, &write_fds_, &except_fds_, &timeout_);
   return updated_fd_num;
 }
 
@@ -129,11 +111,11 @@ SelectHandler::Timeout(std::optional<std::chrono::milliseconds> timeout)
   if (timeout) {
     auto s = std::chrono::duration_cast<secs>(*timeout);
     auto us = std::chrono::duration_cast<usecs>(*timeout - s);
-    this->timeout.tv_sec = s.count();
-    this->timeout.tv_usec = us.count();
+    this->timeout_.tv_sec = s.count();
+    this->timeout_.tv_usec = us.count();
   } else {
-    this->timeout.tv_sec = 0;
-    this->timeout.tv_usec = 0;
+    this->timeout_.tv_sec = 0;
+    this->timeout_.tv_usec = 0;
   }
 }
 
@@ -149,9 +131,9 @@ SelectHandler::RunOnce()
   }
 
   for (int i = 0; i < updated_fd_num; ++i) {
-    if (FD_ISSET(i, &read_fds)) {
-      auto it = reaction.find(i);
-      if (it == reaction.end()) {
+    if (FD_ISSET(i, &read_fds_)) {
+      auto it = reaction_.find(i);
+      if (it == reaction_.end()) {
         std::cerr << "not found fd(" << i << ")" << std::endl;
         continue;
       }
@@ -170,13 +152,6 @@ SelectHandler::Run()
   }
 }
 
-/// @brief Epollインスタンスを作成する関数
-void
-SelectHandler::CreateSelect()
-{
-  // SELECTにEPOLLのようなインスタンス作成は存在しない
-}
-
 /// @brief 現在登録されているFD数を計算する関数
 /// @return 現在登録されているFD数
 int
@@ -184,8 +159,8 @@ SelectHandler::GetMaxFd()
 {
   int max = 0;
   for (int i = 0; i < FD_SETSIZE; i++) {
-    if (FD_ISSET(i, &read_fds) || FD_ISSET(i, &write_fds) ||
-        FD_ISSET(i, &except_fds)) {
+    if (FD_ISSET(i, &read_fds_) || FD_ISSET(i, &write_fds_) ||
+        FD_ISSET(i, &except_fds_)) {
       max = std::max(max, i);
     }
   }

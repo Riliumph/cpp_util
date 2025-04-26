@@ -1,20 +1,17 @@
 #ifndef INCLUDE_EVENT_SELECT_HANDLER_HPP
 #define INCLUDE_EVENT_SELECT_HANDLER_HPP
+// inherit
+#include "event/abc.hpp"
 // STL
 #include <map>
-#include <vector>
 // system
 #include <sys/select.h>
-// original
-#include "event/interface.hpp"
 
 namespace event {
 /// @brief Epollを使う上での抽象基底クラス（インターフェイスではない）
-class SelectHandler : public event::IF::EventHandler
+class SelectHandler : public event::abc::EventHandler
 {
 public:
-  static constexpr int EVENT_MAX = 10;
-
   SelectHandler();
   SelectHandler(size_t);
   ~SelectHandler();
@@ -32,19 +29,15 @@ public: // EventHandler
 
 private:
   int WaitEvent() override;
-
-  void CreateSelect();
   int GetMaxFd();
 
 private:
-  int select_fd;
-  size_t event_max;
-  int max_fd;
-  fd_set read_fds;
-  fd_set write_fds;
-  fd_set except_fds;
-  struct timeval timeout;
-  std::map<int, callback> reaction;
+  int max_fd_;
+  fd_set read_fds_;
+  fd_set write_fds_;
+  fd_set except_fds_;
+  struct timeval timeout_;
+  std::map<int, callback> reaction_;
 };
 }
 #endif // INCLUDE_EVENT_SELECT_HANDLER_HPP
