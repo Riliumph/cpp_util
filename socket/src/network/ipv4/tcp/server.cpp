@@ -182,7 +182,7 @@ Server::AcceptEvent(int server_fd)
   struct epoll_event ev;
   ev.data.fd = client_fd;
   ev.events = (EPOLLIN | EPOLLRDHUP);
-  int ok = event_handler_->CreateTrigger(ev.data.fd, ev.events);
+  auto ok = event_handler_->CreateTrigger(ev.data.fd, ev.events);
   if (ok != 0) {
     std::cerr << "failed to set event" << std::endl;
     close(client_fd);
