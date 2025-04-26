@@ -96,8 +96,11 @@ SelectHandler::SetCallback(int fd, int event, callback_t fn)
 int
 SelectHandler::WaitEvent()
 {
-  auto updated_fd_num =
-    select(max_fd_ + 1, &read_fds_, &write_fds_, &except_fds_, &timeout_);
+  auto updated_fd_num = select(max_fd_ + 1, // +1補正が必要
+                               &read_fds_,
+                               &write_fds_,
+                               &except_fds_,
+                               &timeout_);
   return updated_fd_num;
 }
 

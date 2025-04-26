@@ -28,13 +28,13 @@ EventHandler::~EventHandler()
 bool
 EventHandler::CanReady()
 {
-  return event_handler_fd_ != -1;
+  return event_handler_fd_ != DISABLED_FD;
 }
 
 void
 EventHandler::SafeClose() const
 {
-  if (0 < event_handler_fd_) {
+  if (event_handler_fd_ != DISABLED_FD) {
     close(event_handler_fd_);
   }
 }

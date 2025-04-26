@@ -11,8 +11,9 @@ namespace event {
 namespace abc {
 class EventHandler : public event::interface::EventHandler
 {
-public:
-  static constexpr int DISABLED_FD = -1;
+protected:
+  using fd_t = int;
+  static constexpr fd_t DISABLED_FD = -1;
   static constexpr int EVENT_MAX = 10;
 
 protected:
@@ -27,7 +28,7 @@ private:
   void SafeClose() const;
 
 protected:
-  int event_handler_fd_;
+  fd_t event_handler_fd_;
   size_t event_max_;
 };
 } // namespace abc

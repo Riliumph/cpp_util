@@ -39,7 +39,7 @@ private:
   std::vector<event_t> events_;
   std::optional<timeout_t> timeout_;
   // std::map<int, std::map<int, callback>>ではなく、少し特殊な型を使ってみる
-  std::map<std::pair<int, uint32_t>, callback_t> reaction_;
+  std::map<std::pair<fd_t, uint32_t>, callback_t> reaction_;
 };
 }
 #endif // INCLUDE_EVENT_EPOLL_EPOLL_HANDLER_HPP

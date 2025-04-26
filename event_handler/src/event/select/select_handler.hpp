@@ -32,12 +32,12 @@ private:
   int GetMaxFd();
 
 private:
-  int max_fd_;
+  fd_t max_fd_;
   fd_set read_fds_;
   fd_set write_fds_;
   fd_set except_fds_;
   struct timeval timeout_;
-  std::map<int, callback_t> reaction_;
+  std::map<fd_t, callback_t> reaction_;
 };
 }
 #endif // INCLUDE_EVENT_SELECT_HANDLER_HPP

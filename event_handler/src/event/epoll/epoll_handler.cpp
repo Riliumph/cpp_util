@@ -181,7 +181,7 @@ void
 EpollHandler::CreateEpoll()
 {
   event_handler_fd_ = epoll_create1(EPOLL_CLOEXEC);
-  if (event_handler_fd_ == -1) {
+  if (event_handler_fd_ == DISABLED_FD) {
     perror("epoll_create1");
   }
 }
