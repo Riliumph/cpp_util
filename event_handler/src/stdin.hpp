@@ -14,7 +14,7 @@
 #include "event.hpp"
 
 void
-stdin_sample(std::shared_ptr<event::IF::EventHandler> e_handler)
+stdin_sample(std::shared_ptr<event::interface::EventHandler> e_handler)
 {
   struct epoll_event e;
   e.events = EPOLLIN;       // 読み込み可能なイベントを監視

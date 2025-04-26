@@ -16,7 +16,7 @@
 int
 main()
 {
-  std::shared_ptr<event::IF::EventHandler> e_handler =
+  std::shared_ptr<event::interface::EventHandler> e_handler =
     std::make_shared<event::EpollHandler>();
   if (!e_handler->CanReady()) {
     std::cerr << "failed to create epoll handler" << std::endl;

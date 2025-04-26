@@ -9,7 +9,7 @@
 
 namespace event {
 namespace abc {
-class EventHandler : public event::IF::EventHandler
+class EventHandler : public event::interface::EventHandler
 {
 public:
   static constexpr int DISABLED_FD = -1;
@@ -30,6 +30,6 @@ protected:
   int event_handler_fd_;
   size_t event_max_;
 };
-}
-}
+} // namespace abc
+} // namespace event
 #endif // INCLUDE_EVENT_ABC_EVENT_HANDLER_HPP

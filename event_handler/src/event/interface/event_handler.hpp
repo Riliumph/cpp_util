@@ -5,7 +5,8 @@
 #include <functional>
 #include <optional>
 
-namespace event::IF {
+namespace event {
+namespace interface {
 /// @brief イベントハンドラーとしてのIFクラス
 class EventHandler
 {
@@ -26,5 +27,6 @@ public:
 protected:
   virtual int WaitEvent() = 0;
 };
-}
+} // namespace interface
+} // namespace event
 #endif // INCLUDE_EVENT_INTERFACE_EVENT_HANDLER_HPP
