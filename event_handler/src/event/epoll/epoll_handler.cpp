@@ -35,7 +35,7 @@ EpollHandler::~EpollHandler() {}
 int
 EpollHandler::CreateTrigger(int fd, int event)
 {
-  struct epoll_event e;
+  event_t e;
   e.data.fd = fd;
   e.events = event;
   auto ok = epoll_ctl(event_handler_fd_, EPOLL_CTL_ADD, fd, &e);
@@ -54,7 +54,7 @@ EpollHandler::CreateTrigger(int fd, int event)
 int
 EpollHandler::ModifyTrigger(int fd, int event)
 {
-  struct epoll_event e;
+  event_t e;
   e.data.fd = fd;
   e.events = event;
   auto ok = epoll_ctl(event_handler_fd_, EPOLL_CTL_MOD, fd, &e);
@@ -73,7 +73,7 @@ EpollHandler::ModifyTrigger(int fd, int event)
 int
 EpollHandler::DeleteTrigger(int fd, int event)
 {
-  struct epoll_event e;
+  event_t e;
   e.data.fd = fd;
   e.events = event;
   auto ok = epoll_ctl(event_handler_fd_, EPOLL_CTL_DEL, fd, nullptr);
@@ -92,7 +92,7 @@ EpollHandler::DeleteTrigger(int fd, int event)
 void
 EpollHandler::SetCallback(int fd, int event, callback_t fn)
 {
-  struct epoll_event e;
+  event_t e;
   e.data.fd = fd;
   e.events = event;
   reaction_[{ fd, event }] = fn;
@@ -144,7 +144,7 @@ EpollHandler::Timeout()
 void
 EpollHandler::RunOnce()
 {
-  events_ = std::vector<struct epoll_event>(event_max_);
+  events_ = std::vector<event_t>(event_max_);
   auto updated_fd_num = WaitEvent();
   if (updated_fd_num == -1) {
     perror("epoll_wait");
