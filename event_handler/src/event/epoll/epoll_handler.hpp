@@ -1,25 +1,22 @@
 #ifndef INCLUDE_EVENT_EPOLL_EPOLL_HANDLER_HPP
 #define INCLUDE_EVENT_EPOLL_EPOLL_HANDLER_HPP
+// inherit
+#include "event/abc.hpp"
 // STL
 #include <map>
 // system
 #include <sys/epoll.h>
-// original
-#include "event/interface.hpp"
 
 namespace event {
 /// @brief Epollを使う上での具象クラス
-class EpollHandler : public event::IF::EventHandler
+class EpollHandler : public event::abc::EventHandler
 {
 public:
-  static constexpr int EVENT_MAX = 10;
-
   EpollHandler();
   EpollHandler(size_t);
   ~EpollHandler();
 
 public: // EventHandler
-  bool CanReady() override;
   int CreateTrigger(int, int) override;
   int ModifyTrigger(int, int) override;
   int DeleteTrigger(int, int) override;
@@ -37,12 +34,10 @@ private:
   int64_t Timeout();
 
 private:
-  int epoll_fd;
-  size_t event_max;
-  std::vector<struct epoll_event> events;
-  std::optional<std::chrono::milliseconds> timeout;
+  std::vector<struct epoll_event> events_;
+  std::optional<std::chrono::milliseconds> timeout_;
   // std::map<int, std::map<int, callback>>ではなく、少し特殊な型を使ってみる
-  std::map<std::pair<int, uint32_t>, callback> reaction;
+  std::map<std::pair<int, uint32_t>, callback> reaction_;
 };
 }
 #endif // INCLUDE_EVENT_EPOLL_EPOLL_HANDLER_HPP
