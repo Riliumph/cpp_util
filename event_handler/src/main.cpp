@@ -10,14 +10,19 @@
 #include <unistd.h>
 // original
 #include "event.hpp"
+#include "factory.hpp"
 #include "socket.hpp"
 #include "stdin.hpp"
 
 int
-main()
+main(int argc, char* argv[])
 {
-  std::shared_ptr<event::interface::EventHandler> e_handler =
-    std::make_shared<event::EpollHandler>();
+  if (argc < 2) {
+    std::cerr << "引数が足りません" << std::endl;
+    return -1;
+  }
+  auto handler_type = std::string(argv[1]);
+  auto e_handler = CreateEventHandler(handler_type);
   if (!e_handler->CanReady()) {
     std::cerr << "failed to create epoll handler" << std::endl;
     return -1;
