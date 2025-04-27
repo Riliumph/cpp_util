@@ -8,7 +8,7 @@
 #include <sys/epoll.h>
 
 namespace event {
-/// @brief Epollを使う上での具象クラス
+/// @brief Epollを使う具象クラス
 class EpollHandler : public event::abc::EventHandler
 {
   using event_t = struct epoll_event;

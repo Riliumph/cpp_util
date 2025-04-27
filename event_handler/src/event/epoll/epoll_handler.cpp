@@ -104,7 +104,10 @@ EpollHandler::SetCallback(int fd, int event, callback_t fn)
 void
 EpollHandler::EraseCallback(int fd)
 {
-  std::erase_if(reaction_, [fd](auto& p) { return p.first.first == fd; });
+  std::erase_if(reaction_, [fd](auto& p) {
+    auto key = p.first;
+    return key.first == fd;
+  });
   std::cout << "callback erased: " << fd << std::endl;
 }
 

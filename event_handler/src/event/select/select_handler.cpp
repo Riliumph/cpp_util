@@ -1,6 +1,5 @@
 #include "select_handler.hpp"
 // STL
-#include <chrono>
 #include <iostream>
 #include <vector>
 // system
@@ -28,19 +27,14 @@ SelectHandler::~SelectHandler() {}
 int
 SelectHandler::CreateTrigger(int fd, int event)
 {
-  switch (event) {
-    case EPOLLIN:
-      FD_SET(fd, &read_fds_);
-      break;
-    case EPOLLOUT:
-      FD_SET(fd, &write_fds_);
-      break;
-    case EPOLLERR:
-      FD_SET(fd, &except_fds_);
-      break;
-    default:
-      printf("unknown event: %d\n", event);
-      return -1;
+  if (static_cast<bool>(event & EPOLLIN)) {
+    FD_SET(fd, &write_fds_);
+  }
+  if (static_cast<bool>(event & EPOLLOUT)) {
+    FD_SET(fd, &read_fds_);
+  }
+  if (static_cast<bool>(event & EPOLLERR)) {
+    FD_SET(fd, &except_fds_);
   }
   max_fd_ = GetMaxFd();
   return 0;
@@ -53,8 +47,21 @@ SelectHandler::CreateTrigger(int fd, int event)
 int
 SelectHandler::ModifyTrigger(int fd, int event)
 {
-  (void)fd;
-  (void)event;
+  if (static_cast<bool>(event & EPOLLIN)) {
+    FD_SET(fd, &write_fds_);
+  } else {
+    FD_CLR(fd, &write_fds_);
+  }
+  if (static_cast<bool>(event & EPOLLOUT)) {
+    FD_SET(fd, &read_fds_);
+  } else {
+    FD_CLR(fd, &read_fds_);
+  }
+  if (static_cast<bool>(event & EPOLLERR)) {
+    FD_SET(fd, &except_fds_);
+  } else {
+    FD_CLR(fd, &except_fds_);
+  }
   return 0;
 }
 
@@ -65,19 +72,14 @@ SelectHandler::ModifyTrigger(int fd, int event)
 int
 SelectHandler::DeleteTrigger(int fd, int event)
 {
-  switch (event) {
-    case EPOLLIN:
-      FD_CLR(fd, &read_fds_);
-      break;
-    case EPOLLOUT:
-      FD_CLR(fd, &write_fds_);
-      break;
-    case EPOLLERR:
-      FD_CLR(fd, &except_fds_);
-      break;
-    default:
-      printf("unknown event: %d\n", event);
-      return -1;
+  if (static_cast<bool>(event & EPOLLIN)) {
+    FD_CLR(fd, &write_fds_);
+  }
+  if (static_cast<bool>(event & EPOLLOUT)) {
+    FD_CLR(fd, &read_fds_);
+  }
+  if (static_cast<bool>(event & EPOLLERR)) {
+    FD_CLR(fd, &except_fds_);
   }
   max_fd_ = GetMaxFd();
   return 0;
@@ -89,6 +91,15 @@ SelectHandler::SetCallback(int fd, int event, callback_t fn)
   (void)event;
   // TODO: Selectのコールバックは別で実装する
   reaction_[fd] = fn;
+}
+
+/// @brief 指定された条件のコールバックを削除する関数
+/// @param fd 削除したいコールバックに関連づくFD
+void
+SelectHandler::EraseCallback(int fd)
+{
+  std::erase_if(reaction_, [fd](auto& p) { return p.first == fd; });
+  std::cout << "callback erased: " << fd << std::endl;
 }
 
 /// @brief イベントを待機する処理
