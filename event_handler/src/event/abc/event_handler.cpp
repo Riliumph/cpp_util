@@ -31,6 +31,14 @@ EventHandler::CanReady()
   return event_handler_fd_ != DISABLED_FD;
 }
 
+/// @brief イベント待機のタイムアウト値を設定する関数
+/// @param to タイムアウト値
+void
+EventHandler::Timeout(std::optional<timeout_t> timeout)
+{
+  timeout_ = timeout;
+}
+
 void
 EventHandler::SafeClose() const
 {

@@ -116,19 +116,11 @@ EpollHandler::EraseCallback(int fd)
 int
 EpollHandler::WaitEvent()
 {
-  std::cout << "waiting event ..." << std::endl;
+  std::cout << "waiting event by epoll ..." << std::endl;
   auto to = Timeout();
   auto* head = events_.data();
   auto updated_fd_num = epoll_wait(event_handler_fd_, head, event_max_, to);
   return updated_fd_num;
-}
-
-/// @brief イベント待機のタイムアウト値を設定する関数
-/// @param to タイムアウト値
-void
-EpollHandler::Timeout(std::optional<timeout_t> timeout)
-{
-  timeout_ = timeout;
 }
 
 /// @brief イベント待機のタイムアウト値を設定する関数

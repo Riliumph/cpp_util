@@ -5,20 +5,40 @@
 // system
 #include <sys/epoll.h>
 #include <unistd.h>
+// original
+#include "operator_io.hpp"
 
 namespace event {
 /// @brief デフォルトコンストラクタ
-SelectHandler::SelectHandler() {}
+SelectHandler::SelectHandler()
+{
+  FD_ZERO(&read_mask_);
+  FD_ZERO(&write_mask_);
+  FD_ZERO(&except_mask_);
+}
 
 /// @brief コンストラクタ
 /// @param max_event_num 監視イベント最大数
 SelectHandler::SelectHandler(size_t max_event_num)
   : abc::EventHandler(max_event_num)
 {
+  FD_ZERO(&read_mask_);
+  FD_ZERO(&write_mask_);
+  FD_ZERO(&except_mask_);
 }
 
 /// @brief デストラクタ
 SelectHandler::~SelectHandler() {}
+
+/// @brief 実行可能を判定する関数
+/// @details selectはepollと違ってインスタンス準備フェイズがない。
+/// select()のタイミングですべてのエラーを検知するため必ず実行可能になる
+/// @return 成否
+bool
+SelectHandler::CanReady()
+{
+  return true;
+}
 
 /// @brief 監視するイベントを登録する関数
 /// @param fd 新たに監視するFD
@@ -27,16 +47,22 @@ SelectHandler::~SelectHandler() {}
 int
 SelectHandler::CreateTrigger(int fd, int event)
 {
+  if (fd == DISABLED_FD) {
+    return -1;
+  }
+  std::cout << "create trigger for " << fd << "..." << std::endl;
   if (static_cast<bool>(event & EPOLLIN)) {
-    FD_SET(fd, &write_fds_);
+    read_fds_.insert(fd);
+    std::cout << "set write trigger" << std::endl;
   }
   if (static_cast<bool>(event & EPOLLOUT)) {
-    FD_SET(fd, &read_fds_);
+    write_fds_.insert(fd);
+    std::cout << "set read trigger" << std::endl;
   }
   if (static_cast<bool>(event & EPOLLERR)) {
-    FD_SET(fd, &except_fds_);
+    except_fds_.insert(fd);
+    std::cout << "set except trigger" << std::endl;
   }
-  max_fd_ = GetMaxFd();
   return 0;
 }
 
@@ -47,20 +73,23 @@ SelectHandler::CreateTrigger(int fd, int event)
 int
 SelectHandler::ModifyTrigger(int fd, int event)
 {
+  if (fd == DISABLED_FD) {
+    return -1;
+  }
   if (static_cast<bool>(event & EPOLLIN)) {
-    FD_SET(fd, &write_fds_);
+    read_fds_.insert(fd);
   } else {
-    FD_CLR(fd, &write_fds_);
+    read_fds_.erase(fd);
   }
   if (static_cast<bool>(event & EPOLLOUT)) {
-    FD_SET(fd, &read_fds_);
+    write_fds_.insert(fd);
   } else {
-    FD_CLR(fd, &read_fds_);
+    write_fds_.erase(fd);
   }
   if (static_cast<bool>(event & EPOLLERR)) {
-    FD_SET(fd, &except_fds_);
+    except_fds_.insert(fd);
   } else {
-    FD_CLR(fd, &except_fds_);
+    except_fds_.erase(fd);
   }
   return 0;
 }
@@ -72,16 +101,18 @@ SelectHandler::ModifyTrigger(int fd, int event)
 int
 SelectHandler::DeleteTrigger(int fd, int event)
 {
+  if (fd == DISABLED_FD) {
+    return -1;
+  }
   if (static_cast<bool>(event & EPOLLIN)) {
-    FD_CLR(fd, &write_fds_);
+    read_fds_.erase(fd);
   }
   if (static_cast<bool>(event & EPOLLOUT)) {
-    FD_CLR(fd, &read_fds_);
+    write_fds_.erase(fd);
   }
   if (static_cast<bool>(event & EPOLLERR)) {
-    FD_CLR(fd, &except_fds_);
+    except_fds_.erase(fd);
   }
-  max_fd_ = GetMaxFd();
   return 0;
 }
 
@@ -107,30 +138,36 @@ SelectHandler::EraseCallback(int fd)
 int
 SelectHandler::WaitEvent()
 {
-  auto updated_fd_num = select(max_fd_ + 1, // +1補正が必要
-                               &read_fds_,
-                               &write_fds_,
-                               &except_fds_,
-                               &timeout_);
+  std::cout << "waiting event by select ..." << std::endl;
+  LinkFdSet(read_fds_, read_mask_);
+  LinkFdSet(write_fds_, write_mask_);
+  LinkFdSet(except_fds_, except_mask_);
+  std::cout << "read: " << read_fds_ << std::endl;
+  std::cout << "write: " << write_fds_ << std::endl;
+  std::cout << "except: " << except_fds_ << std::endl;
+  auto fd_width = GetMaxFd() + 1; // +1補正が必要
+  auto* to = Timeout();
+  auto updated_fd_num =
+    select(fd_width, &read_mask_, &write_mask_, &except_mask_, to);
   return updated_fd_num;
 }
 
-/// @brief イベント待機のタイムアウトを設定する関数
-/// @param to タイムアウト
-void
-SelectHandler::Timeout(std::optional<timeout_t> timeout)
+/// @brief イベント待機のタイムアウト値を取得する
+/// @return select用のタイムアウト構造体のアドレス
+struct timeval*
+SelectHandler::Timeout()
 {
   using secs = std::chrono::seconds;
   using usecs = std::chrono::microseconds;
-  if (timeout) {
-    auto s = std::chrono::duration_cast<secs>(*timeout);
-    auto us = std::chrono::duration_cast<usecs>(*timeout - s);
-    this->timeout_.tv_sec = s.count();
-    this->timeout_.tv_usec = us.count();
-  } else {
-    this->timeout_.tv_sec = 0;
-    this->timeout_.tv_usec = 0;
+  static struct timeval timeout;
+  if (!timeout_) {
+    return nullptr;
   }
+  auto s = std::chrono::duration_cast<secs>(*timeout_);
+  auto us = std::chrono::duration_cast<usecs>(*timeout_ - s);
+  timeout.tv_sec = s.count();
+  timeout.tv_usec = us.count();
+  return &timeout;
 }
 
 /// @brief イベント監視ループ関数
@@ -143,17 +180,29 @@ SelectHandler::RunOnce()
     perror("select_wait");
     return;
   }
+  if (updated_fd_num == 0) {
+    std::cout << "timeout" << std::endl;
+    return;
+  }
 
-  for (int i = 0; i < updated_fd_num; ++i) {
-    if (FD_ISSET(i, &read_fds_)) {
-      auto it = reaction_.find(i);
-      if (it == reaction_.end()) {
-        std::cerr << "not found fd(" << i << ")" << std::endl;
-        continue;
-      }
-      it->second(i);
+  std::set<fd_t> merged_fds;
+  merged_fds.insert(read_fds_.begin(), read_fds_.end());
+  merged_fds.insert(write_fds_.begin(), write_fds_.end());
+  merged_fds.insert(except_fds_.begin(), except_fds_.end());
+  std::cout << "fired fds: " << merged_fds << std::endl;
+  for (const auto& fd : merged_fds) {
+    if (FD_ISSET(fd, &read_mask_)) {
+      std::cout << "read event: " << fd << std::endl;
+      reaction_[fd](fd);
+    }
+    if (FD_ISSET(fd, &write_mask_)) {
+      std::cout << "write event" << std::endl;
+    }
+    if (FD_ISSET(fd, &except_mask_)) {
+      std::cout << "except event" << std::endl;
     }
   }
+  std::cout << std::endl;
 }
 
 /// @brief イベント監視ループ関数
@@ -171,13 +220,18 @@ SelectHandler::Run()
 int
 SelectHandler::GetMaxFd()
 {
-  int max = 0;
-  for (int i = 0; i < FD_SETSIZE; i++) {
-    if (FD_ISSET(i, &read_fds_) || FD_ISSET(i, &write_fds_) ||
-        FD_ISSET(i, &except_fds_)) {
-      max = std::max(max, i);
-    }
+  auto read_max = read_fds_.empty() ? 0 : *read_fds_.rbegin();
+  auto write_max = write_fds_.empty() ? 0 : *write_fds_.rbegin();
+  auto except_max = except_fds_.empty() ? 0 : *except_fds_.rbegin();
+  return std::max({ read_max, write_max, except_max });
+}
+
+void
+SelectHandler::LinkFdSet(const std::set<fd_t>& fds, fd_set& mask)
+{
+  FD_ZERO(&mask);
+  for (const auto& fd : fds) {
+    FD_SET(fd, &mask);
   }
-  return max;
 }
-}
+} // namespace event
