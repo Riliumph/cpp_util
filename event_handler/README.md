@@ -11,7 +11,7 @@ $ make all
 ## 実行方法
 
 ```console
-$ ./bin/event_handler
+$ ./bin/event_handler epoll
 Loop Event
 (入力待機中)
 hello, world // 入力

@@ -8,7 +8,7 @@
 #include <sys/epoll.h>
 
 namespace event {
-/// @brief Epollを使う上での具象クラス
+/// @brief Epollを使う具象クラス
 class EpollHandler : public event::abc::EventHandler
 {
   using event_t = struct epoll_event;
@@ -27,7 +27,6 @@ public: // EventHandler
 
   void RunOnce() override;
   void Run() override;
-  void Timeout(std::optional<timeout_t>) override;
 
 private:
   int WaitEvent();
@@ -37,7 +36,6 @@ private:
 
 private:
   std::vector<event_t> events_;
-  std::optional<timeout_t> timeout_;
   // std::map<int, std::map<int, callback>>ではなく、少し特殊な型を使ってみる
   std::map<std::pair<fd_t, uint32_t>, callback_t> reaction_;
 };

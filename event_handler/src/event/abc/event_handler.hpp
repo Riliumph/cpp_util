@@ -23,6 +23,7 @@ protected:
 
 public:
   virtual bool CanReady() override;
+  virtual void Timeout(std::optional<timeout_t>) override;
 
 private:
   void SafeClose() const;
@@ -30,6 +31,7 @@ private:
 protected:
   fd_t event_handler_fd_;
   size_t event_max_;
+  std::optional<timeout_t> timeout_;
 };
 } // namespace abc
 } // namespace event
