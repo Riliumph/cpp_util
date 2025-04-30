@@ -16,7 +16,6 @@ count_line(const char* filename)
   char line[256] = "";
   int line_count = 0;
   while (fgets(line, 256, fp) != NULL) {
-    // æ“ª#‚ÍƒRƒƒ“ƒgˆµ‚¢
     if (line[0] != '#') {
       ++line_count;
     }
