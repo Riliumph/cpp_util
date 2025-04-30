@@ -12,7 +12,7 @@
             "program": "${workspaceFolder}/bin/${workspaceFolderBasename}",
             "additionalSOLibSearchPath": "${workspaceFolder}/lib",
             "args": [
-                "select"
+                "epoll"
             ],
             "environment": [],
             "externalConsole": false,
