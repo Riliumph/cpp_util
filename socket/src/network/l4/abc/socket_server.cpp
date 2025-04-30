@@ -5,7 +5,7 @@
 #include <unistd.h>
 
 namespace nw {
-namespace ipv4 {
+namespace l4 {
 namespace abc {
 /// @brief コンストラクタ
 /// @param port サーバーのポート番号
@@ -143,5 +143,5 @@ SocketServer::Event(event_callback_t e)
   event_ = e;
 }
 } // namespace abc
-} // namespace ipv4
+} // namespace l4
 } // namespace nw

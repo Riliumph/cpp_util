@@ -13,7 +13,7 @@
 #include "network/util.h"
 
 namespace nw {
-namespace ipv4 {
+namespace l4 {
 namespace udp {
 /// @brief コンストラクタ
 /// @param port サーバーポート番号
@@ -78,5 +78,5 @@ Server::Start()
   return true;
 }
 } // namespace udp
-} // namespace ipv4
+} // namespace l4
 } // namespace nw

@@ -1,13 +1,13 @@
 #ifndef INCLUDE_NETWORK_IPV4_UDP_SERVER_H
 #define INCLUDE_NETWORK_IPV4_UDP_SERVER_H
 // Inherit
-#include "network/ipv4/abc/socket_server.h"
+#include "network/l4/abc/socket_server.h"
 
 namespace nw {
-namespace ipv4 {
+namespace l4 {
 namespace udp {
 
-class Server : public nw::ipv4::abc::SocketServer
+class Server : public nw::l4::abc::SocketServer
 {
 public:
   Server(const std::string&, const std::string&, struct addrinfo);
@@ -18,7 +18,7 @@ public:
   bool Start() override;
 };
 } // namespace udp
-} // namespace ipv4
+} // namespace l4
 } // namespace nw
 
 #endif // INCLUDE_NETWORK_IPV4_UDP_SERVER_H
