@@ -2,10 +2,9 @@
 #define INCLUDE_EVENT_OPERATOR_IO_HPP
 // STL
 #include <ostream>
-// system
-#include <sys/epoll.h>
+// original
+#include "types.hpp"
 
 std::ostream&
-operator<<(std::ostream&, const struct epoll_event&);
-
+operator<<(std::ostream&, const event::epoll::event_t&);
 #endif // INCLUDE_EVENT_OPERATOR_IO_HPP

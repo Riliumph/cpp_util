@@ -3,9 +3,8 @@
 #include "select_handler.hpp"
 // STL
 #include <ostream>
-namespace event {
+
 std::ostream&
-operator<<(std::ostream& os, const std::set<int>& fds);
-}
+operator<<(std::ostream& os, const std::set<event::fd_t>& fds);
 
 #endif // INCLUDE_EVENT_SELECT_OPERATOR_IO_HPP

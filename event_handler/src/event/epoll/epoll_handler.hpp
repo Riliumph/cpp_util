@@ -4,15 +4,14 @@
 #include "event/abc.hpp"
 // STL
 #include <map>
-// system
-#include <sys/epoll.h>
+// original
+#include "types.hpp"
 
 namespace event {
+namespace epoll {
 /// @brief Epollを使う具象クラス
 class EpollHandler : public event::abc::EventHandler
 {
-  using event_t = struct epoll_event;
-
 public:
   EpollHandler();
   EpollHandler(size_t);
@@ -39,5 +38,6 @@ private:
   // std::map<int, std::map<int, callback>>ではなく、少し特殊な型を使ってみる
   std::map<std::pair<fd_t, uint32_t>, callback_t> reaction_;
 };
-}
+} // namespace epoll
+} // namespace event
 #endif // INCLUDE_EVENT_EPOLL_EPOLL_HANDLER_HPP
