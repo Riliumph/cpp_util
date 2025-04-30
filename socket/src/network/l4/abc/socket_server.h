@@ -10,7 +10,7 @@
 #include <event.hpp>
 
 namespace nw {
-namespace ipv4 {
+namespace l4 {
 using event_handler_if_t = event::interface::EventHandler;
 using event_callback_t = event::callback_t;
 namespace abc {
@@ -55,6 +55,6 @@ protected: // EventLib
   event_callback_t event_;
 };
 } // namespace abc
-} // ipv4
+} // l4
 } // nw
 #endif // INCLUDE_NETWORK_IPV4_ABC_SOCKET_SERVER_H

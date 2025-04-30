@@ -12,7 +12,7 @@
 // original
 #include "network/util.h"
 namespace nw {
-namespace ipv4 {
+namespace l4 {
 namespace tcp {
 /// @brief コンストラクタ
 /// @param e_handler イベントハンドラ
@@ -198,5 +198,5 @@ Server::AcceptEvent(int server_fd)
   return true;
 }
 } // namespace tcp
-} // namespace ipv4
+} // namespace l4
 } // namespace nw
