@@ -6,6 +6,12 @@
 // original
 #include "network.h"
 
+std::shared_ptr<event::abc::EventHandler>
+CreateEventHandler()
+{
+  return std::make_shared<event::epoll::EpollHandler>();
+}
+
 void
 receive_event(int fd)
 {
@@ -43,7 +49,7 @@ main(int argc, char* argv[])
   hint.ai_family = AF_INET;
   hint.ai_socktype = protocol == "udp" ? SOCK_DGRAM : SOCK_STREAM;
   hint.ai_flags = AI_PASSIVE;
-  auto eh = std::make_shared<event::EpollHandler>();
+  auto eh = CreateEventHandler();
   eh->Timeout(std::nullopt);
 
   std::cout << "create server..." << std::endl;
