@@ -28,6 +28,8 @@
   SPDLOG_LOGGER_CRITICAL(spdlog::get(logger::AppLogger::name), __VA_ARGS__)
 
 namespace logger {
+/// @brief アプリケーションロガー
+/// @details spdlogのグローバル空間からこの名前で取り出すことで使用する
 class AppLogger
 {
 public:
