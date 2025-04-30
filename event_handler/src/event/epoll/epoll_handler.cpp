@@ -8,6 +8,7 @@
 #include "operator_io.hpp"
 
 namespace event {
+namespace epoll {
 /// @brief デフォルトコンストラクタ
 EpollHandler::EpollHandler()
   : events_(event_max_)
@@ -180,4 +181,5 @@ EpollHandler::CreateEpoll()
     perror("epoll_create1");
   }
 }
-}
+} // namespace epoll
+} // namespace event

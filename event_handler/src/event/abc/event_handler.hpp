@@ -6,14 +6,14 @@
 #include <chrono>
 #include <map>
 #include <optional>
+// original
+#include "types.hpp"
 
 namespace event {
 namespace abc {
 class EventHandler : public event::interface::EventHandler
 {
 protected:
-  using fd_t = int;
-  static constexpr fd_t DISABLED_FD = -1;
   static constexpr int EVENT_MAX = 10;
 
 protected:

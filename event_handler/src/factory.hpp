@@ -9,10 +9,10 @@ std::shared_ptr<event::interface::EventHandler>
 CreateEventHandler(const std::string& type)
 {
   if (type == "epoll") {
-    return std::make_shared<event::EpollHandler>();
+    return std::make_shared<event::epoll::EpollHandler>();
   }
   if (type == "select") {
-    return std::make_shared<event::SelectHandler>();
+    return std::make_shared<event::select::SelectHandler>();
   }
   static_assert("not supported type event handler");
   return nullptr;

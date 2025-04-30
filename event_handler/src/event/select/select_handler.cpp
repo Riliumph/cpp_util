@@ -3,12 +3,13 @@
 #include <iostream>
 #include <vector>
 // system
-#include <sys/epoll.h>
+#include <sys/epoll.h> //EPOLLIN, EPOLLOUT, EPOLLERR
 #include <unistd.h>
 // original
 #include "operator_io.hpp"
 
 namespace event {
+namespace select {
 /// @brief デフォルトコンストラクタ
 SelectHandler::SelectHandler()
 {
@@ -148,7 +149,7 @@ SelectHandler::WaitEvent()
   auto fd_width = GetMaxFd() + 1; // +1補正が必要
   auto* to = Timeout();
   auto updated_fd_num =
-    select(fd_width, &read_mask_, &write_mask_, &except_mask_, to);
+    ::select(fd_width, &read_mask_, &write_mask_, &except_mask_, to);
   return updated_fd_num;
 }
 
@@ -234,4 +235,5 @@ SelectHandler::LinkFdSet(const std::set<fd_t>& fds, fd_set& mask)
     FD_SET(fd, &mask);
   }
 }
+} // namespace select
 } // namespace event

@@ -9,6 +9,7 @@
 #include <sys/select.h>
 
 namespace event {
+namespace select {
 /// @brief Epollを使う具象クラス
 class SelectHandler : public event::abc::EventHandler
 {
@@ -43,5 +44,6 @@ private:
   fd_set except_mask_;
   std::map<fd_t, callback_t> reaction_;
 };
-}
+} // namespace select
+} // namespace event
 #endif // INCLUDE_EVENT_SELECT_HANDLER_HPP

@@ -6,14 +6,13 @@
 #include <optional>
 
 namespace event {
+using callback_t = std::function<void(int)>;
+using timeout_t = std::chrono::milliseconds;
 namespace interface {
 /// @brief イベントハンドラーとしてのIFクラス
 class EventHandler
 {
 public:
-  using callback_t = std::function<void(int)>;
-  using timeout_t = std::chrono::milliseconds;
-
   virtual bool CanReady() = 0;
   virtual int CreateTrigger(int, int) = 0;
   virtual int ModifyTrigger(int, int) = 0;
