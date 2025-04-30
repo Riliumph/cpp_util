@@ -1,6 +1,8 @@
 #ifndef GENERATOR_HPP
 #define GENERATOR_HPP
 #include <iterator>
+/// @brief ジェネレータの実装
+/// @details 状態管理を行い、yieldを実現するクラス
 class Generator
 {
 public:

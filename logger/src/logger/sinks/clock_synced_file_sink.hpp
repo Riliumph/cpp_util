@@ -56,6 +56,8 @@ public:
     opened_at_ = clock_t::now();
   }
 
+  /// @brief デストラクタ
+  /// @details ログファイルを閉じて、ローテーションする
   ~clock_synced_file_sink()
   {
     flush_();
@@ -140,12 +142,14 @@ private:
 };
 
 /// @brief マルチスレッド用の時刻同期ローテーションファイルシンク
-template<typename T>
-using clock_synced_file_sink_mt = clock_synced_file_sink<std::mutex, T>;
+/// @tparam TimeUnit 時刻の単位
+template<typename TimeUnit>
+using clock_synced_file_sink_mt = clock_synced_file_sink<std::mutex, TimeUnit>;
 /// @brief シングルスレッド用の時刻同期ローテーションファイルシンク
-template<typename T>
+/// @tparam TimeUnit 時刻の単位
+template<typename TimeUnit>
 using clock_synced_file_sink_st =
-  clock_synced_file_sink<spdlog::details::null_mutex, T>;
+  clock_synced_file_sink<spdlog::details::null_mutex, TimeUnit>;
 } // namespace sinks
 } // namespace logger
 #endif // INCLUDE_LOGGER_SINKS_CLOCK_SYNCED_FILE_SINK_HPP

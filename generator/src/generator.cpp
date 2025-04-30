@@ -1,6 +1,7 @@
 #include "generator.hpp"
 #include <iostream>
 #include <stdexcept> // for std::out_of_range
+
 /// @brief コンストラクタ
 Generator::Iterator::Iterator()
   : state(State::START)
@@ -61,7 +62,7 @@ Generator::Iterator::operator++()
 }
 
 /// @brief 今の要素を返して、状態を進める（後置インクリメント）
-/// @return
+/// @return 現在の要素を返す
 Generator::Iterator
 Generator::Iterator::operator++(int)
 {

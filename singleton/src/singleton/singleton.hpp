@@ -8,10 +8,16 @@
 #include "finalizer.hpp"
 
 namespace singleton {
+/// @brief シングルトンを作るクラス
+/// @tparam T 作りたい型
 template<typename T>
 class Factory final
 {
 public:
+  /// @brief シングルトンインスタンスを取得する
+  /// @tparam ...Args 引数の型群
+  /// @param ...args 引数群
+  /// @return
   template<typename... Args>
   static T& Get(Args&&... args)
   {
@@ -22,6 +28,9 @@ public:
   }
 
 private:
+  /// @brief インスタンスを生成する
+  /// @tparam ...Args 引数の型群
+  /// @param ...args 引数群
   template<typename... Args>
   static void create(Args&&... args)
   {

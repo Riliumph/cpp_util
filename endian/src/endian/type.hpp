@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 namespace endian {
+/// @brief 4バイトのデータを扱うための共用体
 typedef union
 {
   uint32_t byte4;

@@ -78,4 +78,4 @@ AppLogger::SetLevel(const std::string& log_level_str)
   logger_->set_level(log_level);
 }
 
-}
+} // namespace logger
