@@ -1,19 +1,26 @@
 FROM mcr.microsoft.com/devcontainers/cpp:debian
 
 RUN echo "INSTALL UTILITIES"
-RUN apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y\
+RUN apt-get update -qq \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -qq --no-install-recommends -y\
     # utilities
     peco\
     silversearcher-ag\
-    vim
+    vim\
+    && apt-get clean\
+    && rm -rf /var/lib/apt/lists/*
+
 RUN echo "INSTALL NETWORK TOOLS"
-RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y\
+RUN apt-get update -qq \
+    && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y\
     telnet\
-    netcat-openbsd
+    netcat-openbsd\
+    && apt-get clean\
+    && rm -rf /var/lib/apt/lists/*
 
 RUN echo "INSTALL C++ TOOLS"
-RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y\
+RUN apt-get update -qq \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -qq --no-install-recommends -y\
     # c++ libraries
     libboost1.81-all-dev\
     libgtest-dev\
