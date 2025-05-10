@@ -15,5 +15,6 @@ main(int argc, char** argv)
   for (auto i = 0; i < argc; ++i) {
     printf("argv[%d]: %s\n", i, argv[i]);
   }
+  sleep(100000);
   return 0;
 }
