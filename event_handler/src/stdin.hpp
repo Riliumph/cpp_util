@@ -25,6 +25,7 @@ stdin_sample(std::shared_ptr<event::interface::EventHandler> e_handler)
     exit(1);
   }
   e_handler->SetCallback(e.data.fd, EPOLLIN, [](int fd) {
+    std::printf("===== RECEIVED EVENT(%d) =====\n", fd);
     // 標準入力からデータを読み込む
     char buffer[1024];
     auto bytes_read = read(fd, buffer, sizeof(buffer));
