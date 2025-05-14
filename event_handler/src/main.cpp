@@ -28,7 +28,7 @@ main(int argc, char* argv[])
     return -1;
   }
   stdin_sample(e_handler);
-  socket_sample(e_handler);
+  socket_sample(e_handler, handler_type);
   e_handler->Run();
   return 0;
 }
