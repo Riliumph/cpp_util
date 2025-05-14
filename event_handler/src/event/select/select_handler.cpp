@@ -54,15 +54,15 @@ SelectHandler::CreateTrigger(int fd, int event)
   std::cout << "create trigger for " << fd << "..." << std::endl;
   if (static_cast<bool>(event & EPOLLIN)) {
     read_fds_.insert(fd);
-    std::cout << "set write trigger" << std::endl;
+    std::printf("FD(%d) added to read_fds\n", fd);
   }
   if (static_cast<bool>(event & EPOLLOUT)) {
     write_fds_.insert(fd);
-    std::cout << "set read trigger" << std::endl;
+    std::printf("FD(%d) added to write_fds\n", fd);
   }
   if (static_cast<bool>(event & EPOLLERR)) {
     except_fds_.insert(fd);
-    std::cout << "set except trigger" << std::endl;
+    std::printf("FD(%d) added to except_fds\n", fd);
   }
   return 0;
 }
@@ -106,12 +106,15 @@ SelectHandler::DeleteTrigger(int fd, int event)
     return -1;
   }
   if (static_cast<bool>(event & EPOLLIN)) {
+    std::printf("FD(%d) erased to read_fds\n", fd);
     read_fds_.erase(fd);
   }
   if (static_cast<bool>(event & EPOLLOUT)) {
+    std::printf("FD(%d) added to write_fds\n", fd);
     write_fds_.erase(fd);
   }
   if (static_cast<bool>(event & EPOLLERR)) {
+    std::printf("FD(%d) added to except_fds\n", fd);
     except_fds_.erase(fd);
   }
   return 0;
