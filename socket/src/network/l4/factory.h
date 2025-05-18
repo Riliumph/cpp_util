@@ -10,8 +10,23 @@
 
 namespace nw {
 namespace l4 {
-std::unique_ptr<abc::SocketServer>
-MakeServer(const std::string&, const std::string&, struct addrinfo);
+class ServerFactory
+{
+public:
+  using event_handler_t = event::abc::EventHandler;
+  using server_t = abc::SocketServer;
+  using tcp_server_t = nw::l4::tcp::Server;
+  using udp_server_t = nw::l4::udp::Server;
+  using addr_t = struct addrinfo;
+
+public:
+  ServerFactory() = default;
+  ~ServerFactory() = default;
+
+  std::unique_ptr<server_t> MakeServer(const std::string&,
+                                       const std::string&,
+                                       addr_t);
+};
 } // namespace l4
 } // namespace nw
 #endif // INCLUDE_NETWORK_IPV4_FACTORY_H
