@@ -10,7 +10,7 @@
 #include <unistd.h>
 // original
 #include "event.hpp"
-#include "factory.hpp"
+// sample
 #include "socket.hpp"
 #include "stdin.hpp"
 
@@ -22,7 +22,8 @@ main(int argc, char* argv[])
     return -1;
   }
   auto handler_type = std::string(argv[1]);
-  auto e_handler = CreateEventHandler(handler_type);
+  auto factory = event::factory::EventHandlerFactory();
+  auto e_handler = factory.MakeEventHandler(handler_type);
   if (!e_handler->CanReady()) {
     std::cerr << "failed to create epoll handler" << std::endl;
     return -1;
