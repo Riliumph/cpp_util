@@ -6,12 +6,6 @@
 // original
 #include "network.h"
 
-std::shared_ptr<event::abc::EventHandler>
-CreateEventHandler()
-{
-  return std::make_shared<event::epoll::EpollHandler>();
-}
-
 void
 receive_event(int fd)
 {
@@ -24,36 +18,45 @@ receive_event(int fd)
 int
 main(int argc, char* argv[])
 {
-  if (argc < 4) {
+  if (argc < 5) {
     std::cerr << "引数が足りません" << std::endl;
     return -1;
   }
 
   auto pid = getpid();
   std::cout << "server pid: " << pid << std::endl;
-  std::vector<std::string> supported_protocols = { "udp", "tcp" };
-  auto protocol = std::string(argv[1]);
-  auto ip = std::string(argv[2]);
-  auto port = std::string(argv[3]);
 
-  auto is_supported =
-    std::any_of(supported_protocols.begin(),
-                supported_protocols.end(),
-                [protocol](const auto& v) { return v == protocol; });
-  if (!is_supported) {
+  auto event = std::string(argv[1]);
+  auto protocol = std::string(argv[2]);
+  auto ip = std::string(argv[3]);
+  auto port = std::string(argv[4]);
+
+  struct addrinfo hint;
+  hint.ai_family = AF_INET;
+  hint.ai_flags = AI_PASSIVE;
+  if (protocol == "tcp") {
+    hint.ai_socktype = SOCK_STREAM;
+  } else if (protocol == "udp") {
+    hint.ai_socktype = SOCK_DGRAM;
+  } else {
     std::cerr << "not supported protocol: " << protocol << std::endl;
     return -1;
   }
 
-  struct addrinfo hint;
-  hint.ai_family = AF_INET;
-  hint.ai_socktype = protocol == "udp" ? SOCK_DGRAM : SOCK_STREAM;
-  hint.ai_flags = AI_PASSIVE;
-  auto eh = CreateEventHandler();
-  eh->Timeout(std::nullopt);
+  auto server_factory = nw::l4::ServerFactory();
+  auto srv = server_factory.MakeServer(ip, port, hint);
+  if (!srv) {
+    std::cerr << "failed to create server" << std::endl;
+    return -1;
+  }
 
-  std::cout << "create server..." << std::endl;
-  auto srv = nw::l4::MakeServer(ip, port, hint);
+  auto event_factory = event::factory::EventHandlerFactory();
+  auto eh = event_factory.MakeEventHandler(event);
+  if (!eh) {
+    std::cerr << "failed to create event handler" << std::endl;
+    return -1;
+  }
+
   srv->EventHandler(eh);
   srv->Event(receive_event);
 
