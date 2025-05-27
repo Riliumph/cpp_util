@@ -11,6 +11,7 @@
 // original
 #include "event.hpp"
 // sample
+#include "signal.hpp"
 #include "socket.hpp"
 #include "stdin.hpp"
 
@@ -28,6 +29,7 @@ main(int argc, char* argv[])
     std::cerr << "failed to create epoll handler" << std::endl;
     return -1;
   }
+  signal_sample(e_handler);
   stdin_sample(e_handler);
   socket_sample(e_handler, handler_type);
   e_handler->Run();
