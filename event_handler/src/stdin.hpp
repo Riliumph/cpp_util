@@ -2,14 +2,9 @@
 #define INCLUDE_STDIN_HPP
 // STL
 #include <iostream>
-#include <memory>
 // Linux
-#include <cstring>
-#include <fcntl.h>
-#include <netinet/in.h>
-#include <sys/epoll.h>
-#include <sys/socket.h>
-#include <unistd.h>
+#include <sys/epoll.h> // EPOLLIN
+#include <unistd.h>    // STDIN_FILENO
 // original
 #include "event.hpp"
 
