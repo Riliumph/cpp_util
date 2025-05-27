@@ -1,13 +1,5 @@
 // STL
 #include <iostream>
-#include <memory>
-// Linux
-#include <cstring>
-#include <fcntl.h>
-#include <netinet/in.h>
-#include <sys/epoll.h>
-#include <sys/socket.h>
-#include <unistd.h>
 // original
 #include "event.hpp"
 // sample

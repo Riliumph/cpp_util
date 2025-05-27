@@ -2,33 +2,17 @@
 #define INCLUDE_SOCKET_HPP
 // STL
 #include <iostream>
-#include <memory>
+#include <string>
 // Linux
-#include <cstring>
-#include <fcntl.h>
-#include <netinet/in.h>
-#include <sys/epoll.h>
-#include <sys/socket.h>
-#include <unistd.h>
+#include <netinet/in.h> // sockaddr_in
+#include <sys/epoll.h>  // EPOLLIN
+#include <sys/socket.h> // socket
 // original
 #include "event.hpp"
-
-#include <arpa/inet.h>
-#include <cstring>
-#include <functional>
-#include <iostream>
-#include <map>
-#include <netinet/in.h>
-#include <string>
-#include <sys/epoll.h>
-#include <unistd.h>
 
 constexpr int MAX_EVENTS = 10;
 constexpr int PORT = 50000;
 constexpr int BUF_SIZE = 1024;
-
-// コールバック関数の型
-using Callback = std::function<void(int)>;
 
 void
 socket_sample(std::shared_ptr<event::interface::EventHandler> e_handler,
