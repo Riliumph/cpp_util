@@ -46,7 +46,7 @@ SelectHandler::CanReady()
 /// @param event 監視したいイベント
 /// @return 成否
 int
-SelectHandler::CreateTrigger(fd_t fd, int event)
+SelectHandler::CreateTrigger(fd_t fd, event_id_t event)
 {
   if (fd == DISABLED_FD) {
     return -1;
@@ -72,7 +72,7 @@ SelectHandler::CreateTrigger(fd_t fd, int event)
 /// @param event 変更したいイベント
 /// @return 成否
 int
-SelectHandler::ModifyTrigger(fd_t fd, int event)
+SelectHandler::ModifyTrigger(fd_t fd, event_id_t event)
 {
   if (fd == DISABLED_FD) {
     return -1;
@@ -100,7 +100,7 @@ SelectHandler::ModifyTrigger(fd_t fd, int event)
 /// @param event 削除したいイベント
 /// @return 成否
 int
-SelectHandler::DeleteTrigger(fd_t fd, int event)
+SelectHandler::DeleteTrigger(fd_t fd, event_id_t event)
 {
   if (fd == DISABLED_FD) {
     return -1;
@@ -121,7 +121,7 @@ SelectHandler::DeleteTrigger(fd_t fd, int event)
 }
 
 void
-SelectHandler::SetCallback(fd_t fd, int event, callback_t fn)
+SelectHandler::SetCallback(fd_t fd, event_id_t event, callback_t fn)
 {
   (void)event;
   // TODO: Selectのコールバックは別で実装する

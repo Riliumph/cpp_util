@@ -3,7 +3,6 @@
 // inherit
 #include "event/interface.hpp"
 // STL
-#include <map>
 #include <optional>
 
 namespace event {

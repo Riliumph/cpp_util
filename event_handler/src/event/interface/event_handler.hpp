@@ -12,10 +12,10 @@ class EventHandler
 {
 public:
   virtual bool CanReady() = 0;
-  virtual int CreateTrigger(fd_t, int) = 0;
-  virtual int ModifyTrigger(fd_t, int) = 0;
-  virtual int DeleteTrigger(fd_t, int) = 0;
-  virtual void SetCallback(fd_t, int, callback_t) = 0;
+  virtual int CreateTrigger(fd_t, event_id_t) = 0;
+  virtual int ModifyTrigger(fd_t, event_id_t) = 0;
+  virtual int DeleteTrigger(fd_t, event_id_t) = 0;
+  virtual void SetCallback(fd_t, event_id_t, callback_t) = 0;
   virtual void EraseCallback(fd_t) = 0;
 
   virtual void RunOnce() = 0;

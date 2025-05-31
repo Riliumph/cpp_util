@@ -33,7 +33,7 @@ EpollHandler::~EpollHandler() {}
 /// @param event 監視したいイベント
 /// @return 0: 成功 / -1: 失敗
 int
-EpollHandler::CreateTrigger(fd_t fd, int event)
+EpollHandler::CreateTrigger(fd_t fd, event_id_t event)
 {
   event_t e;
   e.data.fd = fd;
@@ -52,7 +52,7 @@ EpollHandler::CreateTrigger(fd_t fd, int event)
 /// @param event 変更したいイベント
 /// @return 0: 成功 / -1: 失敗
 int
-EpollHandler::ModifyTrigger(fd_t fd, int event)
+EpollHandler::ModifyTrigger(fd_t fd, event_id_t event)
 {
   event_t e;
   e.data.fd = fd;
@@ -71,7 +71,7 @@ EpollHandler::ModifyTrigger(fd_t fd, int event)
 /// @param event 削除したいイベント（使われない）
 /// @return 0: 成功 / -1: 失敗
 int
-EpollHandler::DeleteTrigger(fd_t fd, int event)
+EpollHandler::DeleteTrigger(fd_t fd, event_id_t event)
 {
   event_t e;
   e.data.fd = fd;
@@ -90,7 +90,7 @@ EpollHandler::DeleteTrigger(fd_t fd, int event)
 /// @param event 発火したイベント
 /// @param fn 設定するコールバック
 void
-EpollHandler::SetCallback(fd_t fd, int event, callback_t fn)
+EpollHandler::SetCallback(fd_t fd, event_id_t event, callback_t fn)
 {
   event_t e;
   e.data.fd = fd;
