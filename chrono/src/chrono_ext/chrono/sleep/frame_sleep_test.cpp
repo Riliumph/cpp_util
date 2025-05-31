@@ -1,10 +1,10 @@
-#include "sleep.hpp"
+#include "frame_sleep.hpp"
 // STL
 #include <ctime>
 // 3rd
 #include <gtest/gtest.h>
 // original
-#include "chrono/type.hpp"
+#include "chrono_etc/chrono/core/core.hpp"
 
 using namespace std::chrono;
 using namespace std::literals::chrono_literals;

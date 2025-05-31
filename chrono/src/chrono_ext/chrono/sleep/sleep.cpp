@@ -4,11 +4,11 @@
 #include <ctime>
 #include <iostream>
 // original
-#include "operator_io.hpp"
-#include "type.hpp"
+#include "chrono_ext/chrono/core/core.hpp"
+#include "chrono_ext/io/operator_io.hpp"
 
 using namespace std::literals::chrono_literals;
-
+namespace chrono_ext {
 /// @brief hh:mm:nのタイミングでスリープを解除する関数
 /// こんな無駄なスリープ機能意味あるのか？
 /// 端的に言って、Linuxのcronを使え。
@@ -19,7 +19,7 @@ std::chrono::seconds
 cron_sleep(double n)
 {
   auto now = time(NULL);                        // 現在時刻を取得
-  auto local = localtime(&now);                 // 地方時に変換
+  auto* local = localtime(&now);                // 地方時に変換
   auto quotient = std::ceil(local->tm_sec / n); // 切り上げるが型は高精度を保つ
   auto next = n * quotient;
   auto diff = static_cast<int>(next - local->tm_sec);
@@ -31,4 +31,5 @@ cron_sleep(double n)
   std::this_thread::sleep_for(sleep_time);
   std::cout << std::chrono::system_clock::now();
   return sleep_time;
+}
 }

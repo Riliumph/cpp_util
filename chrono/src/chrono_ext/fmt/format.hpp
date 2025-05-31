@@ -1,14 +1,16 @@
-#ifndef INCLUDE_CHRONO_STRING_HPP
-#define INCLUDE_CHRONO_STRING_HPP
+#ifndef INCLUDE_CHRONO_EXT_FMT_FORMAT_HPP
+#define INCLUDE_CHRONO_EXT_FMT_FORMAT_HPP
 // STL
 #include <chrono>
 #include <iomanip>
 #include <sstream>
 #include <string>
 // original
-#include "calc.hpp"
-#include "type.hpp"
+#include "chrono_ext/chrono/core/core.hpp"
+#include "chrono_ext/chrono/math/math.hpp"
 
+namespace chrono_ext {
+namespace fmt {
 /// @brief ISO8601形式で時間を文字列化する関数
 /// @tparam TimeUnit 計算したい時間の単位（デフォルトは秒）
 /// @param tp 特定の時間
@@ -38,5 +40,6 @@ to_iso8601(std::chrono::system_clock::time_point tp)
   }
   return ss.str();
 }
-
-#endif // INCLUDE_CHRONO_STRING_HPP
+} // namespace fmt
+} // namespace chrono_ext
+#endif // INCLUDE_CHRONO_EXT_FMT_FORMAT_HPP

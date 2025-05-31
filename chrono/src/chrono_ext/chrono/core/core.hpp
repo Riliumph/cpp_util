@@ -1,0 +1,4 @@
+#ifndef INCLUDE_CHRONO_EXT_CORE_HPP
+#define INCLUDE_CHRONO_EXT_CORE_HPP
+#include "type.hpp"
+#endif // INCLUDE_CHRONO_EXT_CORE_HPP

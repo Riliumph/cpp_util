@@ -1,12 +1,14 @@
-#include "string.hpp"
+#include "format.hpp"
 // 3rd
 #include <gtest/gtest.h>
-// original
-#include "type.hpp"
+// chrono_ext
+#include "chrono_ext/chrono/core/core.hpp"
 
 using namespace std::chrono;
 using namespace std::literals::chrono_literals;
 
+namespace chrono_ext {
+namespace fmt {
 TEST(to_iso8601, min)
 {
   struct TestData
@@ -166,3 +168,5 @@ TEST(to_iso8601, nsec)
     EXPECT_EQ(t.expected.str, actual);
   }
 }
+} // namespace fmt
+} // namespace chrono_ext
