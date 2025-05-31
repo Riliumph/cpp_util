@@ -7,8 +7,8 @@
 #include <netinet/in.h> // sockaddr_in
 #include <sys/epoll.h>  // EPOLLIN
 #include <sys/socket.h> // socket
-// original
-#include "event.hpp"
+// event
+#include "event/event.hpp"
 
 constexpr int MAX_EVENTS = 10;
 constexpr int PORT = 50000;

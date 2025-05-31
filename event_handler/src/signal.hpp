@@ -10,8 +10,8 @@
 #include <sys/signal.h>
 #include <sys/signalfd.h>
 #include <unistd.h>
-// original
-#include "event.hpp"
+// event
+#include "event/event.hpp"
 
 void
 signal_sample(std::shared_ptr<event::interface::EventHandler> e_handler)

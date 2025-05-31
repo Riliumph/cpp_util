@@ -5,7 +5,7 @@
 // system
 #include <sys/epoll.h> //EPOLLIN, EPOLLOUT, EPOLLERR
 #include <unistd.h>
-// original
+// event
 #include "operator_io.hpp"
 
 namespace event {

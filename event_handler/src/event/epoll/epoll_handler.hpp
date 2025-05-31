@@ -1,11 +1,12 @@
 #ifndef INCLUDE_EVENT_EPOLL_EPOLL_HANDLER_HPP
 #define INCLUDE_EVENT_EPOLL_EPOLL_HANDLER_HPP
 // inherit
-#include "event/abc.hpp"
+#include "event/abc/abc.hpp"
 // STL
 #include <map>
+#include <vector>
 // event
-#include "types.hpp"
+#include "epoll_types.hpp"
 
 namespace event {
 namespace epoll {
@@ -36,7 +37,7 @@ private:
 private:
   std::vector<event_t> events_;
   // std::map<int, std::map<int, callback>>ではなく、少し特殊な型を使ってみる
-  std::map<std::pair<fd_t, uint32_t>, callback_t> reaction_;
+  std::map<std::pair<fd_t, event_id_t>, callback_t> reaction_;
 };
 } // namespace epoll
 } // namespace event
