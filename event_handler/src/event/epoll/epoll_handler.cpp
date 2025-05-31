@@ -34,7 +34,7 @@ EpollHandler::~EpollHandler() {}
 /// @param event 監視したいイベント
 /// @return 0: 成功 / -1: 失敗
 int
-EpollHandler::CreateTrigger(int fd, int event)
+EpollHandler::CreateTrigger(fd_t fd, int event)
 {
   event_t e;
   e.data.fd = fd;
@@ -53,7 +53,7 @@ EpollHandler::CreateTrigger(int fd, int event)
 /// @param event 変更したいイベント
 /// @return 0: 成功 / -1: 失敗
 int
-EpollHandler::ModifyTrigger(int fd, int event)
+EpollHandler::ModifyTrigger(fd_t fd, int event)
 {
   event_t e;
   e.data.fd = fd;
@@ -72,7 +72,7 @@ EpollHandler::ModifyTrigger(int fd, int event)
 /// @param event 削除したいイベント（使われない）
 /// @return 0: 成功 / -1: 失敗
 int
-EpollHandler::DeleteTrigger(int fd, int event)
+EpollHandler::DeleteTrigger(fd_t fd, int event)
 {
   event_t e;
   e.data.fd = fd;
@@ -91,7 +91,7 @@ EpollHandler::DeleteTrigger(int fd, int event)
 /// @param event 発火したイベント
 /// @param fn 設定するコールバック
 void
-EpollHandler::SetCallback(int fd, int event, callback_t fn)
+EpollHandler::SetCallback(fd_t fd, int event, callback_t fn)
 {
   event_t e;
   e.data.fd = fd;
@@ -103,7 +103,7 @@ EpollHandler::SetCallback(int fd, int event, callback_t fn)
 /// @brief 指定された条件のコールバックを削除する関数
 /// @param fd 削除したいコールバックに関連づくFD
 void
-EpollHandler::EraseCallback(int fd)
+EpollHandler::EraseCallback(fd_t fd)
 {
   std::erase_if(reaction_, [fd](auto& p) {
     auto key = p.first;

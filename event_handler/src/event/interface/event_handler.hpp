@@ -1,24 +1,22 @@
 #ifndef INCLUDE_EVENT_INTERFACE_EVENT_HANDLER_HPP
 #define INCLUDE_EVENT_INTERFACE_EVENT_HANDLER_HPP
 // STL
-#include <chrono>
-#include <functional>
 #include <optional>
+// event
+#include "event/types.hpp"
 
 namespace event {
-using callback_t = std::function<void(int)>;
-using timeout_t = std::chrono::milliseconds;
 namespace interface {
 /// @brief イベントハンドラーとしてのIFクラス
 class EventHandler
 {
 public:
   virtual bool CanReady() = 0;
-  virtual int CreateTrigger(int, int) = 0;
-  virtual int ModifyTrigger(int, int) = 0;
-  virtual int DeleteTrigger(int, int) = 0;
-  virtual void SetCallback(int, int, callback_t) = 0;
-  virtual void EraseCallback(int) = 0;
+  virtual int CreateTrigger(fd_t, int) = 0;
+  virtual int ModifyTrigger(fd_t, int) = 0;
+  virtual int DeleteTrigger(fd_t, int) = 0;
+  virtual void SetCallback(fd_t, int, callback_t) = 0;
+  virtual void EraseCallback(fd_t) = 0;
 
   virtual void RunOnce() = 0;
   virtual void Run() = 0;

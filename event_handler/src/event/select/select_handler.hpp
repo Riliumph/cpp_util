@@ -20,11 +20,11 @@ public:
 
 public: // EventHandler
   bool CanReady() override;
-  int CreateTrigger(int, int) override;
-  int ModifyTrigger(int, int) override;
-  int DeleteTrigger(int, int) override;
-  void SetCallback(int, int, callback_t) override;
-  void EraseCallback(int) override;
+  int CreateTrigger(fd_t, int) override;
+  int ModifyTrigger(fd_t, int) override;
+  int DeleteTrigger(fd_t, int) override;
+  void SetCallback(fd_t, int, callback_t) override;
+  void EraseCallback(fd_t) override;
 
   void RunOnce() override;
   void Run() override;

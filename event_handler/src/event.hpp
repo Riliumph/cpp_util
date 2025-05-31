@@ -4,4 +4,5 @@
 #include "event/factory.hpp"
 #include "event/interface.hpp"
 #include "event/select.hpp"
+#include "event/types.hpp"
 #endif // INCLUDE_EVENT_H
