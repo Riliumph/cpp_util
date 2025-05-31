@@ -12,7 +12,6 @@ namespace epoll {
 /// @brief デフォルトコンストラクタ
 EpollHandler::EpollHandler()
   : events_(event_max_)
-
 {
   CreateEpoll();
 }

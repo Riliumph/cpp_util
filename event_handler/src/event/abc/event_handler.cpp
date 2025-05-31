@@ -5,15 +5,8 @@
 namespace event {
 namespace abc {
 
-EventHandler::EventHandler()
-  : event_handler_fd_(DISABLED_FD)
-  , event_max_(EVENT_MAX)
-{
-}
-
 EventHandler::EventHandler(size_t event_max)
-  : event_handler_fd_(DISABLED_FD)
-  , event_max_(event_max)
+  : event_max_(event_max)
 {
 }
 

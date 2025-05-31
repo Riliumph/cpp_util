@@ -14,7 +14,7 @@ protected:
   static constexpr int EVENT_MAX = 10;
 
 protected:
-  EventHandler();
+  EventHandler() = default;
   EventHandler(size_t);
   ~EventHandler();
 
@@ -26,9 +26,9 @@ private:
   void SafeClose() const;
 
 protected:
-  fd_t event_handler_fd_;
-  size_t event_max_;
-  std::optional<timeout_t> timeout_;
+  fd_t event_handler_fd_ = DISABLED_FD;
+  size_t event_max_ = EVENT_MAX;
+  std::optional<timeout_t> timeout_ = std::nullopt;
 };
 } // namespace abc
 } // namespace event
