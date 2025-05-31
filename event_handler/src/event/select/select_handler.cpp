@@ -46,7 +46,7 @@ SelectHandler::CanReady()
 /// @param event 監視したいイベント
 /// @return 成否
 int
-SelectHandler::CreateTrigger(int fd, int event)
+SelectHandler::CreateTrigger(fd_t fd, event_id_t event)
 {
   if (fd == DISABLED_FD) {
     return -1;
@@ -72,7 +72,7 @@ SelectHandler::CreateTrigger(int fd, int event)
 /// @param event 変更したいイベント
 /// @return 成否
 int
-SelectHandler::ModifyTrigger(int fd, int event)
+SelectHandler::ModifyTrigger(fd_t fd, event_id_t event)
 {
   if (fd == DISABLED_FD) {
     return -1;
@@ -100,7 +100,7 @@ SelectHandler::ModifyTrigger(int fd, int event)
 /// @param event 削除したいイベント
 /// @return 成否
 int
-SelectHandler::DeleteTrigger(int fd, int event)
+SelectHandler::DeleteTrigger(fd_t fd, event_id_t event)
 {
   if (fd == DISABLED_FD) {
     return -1;
@@ -121,7 +121,7 @@ SelectHandler::DeleteTrigger(int fd, int event)
 }
 
 void
-SelectHandler::SetCallback(int fd, int event, callback_t fn)
+SelectHandler::SetCallback(fd_t fd, event_id_t event, callback_t fn)
 {
   (void)event;
   // TODO: Selectのコールバックは別で実装する
@@ -131,7 +131,7 @@ SelectHandler::SetCallback(int fd, int event, callback_t fn)
 /// @brief 指定された条件のコールバックを削除する関数
 /// @param fd 削除したいコールバックに関連づくFD
 void
-SelectHandler::EraseCallback(int fd)
+SelectHandler::EraseCallback(fd_t fd)
 {
   std::erase_if(reaction_, [fd](auto& p) { return p.first == fd; });
   std::cout << "callback erased: " << fd << std::endl;

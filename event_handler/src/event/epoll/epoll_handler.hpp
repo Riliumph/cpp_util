@@ -4,7 +4,7 @@
 #include "event/abc.hpp"
 // STL
 #include <map>
-// original
+// event
 #include "types.hpp"
 
 namespace event {
@@ -18,11 +18,11 @@ public:
   ~EpollHandler();
 
 public: // EventHandler
-  int CreateTrigger(int, int) override;
-  int ModifyTrigger(int, int) override;
-  int DeleteTrigger(int, int) override;
-  void SetCallback(int, int, callback_t) override;
-  void EraseCallback(int) override;
+  int CreateTrigger(fd_t, event_id_t) override;
+  int ModifyTrigger(fd_t, event_id_t) override;
+  int DeleteTrigger(fd_t, event_id_t) override;
+  void SetCallback(fd_t, event_id_t, callback_t) override;
+  void EraseCallback(fd_t) override;
 
   void RunOnce() override;
   void Run() override;
