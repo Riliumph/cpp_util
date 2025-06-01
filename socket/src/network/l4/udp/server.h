@@ -1,5 +1,5 @@
-#ifndef INCLUDE_NETWORK_IPV4_UDP_SERVER_H
-#define INCLUDE_NETWORK_IPV4_UDP_SERVER_H
+#ifndef INCLUDE_NETWORK_L4_UDP_SERVER_H
+#define INCLUDE_NETWORK_L4_UDP_SERVER_H
 // Inherit
 #include "network/l4/abc/socket_server.h"
 
@@ -21,4 +21,4 @@ public:
 } // namespace l4
 } // namespace nw
 
-#endif // INCLUDE_NETWORK_IPV4_UDP_SERVER_H
+#endif // INCLUDE_NETWORK_L4_UDP_SERVER_H

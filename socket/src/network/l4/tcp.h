@@ -1,4 +1,0 @@
-#ifndef INCLUDE_NETWORK_IPV4_TCP_H
-#define INCLUDE_NETWORK_IPV4_TCP_H
-#include "tcp/server.h"
-#endif // INCLUDE_NETWORK_IPV4_TCP_H

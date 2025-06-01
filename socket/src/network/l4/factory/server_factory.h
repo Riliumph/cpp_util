@@ -1,12 +1,12 @@
-#ifndef INCLUDE_NETWORK_IPV4_FACTORY_H
-#define INCLUDE_NETWORK_IPV4_FACTORY_H
+#ifndef INCLUDE_NETWORK_L4_FACTORY_SERVER_FACTORY_H
+#define INCLUDE_NETWORK_L4_FACTORY_SERVER_FACTORY_H
 // STL
 #include <memory>
-// Standard
+// system
 #include <netdb.h>
-// original
-#include "network/l4/tcp.h"
-#include "network/l4/udp.h"
+// network
+#include "network/l4/tcp/tcp.h"
+#include "network/l4/udp/udp.h"
 
 namespace nw {
 namespace l4 {
@@ -29,4 +29,4 @@ public:
 };
 } // namespace l4
 } // namespace nw
-#endif // INCLUDE_NETWORK_IPV4_FACTORY_H
+#endif // INCLUDE_NETWORK_L4_FACTORY_SERVER_FACTORY_H

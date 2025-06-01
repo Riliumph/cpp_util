@@ -1,6 +1,8 @@
-#ifndef INCLUDE_TCP_UTIL_SOCKET_H
-#define INCLUDE_TCP_UTIL_SOCKET_H
+#ifndef INCLUDE_NETWORK_UTIL_SOCKET_H
+#define INCLUDE_NETWORK_UTIL_SOCKET_H
+// system
 #include <netdb.h>
+
 int
 ReuseAddress(int fd);
-#endif // INCLUDE_TCP_UTIL_SOCKET_H
+#endif // INCLUDE_NETWORK_UTIL_SOCKET_H

@@ -1,4 +1,4 @@
-#include "factory.h"
+#include "server_factory.h"
 // STL
 #include <cassert>
 #include <iostream>

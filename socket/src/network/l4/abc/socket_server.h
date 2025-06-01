@@ -1,13 +1,13 @@
-#ifndef INCLUDE_NETWORK_IPV4_ABC_SOCKET_SERVER_H
-#define INCLUDE_NETWORK_IPV4_ABC_SOCKET_SERVER_H
+#ifndef INCLUDE_NETWORK_L4_ABC_SOCKET_SERVER_H
+#define INCLUDE_NETWORK_L4_ABC_SOCKET_SERVER_H
 // super class
 #include "network/interface/server.h"
 // STL
 #include <memory>
-// Standard
+// system
 #include <netdb.h>
-// Original Lib
-#include <event.hpp>
+// event lib
+#include <event/event.hpp>
 
 namespace nw {
 namespace l4 {
@@ -57,4 +57,4 @@ protected: // EventLib
 } // namespace abc
 } // l4
 } // nw
-#endif // INCLUDE_NETWORK_IPV4_ABC_SOCKET_SERVER_H
+#endif // INCLUDE_NETWORK_L4_ABC_SOCKET_SERVER_H

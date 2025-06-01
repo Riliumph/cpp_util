@@ -3,8 +3,8 @@
 #include <iostream>
 // POSIX Standard
 #include <unistd.h>
-// original
-#include "network.h"
+// system
+#include "network/network.h"
 
 void
 receive_event(int fd)

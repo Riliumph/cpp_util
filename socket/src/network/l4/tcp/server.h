@@ -1,5 +1,5 @@
-#ifndef INCLUDE_NETWORK_IPV4_TCP_SERVER_H
-#define INCLUDE_NETWORK_IPV4_TCP_SERVER_H
+#ifndef INCLUDE_NETWORK_L4_TCP_SERVER_H
+#define INCLUDE_NETWORK_L4_TCP_SERVER_H
 // Inherit
 #include "network/l4/abc/socket_server.h"
 // STL
@@ -36,4 +36,4 @@ private: // File Descriptor
 } // namespace tcp
 } // namespace l4
 } // namespace nw
-#endif // INCLUDE_NETWORK_IPV4_TCP_SERVER_H
+#endif // INCLUDE_NETWORK_L4_TCP_SERVER_H
