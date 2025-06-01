@@ -1,8 +1,8 @@
 #include "operator_io.hpp"
+#include <cstdio>
 
-namespace endian {
 std::ostream&
-operator<<(std::ostream& os, bytes lv)
+operator<<(std::ostream& os, endian::bytes& lv)
 {
   std::printf("byte(4): 0x%08X\n", lv.byte4);
   std::printf("byte(2): 0x%04X, 0x%04X\n", lv.byte2[0], lv.byte2[1]);
@@ -12,5 +12,4 @@ operator<<(std::ostream& os, bytes lv)
               lv.byte1[2],
               lv.byte1[3]);
   return os;
-}
 }

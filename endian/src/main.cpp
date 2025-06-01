@@ -1,8 +1,8 @@
 // STL
 #include <iomanip>
 #include <iostream>
-// ORIGINAL
-#include "endian.hpp"
+// endian
+#include "endian/endian.hpp"
 
 int
 main(void)
