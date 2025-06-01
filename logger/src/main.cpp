@@ -8,7 +8,7 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 // logger
-#include "logger.hpp"
+#include "logger/logger.hpp"
 
 int
 main()

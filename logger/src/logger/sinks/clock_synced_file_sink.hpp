@@ -14,7 +14,7 @@
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/sinks/base_sink.h>
 // original
-#include <chrono.hpp>
+#include <chrono_ext/chrono_ext.hpp>
 
 namespace logger {
 namespace sinks {
@@ -75,7 +75,7 @@ public:
   {
     using fh = spdlog::details::file_helper;
     auto [basename, ext] = fh::split_by_extension(filename);
-    auto ts = to_iso8601<time_unit_on_filename>(timestamp);
+    auto ts = chrono_ext::fmt::to_iso8601<time_unit_on_filename>(timestamp);
     std::replace(ts.begin(), ts.end(), ':', '-');
     return fmt::format("{}_{}{}", basename, ts, ext);
   }
@@ -132,7 +132,8 @@ private:
   /// @return ローテーションすべきかどうか
   bool should_rotate_(const time_point_t& will_rotate_at) const
   {
-    return is_unit_time_changed<TimeUnit>(opened_at_, will_rotate_at);
+    return chrono_ext::is_unit_time_changed<TimeUnit>(opened_at_,
+                                                      will_rotate_at);
   }
 
 private:

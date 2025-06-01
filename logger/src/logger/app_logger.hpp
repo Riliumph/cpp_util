@@ -1,5 +1,5 @@
-#ifndef INCLUDE_LOGGER_LOGGER_HPP
-#define INCLUDE_LOGGER_LOGGER_HPP
+#ifndef INCLUDE_LOGGER_APP_LOGGER_HPP
+#define INCLUDE_LOGGER_APP_LOGGER_HPP
 // STL
 #include <cstdlib>
 #include <iostream>
@@ -10,8 +10,8 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 // original
-#include "formatters.hpp"
-#include "sinks.hpp"
+#include "formatters/formatters.hpp"
+#include "sinks/sinks.hpp"
 
 // defines
 #define APP_TRACE(...)                                                         \
@@ -48,7 +48,6 @@ public:
 
 public:
   AppLogger(const std::string&);
-  AppLogger(const std::string&, size_t max_file_size, size_t max_files);
   ~AppLogger();
 
   // Deleted copy constructor and assignment operator
@@ -71,4 +70,4 @@ private:
   std::shared_ptr<spdlog::logger> logger_;
 };
 }
-#endif // INCLUDE_LOGGER_LOGGER_HPP
+#endif // INCLUDE_LOGGER_APP_LOGGER_HPP

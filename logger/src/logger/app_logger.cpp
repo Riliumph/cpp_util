@@ -17,7 +17,7 @@ const size_t AppLogger::default_max_files = 3;
 /// @param filename ログファイル名
 AppLogger::AppLogger(const std::string& filename)
   : logger_name_(name)
-  , file_sink_(std::make_shared<file_sink_t>(filename, true))
+  , file_sink_(std::make_shared<file_sink_t>(filename))
   , console_sink_(std::make_shared<console_sink_t>())
 {
   Init();
