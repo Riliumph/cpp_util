@@ -1,7 +1,7 @@
 // STL
 #include <iostream>
 // original
-#include "singleton.hpp"
+#include "singleton/singleton.hpp"
 
 class Data
 {
@@ -17,13 +17,13 @@ ref_routine();
 int
 main(void)
 {
-  auto only_one = singleton::Factory<Data>::Get();
+  auto only_one = singleton::Initializer<Data>::Get();
   // 通常アクセスでデータを変更する。
   std::cout << "store local & change data by normal access." << std::endl;
   std::cout << "before: " << only_one.data << std::endl;
   routine();
   std::cout << "after: " << only_one.data << std::endl;
-  std::cout << "new instance: " << singleton::Factory<Data>::Get().data
+  std::cout << "new instance: " << singleton::Initializer<Data>::Get().data
             << std::endl;
 
   // 参照アクセスでデータを変更するが、依然に取得した一時変数には反映されない。
@@ -31,7 +31,7 @@ main(void)
   std::cout << "before: " << only_one.data << std::endl;
   ref_routine();
   std::cout << "after: " << only_one.data << std::endl;
-  std::cout << "new instance: " << singleton::Factory<Data>::Get().data
+  std::cout << "new instance: " << singleton::Initializer<Data>::Get().data
             << std::endl;
 
   // 一時変数を経由すると値が追従できないので、都度アクセスするのが良い。
@@ -44,7 +44,7 @@ main(void)
 void
 routine()
 {
-  auto only_one = singleton::Factory<Data>::Get();
+  auto only_one = singleton::Initializer<Data>::Get();
   only_one.data = 1000;
 }
 
@@ -52,6 +52,6 @@ routine()
 void
 ref_routine()
 {
-  auto& ref_only_one = singleton::Factory<Data>::Get();
+  auto& ref_only_one = singleton::Initializer<Data>::Get();
   ref_only_one.data = 2000;
 }
