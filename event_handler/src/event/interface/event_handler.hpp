@@ -3,7 +3,7 @@
 // STL
 #include <optional>
 // event
-#include "event/types.hpp"
+#include "types.hpp"
 
 namespace event {
 namespace interface {

@@ -1,6 +1,8 @@
-#ifndef INCLUDE_NETWORK_INTERFACE_H
-#define INCLUDE_NETWORK_INTERFACE_H
+#ifndef INCLUDE_NETWORK_INTERFACE_SERVER_H
+#define INCLUDE_NETWORK_INTERFACE_SERVER_H
+// STL
 #include <functional>
+
 namespace nw {
 namespace interface {
 class Server
@@ -11,4 +13,4 @@ public:
 };
 } // namespace interface
 } // namespace nw
-#endif // INCLUDE_NETWORK_INTERFACE_H
+#endif // INCLUDE_NETWORK_INTERFACE_SERVER_H

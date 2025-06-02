@@ -1,7 +1,7 @@
-#ifndef INCLUDE_EVENT_SELECT_HANDLER_HPP
-#define INCLUDE_EVENT_SELECT_HANDLER_HPP
+#ifndef INCLUDE_EVENT_SELECT_SELECT_HANDLER_HPP
+#define INCLUDE_EVENT_SELECT_SELECT_HANDLER_HPP
 // inherit
-#include "event/abc.hpp"
+#include "event/abc/abc.hpp"
 // STL
 #include <map>
 #include <set>
@@ -46,4 +46,4 @@ private:
 };
 } // namespace select
 } // namespace event
-#endif // INCLUDE_EVENT_SELECT_HANDLER_HPP
+#endif // INCLUDE_EVENT_SELECT_SELECT_HANDLER_HPP

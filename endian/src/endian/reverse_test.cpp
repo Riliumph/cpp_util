@@ -4,8 +4,7 @@
 // 3rd
 #include <gtest/gtest.h>
 
-using namespace endian;
-
+namespace endian {
 TEST(little_to_big, byte4)
 {
   typedef union
@@ -86,3 +85,4 @@ TEST(little_to_big, byte8)
     }
   }
 }
+} // namespace endian

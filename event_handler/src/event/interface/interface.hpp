@@ -1,0 +1,5 @@
+#ifndef INCLUDE_EVENT_INTERFACE_INTERFACE_HPP
+#define INCLUDE_EVENT_INTERFACE_INTERFACE_HPP
+#include "event_handler.hpp"
+#include "types.hpp"
+#endif // INCLUDE_EVENT_INTERFACE_INTERFACE_HPP

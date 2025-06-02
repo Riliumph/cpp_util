@@ -5,8 +5,8 @@
 // Linux
 #include <sys/epoll.h> // EPOLLIN
 #include <unistd.h>    // STDIN_FILENO
-// original
-#include "event.hpp"
+// event
+#include "event/event.hpp"
 
 void
 stdin_sample(std::shared_ptr<event::interface::EventHandler> e_handler)

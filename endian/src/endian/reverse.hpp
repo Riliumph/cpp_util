@@ -25,8 +25,8 @@ template<typename T,
 T
 Reverse(T value)
 {
-  auto begin = reinterpret_cast<char*>(&value);
-  auto end = begin + sizeof(T);
+  auto* begin = reinterpret_cast<char*>(&value);
+  auto* end = begin + sizeof(T);
   std::reverse(begin, end);
   return value;
 }

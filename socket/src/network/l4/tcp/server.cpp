@@ -9,8 +9,9 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
-// original
-#include "network/util.h"
+// system
+#include "network/util/util.h"
+
 namespace nw {
 namespace l4 {
 namespace tcp {

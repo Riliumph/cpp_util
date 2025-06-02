@@ -1,7 +1,7 @@
 #ifndef INCLUDE_EVENT_ABC_EVENT_HANDLER_HPP
 #define INCLUDE_EVENT_ABC_EVENT_HANDLER_HPP
 // inherit
-#include "event/interface.hpp"
+#include "event/interface/interface.hpp"
 // STL
 #include <optional>
 
