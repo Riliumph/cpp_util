@@ -18,9 +18,7 @@ namespace chrono {
 template<
   uint32_t Hz,
   typename TimeUnit,
-  typename = typename std::enable_if_t<std::is_base_of_v<
-    std::chrono::duration<typename TimeUnit::rep, typename TimeUnit::period>,
-    TimeUnit>>>
+  typename = typename std_ext::chrono::enable_if_chrono_duration_t<TimeUnit>>
 TimeUnit
 sleep(std::chrono::system_clock::time_point start,
       std::chrono::system_clock::time_point end)
@@ -40,9 +38,7 @@ sleep(std::chrono::system_clock::time_point start,
 template<
   uint32_t Hz,
   typename TimeUnit,
-  typename = typename std::enable_if_t<std::is_base_of_v<
-    std::chrono::duration<typename TimeUnit::rep, typename TimeUnit::period>,
-    TimeUnit>>>
+  typename = typename std_ext::chrono::enable_if_chrono_duration_t<TimeUnit>>
 TimeUnit
 drive_and_sleep(std::function<void()> fn)
 {

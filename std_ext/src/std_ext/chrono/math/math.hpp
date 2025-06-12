@@ -11,9 +11,7 @@ namespace chrono {
 /// @return 単位時間の桁数
 template<
   typename TimeUnit,
-  typename = typename std::enable_if_t<std::is_base_of_v<
-    std::chrono::duration<typename TimeUnit::rep, typename TimeUnit::period>,
-    TimeUnit>>>
+  typename = typename std_ext::chrono::enable_if_chrono_duration_t<TimeUnit>>
 int
 calc_digit()
 {
@@ -53,9 +51,7 @@ time_per_period()
 /// @return 変化の有無
 template<
   typename TimeUnit,
-  typename = typename std::enable_if_t<std::is_base_of_v<
-    std::chrono::duration<typename TimeUnit::rep, typename TimeUnit::period>,
-    TimeUnit>>>
+  typename = typename std_ext::chrono::enable_if_chrono_duration_t<TimeUnit>>
 bool
 is_unit_time_changed(std::chrono::system_clock::time_point start,
                      std::chrono::system_clock::time_point end)

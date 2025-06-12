@@ -20,9 +20,7 @@ cron_sleep(double);
 /// @return 待機した時間
 template<
   typename TimeUnit,
-  typename = typename std::enable_if_t<std::is_base_of_v<
-    std::chrono::duration<typename TimeUnit::rep, typename TimeUnit::period>,
-    TimeUnit>>>
+  typename = typename std_ext::chrono::enable_if_chrono_duration_t<TimeUnit>>
 TimeUnit
 flexible_sleep(TimeUnit drive_time,
                std::chrono::system_clock::time_point start,
@@ -41,9 +39,7 @@ flexible_sleep(TimeUnit drive_time,
 /// @return 待機した時間
 template<
   typename TimeUnit,
-  typename = typename std::enable_if_t<std::is_base_of_v<
-    std::chrono::duration<typename TimeUnit::rep, typename TimeUnit::period>,
-    TimeUnit>>>
+  typename = typename std_ext::chrono::enable_if_chrono_duration_t<TimeUnit>>
 TimeUnit
 flexible_sleep(TimeUnit drive_time, std::function<void()> fn)
 {
