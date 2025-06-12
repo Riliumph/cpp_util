@@ -14,20 +14,17 @@
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/sinks/base_sink.h>
 // original
-#include <chrono_ext/chrono_ext.hpp>
+#include <std_ext/std_ext.hpp>
 
 namespace logger {
 namespace sinks {
-
+namespace ext = std_ext;
 /// @brief タイムスタンプを付与するローテーションファイルシンク
 /// @tparam Mutex ミューテックスの型
 /// @details ログファイル名にタイムスタンプを付与してローテーションする
-template<
-  typename Mutex,
-  typename TimeUnit,
-  typename = typename std::enable_if_t<std::is_base_of_v<
-    std::chrono::duration<typename TimeUnit::rep, typename TimeUnit::period>,
-    TimeUnit>>>
+template<typename Mutex,
+         typename TimeUnit,
+         typename = typename ext::chrono::is_chrono_duration<TimeUnit>>
 class clock_synced_file_sink final : public spdlog::sinks::base_sink<Mutex>
 {
 public:
@@ -74,10 +71,10 @@ public:
                                           time_point_t timestamp)
   {
     using fh = spdlog::details::file_helper;
-    auto [basename, ext] = fh::split_by_extension(filename);
-    auto ts = chrono_ext::fmt::to_iso8601<time_unit_on_filename>(timestamp);
+    auto [basename, extension] = fh::split_by_extension(filename);
+    auto ts = ext::chrono::to_iso8601<time_unit_on_filename>(timestamp);
     std::replace(ts.begin(), ts.end(), ':', '-');
-    return fmt::format("{}_{}{}", basename, ts, ext);
+    return fmt::format("{}_{}{}", basename, ts, extension);
   }
 
 protected:
@@ -132,8 +129,8 @@ private:
   /// @return ローテーションすべきかどうか
   bool should_rotate_(const time_point_t& will_rotate_at) const
   {
-    return chrono_ext::is_unit_time_changed<TimeUnit>(opened_at_,
-                                                      will_rotate_at);
+    return ext::chrono::is_unit_time_changed<TimeUnit>(opened_at_,
+                                                       will_rotate_at);
   }
 
 private:

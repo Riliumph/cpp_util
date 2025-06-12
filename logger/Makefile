@@ -16,6 +16,7 @@ LDFLAGS+= -L./lib
 LDLIBS  = -lstdc++
 LDLIBS += -lspdlog
 LDLIBS += -lfmt
+LDLIBS += -lstd_ext
 # include setting
 INCLUDE = -I$(SRC_ROOT)/
 EXCLUDE = .git%
