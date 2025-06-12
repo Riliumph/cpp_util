@@ -1,4 +1,0 @@
-#ifndef INCLUDE_CHRONO_EXT_FMT_HPP
-#define INCLUDE_CHRONO_EXT_FMT_HPP
-#include "format.hpp"
-#endif // INCLUDE_CHRONO_EXT_FMT_HPP
