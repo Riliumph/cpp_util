@@ -1,5 +1,6 @@
 #include "check.hpp"
 
+namespace std_ext {
 namespace endian {
 bool
 IsLittle()
@@ -13,4 +14,5 @@ IsLittle()
   return *reinterpret_cast<char*>(&t) == 1;
 #endif
 }
-}
+} // namespace endian
+} // namespace std_ext

@@ -1,9 +1,12 @@
-#include "endian.hpp"
+#include "reverse.hpp"
 // STL
 #include <string>
 // 3rd
 #include <gtest/gtest.h>
+// std_ext
+#include "check.hpp"
 
+namespace std_ext {
 namespace endian {
 TEST(little_to_big, byte4)
 {
@@ -86,3 +89,4 @@ TEST(little_to_big, byte8)
   }
 }
 } // namespace endian
+} // namespace std_ext

@@ -9,6 +9,7 @@ using namespace std::literals::string_literals;
 int
 main(void)
 {
+  // variant
   std_ext::table<int, double, std::string> a = { {
                                                    { "id", 1 },
                                                    { "name", "foo" },
@@ -30,6 +31,22 @@ main(void)
 
   a[0]["id"] = a[0]["id"] * 2;
   std::cout << a[0]["id"] << std::endl;
+  // bit
+  std_ext::bit::bytes b;
+  b.byte4 = 0x12345678;
+  std::cout << b.byte4 << std::endl;
+  std::cout << b << std::endl;
 
+  b.byte4 = 0;
+  b.byte1[0] = 'a'; // 61
+  b.byte1[1] = 'A'; // 41
+  std::cout << b.byte4 << std::endl;
+  std::cout << b << std::endl;
+
+  b.byte4 = 0;
+  b.byte1[0] = 0xff; // 61
+  b.byte1[1] = 0xdd; // 41
+  std::cout << b.byte4 << std::endl;
+  std::cout << b << std::endl;
   return 0;
 }

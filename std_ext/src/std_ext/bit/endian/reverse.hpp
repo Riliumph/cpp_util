@@ -1,10 +1,10 @@
-#ifndef INCLUDE_ENDIAN_REVERSE_HPP
-#define INCLUDE_ENDIAN_REVERSE_HPP
+#ifndef INCLUDED_STD_EXT_BIT_ENDIAN_REVERSE_HPP
+#define INCLUDED_STD_EXT_BIT_ENDIAN_REVERSE_HPP
 #include <algorithm>
 #include <type_traits>
 
+namespace std_ext {
 namespace endian {
-
 extern void* enabler;
 
 template<bool B, typename T = void>
@@ -30,6 +30,6 @@ Reverse(T value)
   std::reverse(begin, end);
   return value;
 }
-
-}
-#endif // INCLUDE_ENDIAN_REVERSE_HPP
+} // namespace endian
+} // namespace std_ext
+#endif // INCLUDED_STD_EXT_BIT_ENDIAN_REVERSE_HPP

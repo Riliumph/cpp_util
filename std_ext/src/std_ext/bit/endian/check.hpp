@@ -1,6 +1,7 @@
-#ifndef INCLUDE_ENDIAN_CHECK_HPP
-#define INCLUDE_ENDIAN_CHECK_HPP
+#ifndef INCLUDED_STD_EXT_BIT_ENDIAN_CHECK_HPP
+#define INCLUDED_STD_EXT_BIT_ENDIAN_CHECK_HPP
 
+namespace std_ext {
 namespace endian {
 
 /// @brief Machine's endian checker
@@ -9,5 +10,6 @@ namespace endian {
 /// @return true LITTLE, false maybe BIG
 bool
 IsLittle();
-}
-#endif // INCLUDE_ENDIAN_HPP
+} // namespace endian
+} // namespace std_ext
+#endif // INCLUDED_STD_EXT_BIT_ENDIAN_CHECK_HPP

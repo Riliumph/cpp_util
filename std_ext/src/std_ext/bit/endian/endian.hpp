@@ -1,0 +1,5 @@
+#ifndef INCLUDED_STD_EXT_BIT_ENDIAN_ENDIAN_HPP
+#define INCLUDED_STD_EXT_BIT_ENDIAN_ENDIAN_HPP
+#include "check.hpp"
+#include "reverse.hpp"
+#endif // INCLUDED_STD_EXT_BIT_ENDIAN_ENDIAN_HPP
