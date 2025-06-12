@@ -1,14 +1,14 @@
-#ifndef INCLUDE_CHRONO_EXT_CHRONO_SLEEP_FRAME_SLEEP_HPP
-#define INCLUDE_CHRONO_EXT_CHRONO_SLEEP_FRAME_SLEEP_HPP
+#ifndef INCLUDED_STD_EXT_CHRONO_SLEEP_FRAME_SLEEP_HPP
+#define INCLUDED_STD_EXT_CHRONO_SLEEP_FRAME_SLEEP_HPP
 // STL
-#include <chrono>
 #include <functional>
 #include <thread>
-#include <type_traits>
-// chrono_ext
-#include "chrono_ext/chrono/math/math.hpp"
+// std_ext
+#include "std_ext/chrono/core/core.hpp"
+#include "std_ext/chrono/math/math.hpp"
 
-namespace chrono_ext {
+namespace std_ext {
+namespace chrono {
 /// @brief Hz駆動して余剰時間を待機する関数
 /// @tparam TimeUnit 採用する時間単位
 /// @tparam Hz 秒間の駆動回数を指定する
@@ -52,5 +52,6 @@ drive_and_sleep(std::function<void()> fn)
   auto sleep_time = sleep<Hz, TimeUnit>(start, end);
   return sleep_time;
 }
-} // namespace chrono_ext
-#endif // INCLUDE_CHRONO_EXT_CHRONO_SLEEP_FRAME_SLEEP_HPP
+} // namespace chrono
+} // namespace std_ext
+#endif // INCLUDED_STD_EXT_CHRONO_SLEEP_FRAME_SLEEP_HPP

@@ -1,13 +1,11 @@
-#ifndef INCLUDE_CHRONO_EXT_MATH_MATH_HPP
-#define INCLUDE_CHRONO_EXT_MATH_MATH_HPP
-#include <chrono>
+#ifndef INCLUDED_STD_EXT_CHRONO_MATH_MATH_HPP
+#define INCLUDED_STD_EXT_CHRONO_MATH_MATH_HPP
 #include <cmath>
-#if defined(PRINT_IN_TESTING)
-#include "chrono_ext/chrono/core/core.hpp"
-#include "chrono_ext/fmt/fmt.hpp"
-#endif
+// std_ext
+#include "std_ext/chrono/core/core.hpp"
 
-namespace chrono_ext {
+namespace std_ext {
+namespace chrono {
 /// @brief 単位時間の桁数を計算する関数
 /// @tparam TimeUnit 単位時間
 /// @return 単位時間の桁数
@@ -70,5 +68,6 @@ is_unit_time_changed(std::chrono::system_clock::time_point start,
 #endif
   return floored_start < floored_end;
 }
-} // namespace chrono_ext
-#endif // INCLUDE_CHRONO_EXT_MATH_MATH_HPP
+} // namespace chrono
+} // namespace std_ext
+#endif // INCLUDED_STD_EXT_CHRONO_MATH_MATH_HPP

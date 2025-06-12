@@ -3,12 +3,11 @@
 #include <ctime>
 // 3rd
 #include <gtest/gtest.h>
-// original
-#include "chrono_etc/chrono/core/core.hpp"
 
 using namespace std::chrono;
 using namespace std::literals::chrono_literals;
-
+namespace std_ext {
+namespace chrono {
 TEST(sleep, fps60_msec)
 {
   struct TestData
@@ -95,3 +94,5 @@ TEST(sleep, fps60_usec)
     EXPECT_EQ(t.expected.slept_time, actual);
   }
 }
+} // namespace chrono
+} // namespace std_ext

@@ -3,19 +3,19 @@
 #include <ctime>
 // 3rd
 #include <gtest/gtest.h>
-// original
-#include "type.hpp"
 
-using namespace std::chrono;
+namespace std_ext {
+namespace chrono {
 using namespace std::literals::chrono_literals;
+using tp = std::chrono::system_clock::time_point;
 
 TEST(flexible_sleep, msec)
 {
   struct TestData
   {
     msecs sleep_time;
-    system_clock::time_point start;
-    system_clock::time_point end;
+    tp start;
+    tp end;
   };
   struct TestResult
   {
@@ -28,7 +28,7 @@ TEST(flexible_sleep, msec)
     struct TestResult expected;
   };
 
-  auto now = time_point_cast<usecs>(system_clock::now());
+  auto now = time_point_cast<usecs>(std::chrono::system_clock::now());
   struct TestSet tt[] = {
     { "待機するケース", { 80ms, now, now + 10ms }, { 70ms } },
     { "待機しないケース", { 80ms, now, now + 100ms }, { -20ms } },
@@ -38,3 +38,5 @@ TEST(flexible_sleep, msec)
     EXPECT_EQ(t.expected.slept_time, actual);
   }
 }
+} // namespace chrono
+} // namespace std_ext

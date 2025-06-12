@@ -3,12 +3,12 @@
 #include <cmath>
 #include <ctime>
 #include <iostream>
-// original
-#include "chrono_ext/chrono/core/core.hpp"
-#include "chrono_ext/io/operator_io.hpp"
+// std_ext
+#include "std_ext/chrono/core/core.hpp"
 
 using namespace std::literals::chrono_literals;
-namespace chrono_ext {
+namespace std_ext {
+namespace chrono {
 /// @brief hh:mm:nのタイミングでスリープを解除する関数
 /// こんな無駄なスリープ機能意味あるのか？
 /// 端的に言って、Linuxのcronを使え。
@@ -32,4 +32,5 @@ cron_sleep(double n)
   std::cout << std::chrono::system_clock::now();
   return sleep_time;
 }
-}
+} // namespace chrono
+} // namespace std_ext

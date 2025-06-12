@@ -1,19 +1,24 @@
-#ifndef INCLUDE_CHRONO_EXT_IO_OPERATOR_IO_HPP
-#define INCLUDE_CHRONO_EXT_IO_OPERATOR_IO_HPP
+#ifndef INCLUDED_STD_EXT_CHRONO_CORE_OPERATOR_IO_HPP
+#define INCLUDED_STD_EXT_CHRONO_CORE_OPERATOR_IO_HPP
 // STL
-#include <chrono>
 #include <ostream>
-// original
-#include "chrono_ext/chrono/core/core.hpp"
+// std_ext
+#include "type.hpp"
 
 std::ostream&
 operator<<(std::ostream&, const std::chrono::system_clock::time_point&);
 
+/// @brief duractionの出力演算子
+/// @tparam Rep 値の型
+/// @tparam Period 時間の単位を表す比率型
+/// @param os 出力ストリーム
+/// @param lv 値
+/// @return 出力ストリーム
 template<typename Rep, typename Period>
 std::ostream&
 operator<<(std::ostream& os, const std::chrono::duration<Rep, Period>& lv)
 {
-  using namespace chrono_ext;
+  using namespace std_ext::chrono;
   if constexpr (std::ratio_equal_v<Period, nsecs::period>) {
     os << lv.count() << "ns";
   } else if constexpr (std::ratio_equal_v<Period, usecs::period>) {
@@ -31,4 +36,4 @@ operator<<(std::ostream& os, const std::chrono::duration<Rep, Period>& lv)
   }
   return os;
 }
-#endif // INCLUDE_CHRONO_EXT_IO_OPERATOR_IO_HPP
+#endif // INCLUDED_STD_EXT_CHRONO_CORE_OPERATOR_IO_HPP

@@ -1,12 +1,14 @@
-#ifndef INCLUDE_CHRONO_EXT_CHRONO_SLEEP_SLEEP_HPP
-#define INCLUDE_CHRONO_EXT_CHRONO_SLEEP_SLEEP_HPP
+#ifndef INCLUDED_STD_EXT_CHRONO_CHRONO_SLEEP_SLEEP_HPP
+#define INCLUDED_STD_EXT_CHRONO_CHRONO_SLEEP_SLEEP_HPP
 // STL
 #include <chrono>
 #include <functional>
 #include <thread>
-#include <type_traits>
+// std_ext
+#include "std_ext/chrono/core/core.hpp"
 
-namespace chrono_ext {
+namespace std_ext {
+namespace chrono {
 std::chrono::seconds
 cron_sleep(double);
 
@@ -51,5 +53,6 @@ flexible_sleep(TimeUnit drive_time, std::function<void()> fn)
   auto sleep_time = flexible_sleep(drive_time, start, end);
   return sleep_time;
 }
-} // namespace chrono_ext
-#endif // INCLUDE_CHRONO_EXT_CHRONO_SLEEP_SLEEP_HPP
+} // namespace chrono
+} // namespace std_ext
+#endif // INCLUDED_STD_EXT_CHRONO_CHRONO_SLEEP_SLEEP_HPP

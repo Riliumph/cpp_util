@@ -1,12 +1,13 @@
 #include "math.hpp"
 // 3rd
 #include <gtest/gtest.h>
-// original
-#include "type.hpp"
+// std_ext
+#include "std_ext/chrono/core/core.hpp"
 
 using namespace std::chrono;
 using namespace std::literals::chrono_literals;
-
+namespace std_ext {
+namespace chrono {
 TEST(calc_digit, msec)
 {
   struct TestData
@@ -184,3 +185,5 @@ TEST(is_unit_time_changed, minute)
     EXPECT_EQ(t.expected.elapsed, actual);
   }
 }
+} // namespace chrono
+} // namespace std_ext
