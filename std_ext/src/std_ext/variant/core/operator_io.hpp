@@ -1,5 +1,5 @@
-#ifndef INCLUDE_VALIANT_OPERATOR_IO_HPP
-#define INCLUDE_VALIANT_OPERATOR_IO_HPP
+#ifndef INCLUDED_STD_EXT_VARIANT_CORE_OPERATOR_IO_HPP
+#define INCLUDED_STD_EXT_VARIANT_CORE_OPERATOR_IO_HPP
 // STL
 #include <ostream>
 #include <variant>
@@ -24,4 +24,4 @@ operator<<(std::ostream& os, const std::variant<T0, Ts...>& lv)
     lv);
   return os;
 }
-#endif // INCLUDE_VALIANT_OPERATOR_IO_HPP
+#endif // INCLUDED_STD_EXT_VARIANT_CORE_OPERATOR_IO_HPP

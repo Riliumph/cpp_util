@@ -2,7 +2,7 @@
 #include <string>
 // 3rd
 #include <gtest/gtest.h>
-// original
+// std_ext
 #include "operator.hpp"
 
 using namespace std::literals::string_literals;

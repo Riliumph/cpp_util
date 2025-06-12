@@ -2,21 +2,21 @@
 #include <iostream>
 #include <string>
 // original
-#include "variant/variant.hpp"
+#include "std_ext/std_ext.hpp"
 
 using namespace std::literals::string_literals;
 
 int
 main(void)
 {
-  table<int, double, std::string> a = { {
-                                          { "id", 1 },
-                                          { "name", "foo" },
-                                        },
-                                        {
-                                          { "id", 2 },
-                                          { "name", "bar" },
-                                        } };
+  std_ext::table<int, double, std::string> a = { {
+                                                   { "id", 1 },
+                                                   { "name", "foo" },
+                                                 },
+                                                 {
+                                                   { "id", 2 },
+                                                   { "name", "bar" },
+                                                 } };
 
   // std::variantはboost::variantと違ってストリーム演算子が無いので定義
   std::cout << "print all data" << std::endl;
