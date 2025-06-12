@@ -2,6 +2,8 @@
 // GoogleTest
 #include <gtest/gtest.h>
 
+namespace std_ext {
+namespace set {
 TEST(set_difference_by_regex, Test)
 {
   struct TestData
@@ -67,3 +69,5 @@ TEST(set_difference_by_regex, Test)
     EXPECT_EQ(t.expected.missing_key, actual);
   }
 }
+} // namespace set
+} // namespace std_ext

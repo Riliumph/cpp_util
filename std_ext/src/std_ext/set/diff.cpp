@@ -2,6 +2,8 @@
 // STL
 #include <regex>
 
+namespace std_ext {
+namespace set {
 /// @brief 文字列集合から正規表現で差集合を取る。
 /// 対象の集合から必要な集合が存在するかどうかを判定する。
 /// 対称差集合ではない。
@@ -30,3 +32,5 @@ set_difference_by_regex(const std::set<std::string>& required_patterns,
   }
   return missing_keys;
 }
+} // namespace set
+} // namespace std_ext
