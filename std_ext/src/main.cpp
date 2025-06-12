@@ -48,5 +48,33 @@ main(void)
   b.byte1[1] = 0xdd; // 41
   std::cout << b.byte4 << std::endl;
   std::cout << b << std::endl;
+
+  // enum
+  enum struct COLOR
+  {
+    RED,
+    BLUE,
+    GREEN,
+    QTY
+  };
+
+  COLOR colors[e_cast(COLOR::QTY)] = { COLOR::RED, COLOR::BLUE, COLOR::GREEN };
+
+  for (auto color : colors) {
+    switch (color) {
+      case COLOR::RED:
+        std::cout << "RED" << std::endl;
+        break;
+      case COLOR::BLUE:
+        std::cout << "BLUE" << std::endl;
+        break;
+      case COLOR::GREEN:
+        std::cout << "GREEN" << std::endl;
+        break;
+      default:
+        std::cout << "UNDEFINED" << std::endl;
+        break;
+    }
+  }
   return 0;
 }
