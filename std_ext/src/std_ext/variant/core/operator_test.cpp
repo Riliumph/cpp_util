@@ -18,6 +18,10 @@ TEST(variant, operator_equal_primitive)
 
 TEST(variant, operator_equal_composite)
 {
+  // std::literals::string_literals;を使うことで
+  // 長い条件式の`std::get<std::string>(v) == "foo"`を
+  // 短い条件式の`v == "foo"s`で描けるようになる
+  // `v == "foo"`は右辺値がconst char*型であるため、正しく型演算されない
   std::variant<std::string> v = "foo";
   auto result2 = v == "foo"s;
   EXPECT_TRUE(result2);
