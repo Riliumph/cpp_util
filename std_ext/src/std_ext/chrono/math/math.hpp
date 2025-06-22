@@ -9,10 +9,8 @@ namespace chrono {
 /// @brief 単位時間の桁数を計算する関数
 /// @tparam TimeUnit 単位時間
 /// @return 単位時間の桁数
-template<
-  typename TimeUnit,
-  typename = typename std_ext::chrono::enable_if_chrono_duration_t<TimeUnit>>
-int
+template<typename TimeUnit>
+std_ext::chrono::enable_if_chrono_duration_t<TimeUnit, int>
 calc_digit()
 {
   constexpr auto denom = TimeUnit::period::den;
@@ -32,7 +30,7 @@ calc_digit()
 /// @tparam TimeUnit 演算粒度
 /// @return
 template<uint32_t Hz, typename TimeUnit>
-constexpr int
+constexpr std_ext::chrono::enable_if_chrono_duration_t<TimeUnit, int>
 time_per_period()
 {
   auto one_sec = std::chrono::seconds(1);
@@ -49,10 +47,8 @@ time_per_period()
 /// @param start 開始時刻
 /// @param end 終了時刻
 /// @return 変化の有無
-template<
-  typename TimeUnit,
-  typename = typename std_ext::chrono::enable_if_chrono_duration_t<TimeUnit>>
-bool
+template<typename TimeUnit>
+std_ext::chrono::enable_if_chrono_duration_t<TimeUnit, bool>
 is_unit_time_changed(std::chrono::system_clock::time_point start,
                      std::chrono::system_clock::time_point end)
 {
