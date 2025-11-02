@@ -14,10 +14,8 @@ namespace chrono {
 /// @tparam TimeUnit 計算したい時間の単位（デフォルトは秒）
 /// @param tp 特定の時間
 /// @return ISO8601形式の文字列
-template<
-  typename TimeUnit = std::chrono::seconds,
-  typename = typename std_ext::chrono::enable_if_chrono_duration_t<TimeUnit>>
-std::string
+template<typename TimeUnit = std::chrono::seconds>
+std_ext::chrono::enable_if_chrono_duration_t<TimeUnit, std::string>
 to_iso8601(std::chrono::system_clock::time_point tp)
 {
   static constexpr const char* const fmt = "%Y-%m-%dT%H:%M:%S";

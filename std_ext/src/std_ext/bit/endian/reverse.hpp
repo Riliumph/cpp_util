@@ -5,11 +5,6 @@
 
 namespace std_ext {
 namespace endian {
-extern void* enabler;
-
-template<bool B, typename T = void>
-using enabler_if = typename std::enable_if<B, T>::type*&;
-
 /// @brief Reverse endian (big<->little)
 /// little endian variable changes big endian
 /// big endian variable changes little endian
@@ -19,12 +14,12 @@ using enabler_if = typename std::enable_if<B, T>::type*&;
 /// @tparam is not pointer
 /// @param value [i] Convert the target
 /// @return trans endian value
-template<typename T,
-         enabler_if<std::is_scalar<T>::value> = enabler,
-         enabler_if<!std::is_pointer<T>::value> = enabler>
+template<typename T>
 T
 Reverse(T value)
 {
+  static_assert(std::is_scalar_v<T>, "T must be scalar");
+  static_assert(!std::is_pointer_v<T>, "T must not be pointer");
   auto* begin = reinterpret_cast<char*>(&value);
   auto* end = begin + sizeof(T);
   std::reverse(begin, end);

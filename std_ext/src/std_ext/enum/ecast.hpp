@@ -2,7 +2,7 @@
 #define INCLUDED_STD_EXT_ENUM_ECAST_HPP
 // STL
 #include <type_traits>
-
+namespace std_ext {
 /// @brief 長いunderlying_typeを省略するためのエイリアス
 /// @tparam E 列挙型
 /// @param e 列挙型の値
@@ -13,4 +13,5 @@ e_cast(E e) -> typename std::underlying_type<E>::type
 {
   return static_cast<typename std::underlying_type<E>::type>(e);
 }
+} // namespace std_ext
 #endif // INCLUDED_STD_EXT_ENUM_ECAST_HPP
