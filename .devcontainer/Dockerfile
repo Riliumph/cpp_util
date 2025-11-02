@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/cpp:debian
+FROM mcr.microsoft.com/devcontainers/cpp:debian-12
 
 RUN echo "INSTALL UTILITIES"
 RUN apt-get update -qq \
@@ -22,7 +22,7 @@ RUN echo "INSTALL C++ TOOLS"
 RUN apt-get update -qq \
     && DEBIAN_FRONTEND=noninteractive apt-get install -qq --no-install-recommends -y\
     # c++ libraries
-    libboost1.81-all-dev\
+    libboost-all-dev\
     libgtest-dev\
     libpqxx-dev\
     nlohmann-json3-dev\
@@ -34,7 +34,7 @@ RUN apt-get update -qq \
     # static analysis
     cppcheck\
     clang-tidy\
-    bear\
+    # bear\
     && apt-get clean\
     && rm -rf /var/lib/apt/lists/*
 
