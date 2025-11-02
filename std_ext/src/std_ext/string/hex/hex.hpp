@@ -1,6 +1,6 @@
-#ifndef INCLUDE_HEX_HPP
-#define INCLUDE_HEX_HPP
-
+#ifndef INCLUDED_STD_EXT_STRING_HEX_HEX_HPP
+#define INCLUDED_STD_EXT_STRING_HEX_HEX_HPP
+// STL
 #include <sstream>
 
 template<typename T>
@@ -14,4 +14,4 @@ HexTo(const std::string& s)
   return value;
 }
 
-#endif // INCLUDE_HEX_HPP
+#endif // INCLUDED_STD_EXT_STRING_HEX_HEX_HPP

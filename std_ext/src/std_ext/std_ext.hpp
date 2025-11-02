@@ -5,5 +5,6 @@
 #include "enum/enum.hpp"
 #include "range/range.hpp"
 #include "set/set.hpp"
+#include "string/string.hpp"
 #include "variant/variant.hpp"
 #endif // INCLUDED_STD_EXT_STD_EXT_HPP
