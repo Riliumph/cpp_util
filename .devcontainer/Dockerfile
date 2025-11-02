@@ -1,3 +1,8 @@
+FROM debian:12-slim AS hadolint
+ARG HADOLINT_URL
+RUN apt-get update -qq && apt-get install -y wget && \
+    wget -q -O /hadolint ${HADOLINT_URL} --no-check-certificate
+
 FROM mcr.microsoft.com/devcontainers/cpp:debian-12
 
 RUN echo "INSTALL UTILITIES"
@@ -39,9 +44,7 @@ RUN apt-get update -qq \
     && rm -rf /var/lib/apt/lists/*
 
 # hadolint for docker
-ARG HADOLINT_URL
-RUN wget -q -O /usr/local/bin/hadolint ${HADOLINT_URL} --no-check-certificate\
-    && chmod +x /usr/local/bin/hadolint
+COPY --from=hadolint /hadolint /usr/local/bin/hadolint
 
 WORKDIR /usr/share/doc/git/contrib/diff-highlight
 RUN make\
