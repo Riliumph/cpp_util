@@ -1,0 +1,5 @@
+#ifndef INCLUDED_STD_EXT_SINGLETON_SINGLETON_HPP
+#define INCLUDED_STD_EXT_SINGLETON_SINGLETON_HPP
+#include "finalizer.hpp"
+#include "initializer.hpp"
+#endif // INCLUDED_STD_EXT_SINGLETON_SINGLETON_HPP

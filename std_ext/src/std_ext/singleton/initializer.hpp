@@ -1,5 +1,5 @@
-#ifndef INCLUDE_SINGLETON_INITIALIZER_HPP
-#define INCLUDE_SINGLETON_INITIALIZER_HPP
+#ifndef INCLUDED_STD_EXT_SINGLETON_INITIALIZER_HPP
+#define INCLUDED_STD_EXT_SINGLETON_INITIALIZER_HPP
 // STL
 #include <cassert>
 #include <memory>
@@ -7,6 +7,7 @@
 // singleton
 #include "finalizer.hpp"
 
+namespace std_ext {
 namespace singleton {
 /// @brief シングルトンを作るクラス
 /// @tparam T 作りたい型
@@ -41,5 +42,6 @@ private:
   static inline std::once_flag is_initialized;
   static inline std::unique_ptr<T> instance;
 };
-}
-#endif // INCLUDE_SINGLETON_INITIALIZER_HPP
+} // namespace singleton
+} // namespace std_ext
+#endif // INCLUDED_STD_EXT_SINGLETON_INITIALIZER_HPP

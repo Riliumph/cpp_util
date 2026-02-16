@@ -2,6 +2,8 @@
 // 3rd
 #include <gtest/gtest.h>
 
+namespace std_ext {
+namespace singleton {
 TEST(singleton, rewrite)
 {
   struct TestData
@@ -46,3 +48,5 @@ TEST(singleton, rewrite)
     EXPECT_EQ(t.expected.data, new_v);
   }
 }
+} // namespace singleton
+} // namespace std_ext
