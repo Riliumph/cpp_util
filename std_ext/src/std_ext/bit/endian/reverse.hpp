@@ -18,8 +18,12 @@ template<typename T>
 T
 Reverse(T value)
 {
+  static_assert(!std::is_const_v<T>, "T must not be const");
+  static_assert(!std::is_volatile_v<T>, "T must not be volatile");
   static_assert(std::is_scalar_v<T>, "T must be scalar");
   static_assert(!std::is_pointer_v<T>, "T must not be pointer");
+  static_assert(std::is_trivially_copyable_v<T>, "T must be supported memcpy");
+
   auto* begin = reinterpret_cast<char*>(&value);
   auto* end = begin + sizeof(T);
   std::reverse(begin, end);
