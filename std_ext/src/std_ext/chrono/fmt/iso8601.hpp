@@ -19,7 +19,7 @@ std_ext::chrono::enable_if_chrono_duration_t<TimeUnit, std::string>
 to_iso8601(std::chrono::system_clock::time_point tp)
 {
   static constexpr const char* const fmt = "%Y-%m-%dT%H:%M:%S";
-  auto digits = calc_digit<TimeUnit>();
+  auto digits = fractional_digits<TimeUnit>();
 
   // 秒数以下の数値を取得
   auto duration = tp.time_since_epoch();

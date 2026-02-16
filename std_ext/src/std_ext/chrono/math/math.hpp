@@ -11,18 +11,20 @@ namespace chrono {
 /// @return 単位時間の桁数
 template<typename TimeUnit>
 std_ext::chrono::enable_if_chrono_duration_t<TimeUnit, int>
-calc_digit()
+fractional_digits()
 {
-  constexpr auto denom = TimeUnit::period::den;
-  constexpr auto num = TimeUnit::period::num;
+  constexpr auto num = TimeUnit::period::num;   // e.g. ms=1
+  constexpr auto denom = TimeUnit::period::den; // e.g. ms=1000
 
   // 秒より細かい単位（分母が1より大きい）だけ処理
-  if constexpr (denom <= num) {
+  constexpr auto is_subsecond = (num <= denom);
+  if constexpr (!is_subsecond) {
     return 0;
   }
 
-  return static_cast<int>(
-    std::ceil(std::log10(denom / static_cast<double>(num))));
+  constexpr auto scale = static_cast<double>(denom) / static_cast<double>(num);
+  constexpr auto digit = std::log10(scale);
+  return static_cast<int>(std::ceil(digit));
 }
 
 /// @brief 周波数から1周期にかかる時間を求める関数

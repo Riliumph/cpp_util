@@ -8,7 +8,7 @@ using namespace std::chrono;
 using namespace std::literals::chrono_literals;
 namespace std_ext {
 namespace chrono {
-TEST(calc_digit, msec)
+TEST(fractional_digits, msec)
 {
   struct TestData
   {};
@@ -27,12 +27,12 @@ TEST(calc_digit, msec)
     { "ミリ秒の桁数", {}, { 3 } },
   };
   for (const auto& t : tt) {
-    auto actual = calc_digit<msecs>();
+    auto actual = fractional_digits<msecs>();
     EXPECT_EQ(t.expected.digit, actual);
   }
 }
 
-TEST(calc_digit, usec)
+TEST(fractional_digits, usec)
 {
   struct TestData
   {};
@@ -51,12 +51,12 @@ TEST(calc_digit, usec)
     { "マイクロ秒の桁数", {}, { 6 } },
   };
   for (const auto& t : tt) {
-    auto actual = calc_digit<usecs>();
+    auto actual = fractional_digits<usecs>();
     EXPECT_EQ(t.expected.digit, actual);
   }
 }
 
-TEST(calc_digit, nsec)
+TEST(fractional_digits, nsec)
 {
   struct TestData
   {};
@@ -75,7 +75,7 @@ TEST(calc_digit, nsec)
     { "ナノ秒の桁数", {}, { 9 } },
   };
   for (const auto& t : tt) {
-    auto actual = calc_digit<nsecs>();
+    auto actual = fractional_digits<nsecs>();
     EXPECT_EQ(t.expected.digit, actual);
   }
 }
