@@ -8,7 +8,7 @@
 namespace std_ext {
 namespace range {
 /// @brief std::find_ifのラッパー関数
-/// @details contaienr.begin()と書くのが面倒なので定義
+/// @details container.begin()と書くのが面倒なので定義
 /// @tparam Container コンテナ型
 /// @tparam Predicate
 /// @param c コンテナ型の転送参照（&&のこと）
