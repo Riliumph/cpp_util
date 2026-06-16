@@ -3,58 +3,23 @@
 {
 	"name": "C++",
 	"build": {
-		"dockerfile": "Dockerfile",
-		"args": {
-			"HADOLINT_URL": "https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64"
-		}
+		"dockerfile": "Dockerfile"
 	},
-	"runArgs": [
-		"--hostname",
-		"dev-container"
-	],
-	"workspaceFolder": "/${localWorkspaceFolderBasename}",
-	"workspaceMount": "source=${localWorkspaceFolder},target=/${localWorkspaceFolderBasename},type=bind",
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
 			"moby": false, // The 'moby' option is not supported on Debian 'trixie'
-			"version": "latest"
+			"installDockerBuildx": true,
+			"version": "latest",
+			"dockerDashComposeVersion": "latest"
 		}
-	},
+	}
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [
-		5432
-	],
+	// "forwardPorts": [],
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"onCreateCommand": [
-		"/${localWorkspaceFolderBasename}/.devcontainer/make_completion.sh"
-	],
-	"postCreateCommand": [],
+	// "postCreateCommand": "gcc -v",
 	// Configure tool-specific properties.
-	"customizations": {
-		"vscode": {
-			"settings": {
-				"terminal.integrated.shell.linux": "/bin/bash",
-				"extensions.verifySignature": false
-			},
-			"extensions": [
-				"ms-vscode.cpptools-extension-pack",
-				"ms-vscode.makefile-tools",
-				"DavidSchuldenfrei.gtest-adapter",
-				"streetsidesoftware.code-spell-checker",
-				"ms-azuretools.vscode-docker",
-				"exiasr.hadolint",
-				"ionutvmi.path-autocomplete",
-				"shardulm94.trailing-spaces",
-				"DavidAnson.vscode-markdownlint",
-				"richie5um2.vscode-sort-json",
-				"adpyke.vscode-sql-formatter",
-				"eamodio.gitlens",
-				"mhutchie.git-graph",
-				"donjayamanne.githistory"
-			]
-		}
-	},
+	// "customizations": {},
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	"remoteUser": "vscode"
+	// "remoteUser": "root"
 }
