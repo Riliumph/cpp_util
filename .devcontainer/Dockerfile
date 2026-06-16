@@ -1,7 +1,7 @@
 FROM debian:12-slim AS hadolint
 ARG HADOLINT_URL
 RUN apt-get update -qq && apt-get install -y wget && \
-    wget -q -O /hadolint ${HADOLINT_URL} --no-check-certificate
+    wget -q -O /hadolint ${HADOLINT_URL}
 
 FROM mcr.microsoft.com/devcontainers/cpp:2-debian12
 
