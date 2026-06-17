@@ -3,6 +3,12 @@ ARG HADOLINT_URL
 RUN apt-get update -qq && apt-get install -y wget && \
     wget -q -O /hadolint ${HADOLINT_URL}
 
+FROM mcr.microsoft.com/devcontainers/base:2-debian12 AS git
+WORKDIR /usr/share/doc/git/contrib/diff-highlight
+RUN make
+# && chmod o+x diff-highlight\
+# && ln -s /usr/share/doc/git/contrib/diff-highlight/diff-highlight /usr/local/bin
+
 FROM mcr.microsoft.com/devcontainers/cpp:2-debian12
 
 ARG REINSTALL_CMAKE_VERSION_FROM_SOURCE="none"
@@ -52,8 +58,5 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 
 # hadolint for docker
 COPY --from=hadolint /hadolint /usr/local/bin/hadolint
-
-WORKDIR /usr/share/doc/git/contrib/diff-highlight
-RUN make\
-    && chmod o+x diff-highlight\
-    && ln -s /usr/share/doc/git/contrib/diff-highlight/diff-highlight /usr/local/bin
+# git
+COPY --from=git /usr/share/doc/git/contrib/diff-highlight/diff-highlight /usr/local/bin/diff-highlight
