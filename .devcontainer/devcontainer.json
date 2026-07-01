@@ -12,8 +12,12 @@
 		"--hostname",
 		"dev-container"
 	],
-	"workspaceFolder": "/${localWorkspaceFolderBasename}",
-	"workspaceMount": "source=${localWorkspaceFolder},target=/${localWorkspaceFolderBasename},type=bind",
+	"mounts":[
+		"source=${localEnv:HOME}/.gitconfig,target=/home/vscode/.gitconfig,type=bind"
+	],
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	// ${containerWorkspaceFolder}でworkspaceFolderを参照できるらしい。バグの可能性もあるので、workspaceFolderと同じ書式の方が良いかもしれない
+	"workspaceMount": "source=${localWorkspaceFolder},target=${containerWorkspaceFolder},type=bind",
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
 		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
@@ -28,7 +32,7 @@
 	],
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"onCreateCommand": [
-		"/${localWorkspaceFolderBasename}/.devcontainer/make_completion.sh"
+		"/${containerWorkspaceFolder}/.devcontainer/make_completion.sh"
 	],
 	"postCreateCommand": [],
 	// Configure tool-specific properties.
