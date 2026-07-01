@@ -1,7 +1,10 @@
-FROM debian:12-slim AS hadolint
+FROM mcr.microsoft.com/devcontainers/base:2-debian12 AS toolchain
+# hadolint
 ARG HADOLINT_URL
-RUN apt-get update -qq && apt-get install -y wget && \
-    wget -q -O /hadolint ${HADOLINT_URL} --no-check-certificate
+RUN wget -q -O /usr/local/bin/hadolint ${HADOLINT_URL} --no-check-certificate && chmod +x /usr/local/bin/hadolint
+# diff-highlight
+WORKDIR /usr/share/doc/git/contrib/diff-highlight
+RUN make
 
 FROM mcr.microsoft.com/devcontainers/cpp:debian-12
 
@@ -44,10 +47,7 @@ RUN apt-get update -qq \
     && rm -rf /var/lib/apt/lists/*
 
 # hadolint for docker
-COPY --from=hadolint /hadolint /usr/local/bin/hadolint
-
-WORKDIR /usr/share/doc/git/contrib/diff-highlight
-RUN make\
-    && chmod o+x diff-highlight\
-    && ln -s /usr/share/doc/git/contrib/diff-highlight/diff-highlight /usr/local/bin
+COPY --from=toolchain /usr/local/bin/hadolint /usr/local/bin/hadolint
+# diff-highlight
+COPY --from=toolchain /usr/share/doc/git/contrib/diff-highlight/diff-highlight /usr/local/bin/diff-highlight
 

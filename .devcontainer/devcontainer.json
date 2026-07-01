@@ -16,14 +16,15 @@
 	"workspaceMount": "source=${localWorkspaceFolder},target=/${localWorkspaceFolderBasename},type=bind",
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {
-			"moby": false, // The 'moby' option is not supported on Debian 'trixie'
-			"version": "latest"
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+			"version": "latest",
+			"enableNonRootDocker": "true",
+			"moby": false // The 'moby' option is not supported on Debian 'trixie'
 		}
 	},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [
-		5432
+		5432, // Postgres
 	],
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"onCreateCommand": [
