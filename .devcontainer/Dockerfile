@@ -1,13 +1,36 @@
-FROM debian:12-slim AS hadolint
-ARG HADOLINT_URL
-RUN apt-get update -qq && apt-get install -y wget && \
-    wget -q -O /hadolint ${HADOLINT_URL}
+FROM mcr.microsoft.com/devcontainers/base:2-debian12 AS toolchain
 
-FROM mcr.microsoft.com/devcontainers/base:2-debian12 AS git
+ARG DOCKER_URL="https://download.docker.com/linux/debian"
+ARG DOCKER_KEY_PATH="/etc/apt/keyrings/docker.asc"
+
+ENV DEBIAN_FRONTEND="noninteractive"
+RUN apt-get -qq update \
+    && apt-get -qq -y install --no-install-recommends \
+    ca-certificates \
+    gnupg
+RUN curl -fsSL "${DOCKER_URL}/gpg" -o "${DOCKER_KEY_PATH}"; \
+    chmod a+r "${DOCKER_KEY_PATH}"; \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=${DOCKER_KEY_PATH}] ${DOCKER_URL} $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
+    > /etc/apt/sources.list.d/docker.list;
+RUN apt-get -qq update \
+    && apt-get -qq -y install --no-install-recommends \
+    docker-ce \
+    docker-ce-cli \
+    containerd.io \
+    docker-buildx-plugin \
+    docker-compose-plugin \
+    && rm -rf /var/lib/apt/lists/*
+
+# hadolint
+ARG HADOLINT_URL="https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64"
+RUN curl -fsSL "${HADOLINT_URL}" -o /usr/local/bin/hadolint
+# diff-highlight
 WORKDIR /usr/share/doc/git/contrib/diff-highlight
 RUN make
-# && chmod o+x diff-highlight\
-# && ln -s /usr/share/doc/git/contrib/diff-highlight/diff-highlight /usr/local/bin
+# completion
+WORKDIR /etc/bash_completion.d
+RUN docker completion bash > /etc/bash_completion.d/docker
+
 
 FROM mcr.microsoft.com/devcontainers/cpp:2-debian12
 
@@ -25,7 +48,8 @@ RUN if [ "${REINSTALL_CMAKE_VERSION_FROM_SOURCE}" != "none" ]; then \
 # RUN su vscode -c "${VCPKG_ROOT}/vcpkg install <your-port-name-here>"
 
 # [Optional] Uncomment this section to install additional packages.
-RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+RUN DEBIAN_FRONTEND=noninteractive \
+    apt-get -qq update \
     && apt-get -y install --no-install-recommends \
     # c++ libraries
     libboost-all-dev\
@@ -57,6 +81,8 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && rm -rf /var/lib/apt/lists/*
 
 # hadolint for docker
-COPY --from=hadolint /hadolint /usr/local/bin/hadolint
+COPY --from=toolchain /usr/local/bin/hadolint /usr/local/bin/hadolint
 # git
-COPY --from=git /usr/share/doc/git/contrib/diff-highlight/diff-highlight /usr/local/bin/diff-highlight
+COPY --from=toolchain /usr/share/doc/git/contrib/diff-highlight/diff-highlight /usr/local/bin/diff-highlight
+# completion
+COPY --from=toolchain /etc/bash_completion.d/docker /etc/bash_completion.d/docker
