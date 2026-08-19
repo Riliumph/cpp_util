@@ -10,6 +10,10 @@
 		"--hostname",
 		"dev-container"
 	],
+	"mounts": [
+		"source=${localEnv:HOME}/.gitconfig,target=/home/vscode/.gitconfig,type=bind,consistency=cached",
+		"source=${localEnv:HOME}/.bash_history,target=/home/vscode/.bash_history,type=bind,consistency=cached",
+	],
 	"workspaceFolder": "/${localWorkspaceFolderBasename}",
 	"workspaceMount": "source=${localWorkspaceFolder},target=/${localWorkspaceFolderBasename},type=bind",
 	// Features to add to the dev container. More info: https://containers.dev/features.
