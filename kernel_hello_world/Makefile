@@ -7,23 +7,23 @@ LDFLAGS = -L/usr/local/lib
 LIBS    = -lstdc++
 
 # include setting
-INCLUDE = -I$(SRCROOT)/
+INCLUDE = -I$(SRC_ROOT)/
 EXCLUDE = .git%
 TEST_EXT= %_test.c
 
 # binary setting
-TARGET  = $(shell basename $$(pwd)).ko
-BINROOT = bin
+TARGET   = $(shell basename $$(pwd)).ko
+BIN_ROOT = bin
 
 # source setting
-SRCROOT = src
-SRCS    = $(filter-out $(EXCLUDE) $(TEST_EXT), $(shell find $(SRCROOT) -name "*.c"))
-SRCDIRS = $(dir $(SRCS))
+SRC_ROOT = src
+SRCS     = $(filter-out $(EXCLUDE) $(TEST_EXT), $(shell find $(SRC_ROOT) -name "*.c"))
+SRC_DIRS = $(dir $(SRCS))
 
 # object setting
-OBJROOT = obj
-OBJDIRS = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%, %, $(SRCDIRS)))
-OBJS    = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%.c, %.o, $(SRCS)))
+OBJ_ROOT = obj
+OBJ_DIRS = $(addprefix $(OBJ_ROOT)/, $(patsubst $(SRC_ROOT)/%, %, $(SRC_DIRS)))
+OBJS     = $(addprefix $(OBJ_ROOT)/, $(patsubst $(SRC_ROOT)/%.c, %.o, $(SRCS)))
 
 # dependency setting
 DEPS = $(OBJS:.o=.d)
@@ -36,26 +36,26 @@ all: $(OBJS) $(TARGET)
 install:
 	insmod $(TARGET)
 
-uninstsall:
+uninstall:
 	rmmod $(TARGET)
 
 $(TARGET): $(OBJS)
 	@echo "[build $< -> $@]"
-	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
-	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(LIBS)
+	@[ -d $(BIN_ROOT) ] || mkdir -p $(BIN_ROOT)
+	$(COMPILER) -o $(BIN_ROOT)/$@ $^ $(LDFLAGS) $(LIBS)
 
-$(OBJROOT)/%.o: $(SRCROOT)/%$(SRCEXT)
+$(OBJ_ROOT)/%.o: $(SRC_ROOT)/%$(SRC_EXT)
 	@echo "[build $< -> $@]"
 	@[ -d $@ ] || mkdir -p $(dir $@)
 	$(COMPILER) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
 
 analyze:
-	cppcheck --std=c++17 --enable=all $(SRCROOT)
+	cppcheck --std=c++17 --enable=all $(SRC_ROOT)
 
 fix_lib:
 	@ldconfig
 
 clean:
-	@rm -rf $(OBJROOT) $(BINROOT)
+	@rm -rf $(OBJ_ROOT) $(BIN_ROOT)
 
 -include $(DEPS)

@@ -14,7 +14,7 @@ int
 main()
 {
   using namespace std::literals::chrono_literals;
-  auto log_system = logger::AppLogger("app.log");
+  auto log_system = logger::AppLogger("logs/app.log");
   auto logger = spdlog::get("app_logger");
   APP_TRACE("msg: {}", "trace message");
   APP_DEBUG("msg: {}", "debug message");

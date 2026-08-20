@@ -7,69 +7,69 @@ LDFLAGS = -L/usr/local/lib
 LIBS    = -lstdc++ -lpthread
 
 # include setting
-INCLUDE = -I$(SRCROOT)/
+INCLUDE = -I$(SRC_ROOT)/
 EXCLUDE = .git%
 
 # binary setting
-TARGET1  = $(shell basename $$(pwd))
-TARGET2  = $(shell basename $$(pwd))_sub
-BINROOT = bin
+BIN1  = $(shell basename $$(pwd))
+BIN2  = $(shell basename $$(pwd))_sub
+BIN_ROOT = bin
 
 # source setting
-SRCROOT = src
-SRCS    = $(filter-out $(EXCLUDE) $(TEST_EXT), $(shell find $(SRCROOT) -name "*.cpp"))
-SRCDIRS = $(dir $(SRCS))
+SRC_ROOT = src
+SRCS     = $(filter-out $(EXCLUDE) $(TEST_EXT), $(shell find $(SRC_ROOT) -name "*.cpp"))
+SRC_DIRS = $(dir $(SRCS))
 
 # object setting
-OBJROOT = obj
-OBJDIRS = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%, %, $(SRCDIRS)))
-OBJS    = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%.cpp, %.o, $(SRCS)))
-TARGET1_OBJ = $(filter-out %/sub.o, $(OBJS))
-TARGET2_OBJ = $(filter-out %/main.o, $(OBJS))
+OBJ_ROOT = obj
+OBJ_DIRS = $(addprefix $(OBJ_ROOT)/, $(patsubst $(SRC_ROOT)/%, %, $(SRC_DIRS)))
+OBJS     = $(addprefix $(OBJ_ROOT)/, $(patsubst $(SRC_ROOT)/%.cpp, %.o, $(SRCS)))
+BIN1_OBJ = $(filter-out %/sub.o, $(OBJS))
+BIN2_OBJ = $(filter-out %/main.o, $(OBJS))
 
 # test setting
-TEST_EXT= %_test.cpp
-TESTLIBS = $(LIBS) -lpthread -lgtest -lgtest_main
-TESTROOT = src
-TESTSRCS = $(filter-out $(EXCLUDE) %main.cpp, $(shell find $(SRCROOT) -name "*.cpp"))
-TESTOBJS = $(addprefix $(OBJROOT)/, $(patsubst $(TESTROOT)/%.cpp, %.o, $(TESTSRCS)))
-TESTDIRS = $(dir $(TESTSRCS))
+TEST_EXT  = %_test.cpp
+TEST_LIBS = $(LIBS) -lpthread -lgtest -lgtest_main
+TEST_ROOT = src
+TEST_SRCS = $(filter-out $(EXCLUDE) %main.cpp, $(shell find $(SRC_ROOT) -name "*.cpp"))
+TEST_OBJS = $(addprefix $(OBJ_ROOT)/, $(patsubst $(TEST_ROOT)/%.cpp, %.o, $(TEST_SRCS)))
+TEST_DIRS = $(dir $(TEST_SRCS))
 
 # dependency setting
 DEPS = $(OBJS:.o=.d)
 
 .PHONY: clean all analyze
 
-all: $(TARGET1) $(TARGET2)
+all: $(BIN1) $(BIN2)
 	@echo "make all"
 
-test: $(TESTOBJS)
+test: $(TEST_OBJS)
 	@echo "build $< -> $@"
-	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
-	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(TESTLIBS)
+	@[ -d $(BIN_ROOT) ] || mkdir -p $(BIN_ROOT)
+	$(COMPILER) -o $(BIN_ROOT)/$@ $^ $(LDFLAGS) $(TEST_LIBS)
 
-$(TARGET1): $(TARGET1_OBJ)
+$(BIN1): $(BIN1_OBJ)
 	@echo "build exe $@"
-	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
-	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(LIBS)
+	@[ -d $(BIN_ROOT) ] || mkdir -p $(BIN_ROOT)
+	$(COMPILER) -o $(BIN_ROOT)/$@ $^ $(LDFLAGS) $(LIBS)
 
-$(TARGET2): $(TARGET2_OBJ)
+$(BIN2): $(BIN2_OBJ)
 	@echo "build exe $@"
-	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
-	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(LIBS)
+	@[ -d $(BIN_ROOT) ] || mkdir -p $(BIN_ROOT)
+	$(COMPILER) -o $(BIN_ROOT)/$@ $^ $(LDFLAGS) $(LIBS)
 
-$(OBJROOT)/%.o: $(SRCROOT)/%.cpp
+$(OBJ_ROOT)/%.o: $(SRC_ROOT)/%.cpp
 	@echo "build $< -> $@"
 	@[ -d $@ ] || mkdir -p $(dir $@)
 	$(COMPILER) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
 
 analyze:
-	cppcheck --std=c++17 --enable=all $(SRCROOT)
+	cppcheck --std=c++17 --enable=all $(SRC_ROOT)
 
 fix_lib:
 	@ldconfig
 
 clean:
-	@rm -rf $(OBJROOT) $(BINROOT)
+	@rm -rf $(OBJ_ROOT) $(BIN_ROOT)
 
 -include $(DEPS)

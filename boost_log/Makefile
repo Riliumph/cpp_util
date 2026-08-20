@@ -18,30 +18,30 @@ LIBS   += -lpthread
 LIBS   += -lboost_thread -lboost_log
 
 # include setting
-INCLUDE = -I$(SRCROOT)/
+INCLUDE = -I$(SRC_ROOT)/
 EXCLUDE = .git%
 
 # binary setting
 TARGET  = $(shell basename $$(pwd))
-BINROOT = bin
+BIN_ROOT = bin
 
 # source setting
-SRCROOT = src
-SRCS    = $(filter-out $(EXCLUDE) $(TEST_EXT), $(shell find $(SRCROOT) -name "*.cpp"))
-SRCDIRS = $(dir $(SRCS))
+SRC_ROOT = src
+SRCS    = $(filter-out $(EXCLUDE) $(TEST_EXT), $(shell find $(SRC_ROOT) -name "*.cpp"))
+SRC_DIRS = $(dir $(SRCS))
 
 # object setting
-OBJROOT = obj
-OBJDIRS = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%, %, $(SRCDIRS)))
-OBJS    = $(addprefix $(OBJROOT)/, $(patsubst $(SRCROOT)/%.cpp, %.o, $(SRCS)))
+OBJ_ROOT = obj
+OBJ_DIRS = $(addprefix $(OBJ_ROOT)/, $(patsubst $(SRC_ROOT)/%, %, $(SRC_DIRS)))
+OBJS    = $(addprefix $(OBJ_ROOT)/, $(patsubst $(SRC_ROOT)/%.cpp, %.o, $(SRCS)))
 
 # test setting
 TEST_EXT= %_test.cpp
-TESTLIBS = $(LIBS) -lpthread -lgtest -lgtest_main
-TESTROOT = $(SRCROOT)
-TESTSRCS = $(filter-out $(EXCLUDE) %main.cpp, $(shell find $(SRCROOT) -name "*.cpp"))
-TESTOBJS = $(addprefix $(OBJROOT)/, $(patsubst $(TESTROOT)/%.cpp, %.o, $(TESTSRCS)))
-TESTDIRS = $(dir $(TESTSRCS))
+TEST_LIBS = $(LIBS) -lpthread -lgtest -lgtest_main
+TEST_ROOT = $(SRC_ROOT)
+TEST_SRCS = $(filter-out $(EXCLUDE) %main.cpp, $(shell find $(SRC_ROOT) -name "*.cpp"))
+TEST_OBJS = $(addprefix $(OBJ_ROOT)/, $(patsubst $(TEST_ROOT)/%.cpp, %.o, $(TEST_SRCS)))
+TEST_DIRS = $(dir $(TEST_SRCS))
 
 # dependency setting
 DEPS = $(OBJS:.o=.d)
@@ -51,11 +51,11 @@ DEPS = $(OBJS:.o=.d)
 all: debug
 
 test: CXXFLAGS+= $(DEBUG_CXXFLAGS)
-test: $(TESTOBJS)
+test: $(TEST_OBJS)
 	@echo "--- TEST MODE ---"
-	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
-	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(TESTLIBS)
-	$(BINROOT)/$@
+	@[ -d $(BIN_ROOT) ] || mkdir -p $(BIN_ROOT)
+	$(COMPILER) -o $(BIN_ROOT)/$@ $^ $(LDFLAGS) $(TEST_LIBS)
+	$(BIN_ROOT)/$@
 
 debug: CXXFLAGS+= $(DEBUG_CXXFLAGS)
 debug: $(TARGET)
@@ -67,21 +67,21 @@ release: $(TARGET)
 
 $(TARGET): $(OBJS)
 	@echo "build $< -> $@"
-	@[ -d $(BINROOT) ] || mkdir -p $(BINROOT)
-	$(COMPILER) -o $(BINROOT)/$@ $^ $(LDFLAGS) $(LIBS)
+	@[ -d $(BIN_ROOT) ] || mkdir -p $(BIN_ROOT)
+	$(COMPILER) -o $(BIN_ROOT)/$@ $^ $(LDFLAGS) $(LIBS)
 
-$(OBJROOT)/%.o: $(SRCROOT)/%.cpp
+$(OBJ_ROOT)/%.o: $(SRC_ROOT)/%.cpp
 	@echo "build $< -> $@"
 	@[ -d $@ ] || mkdir -p $(dir $@)
 	$(COMPILER) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
 
 analyze:
-	cppcheck --std=$(CXXVER) --enable=all $(SRCROOT)
+	cppcheck --std=$(CXXVER) --enable=all $(SRC_ROOT)
 
 fix_lib:
 	@ldconfig
 
 clean:
-	@rm -rf $(OBJROOT) $(BINROOT)
+	@rm -rf $(OBJ_ROOT) $(BIN_ROOT)
 
 -include $(DEPS)
