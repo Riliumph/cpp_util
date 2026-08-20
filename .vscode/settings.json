@@ -49,11 +49,24 @@
         "files.insertFinalNewline": true
     },
     "cSpell.words": [
+        "cppcheck",
+        "CXXVER",
+        "DDEBUG",
         "hgetall",
         "hmset",
+        "insmod",
+        "lfmt",
+        "lgtest",
+        "lpthread",
+        "lspdlog",
+        "lstd",
+        "lstdc",
         "NOLINTNEXTLINE",
         "pqxx",
-        "TSTZ"
+        "rmmod",
+        "TSTZ",
+        "Wextra",
+        "Winit"
     ],
     "editor.tokenColorCustomizations": {
         "textMateRules": [
