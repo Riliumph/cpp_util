@@ -4,26 +4,25 @@
 	"name": "C++",
 	"build": {
 		"dockerfile": "Dockerfile",
-		"args": {
-			"HADOLINT_URL": "https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64"
-		}
+		"args": {}
 	},
 	"runArgs": [
 		"--hostname",
 		"dev-container"
 	],
-	"mounts":[
-		"source=${localEnv:HOME}/.gitconfig,target=/home/vscode/.gitconfig,type=bind"
+	"mounts": [
+		"source=${localEnv:HOME}/.gitconfig,target=/home/vscode/.gitconfig,type=bind,consistency=cached",
+		"source=${localEnv:HOME}/.bash_history,target=/home/vscode/.bash_history,type=bind,consistency=cached",
 	],
-	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-	// ${containerWorkspaceFolder}でworkspaceFolderを参照できるらしい。バグの可能性もあるので、workspaceFolderと同じ書式の方が良いかもしれない
-	"workspaceMount": "source=${localWorkspaceFolder},target=${containerWorkspaceFolder},type=bind",
+	"workspaceFolder": "/${localWorkspaceFolderBasename}",
+	"workspaceMount": "source=${localWorkspaceFolder},target=/${localWorkspaceFolderBasename},type=bind",
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
 		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+			"moby": false, // The 'moby' option is not supported on Debian 'trixie'
+			"installDockerBuildx": true,
 			"version": "latest",
-			"enableNonRootDocker": "true",
-			"moby": false // The 'moby' option is not supported on Debian 'trixie'
+			"dockerDashComposeVersion": "latest"
 		}
 	},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
@@ -31,10 +30,7 @@
 		5432, // Postgres
 	],
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"onCreateCommand": [
-		"/${containerWorkspaceFolder}/.devcontainer/make_completion.sh"
-	],
-	"postCreateCommand": [],
+	// "postCreateCommand": "gcc -v",
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
@@ -43,17 +39,21 @@
 				"extensions.verifySignature": false
 			},
 			"extensions": [
+				// C++
 				"ms-vscode.cpptools-extension-pack",
 				"ms-vscode.makefile-tools",
 				"DavidSchuldenfrei.gtest-adapter",
 				"streetsidesoftware.code-spell-checker",
+				// Docker
 				"ms-azuretools.vscode-docker",
 				"exiasr.hadolint",
+				// Util
 				"ionutvmi.path-autocomplete",
 				"shardulm94.trailing-spaces",
 				"DavidAnson.vscode-markdownlint",
 				"richie5um2.vscode-sort-json",
 				"adpyke.vscode-sql-formatter",
+				// git
 				"eamodio.gitlens",
 				"mhutchie.git-graph",
 				"donjayamanne.githistory"

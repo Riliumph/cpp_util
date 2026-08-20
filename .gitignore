@@ -41,3 +41,6 @@ bin/
 # log
 *.log
 *.pcap
+
+# devcontainer
+*-lock.json
