@@ -89,7 +89,7 @@ fix_lib:
 clean:
 	@rm -rf $(OBJ_ROOT) $(BIN_ROOT) $(LIB_ROOT)
 
-# BUID RULES
+# BUILD RULES
 
 # binary build rule
 $(BIN): $(LIB) $(BIN_OBJS)
